@@ -5,6 +5,17 @@ import { contactInfo } from "@/data/contactData";
 export default function ContactInfo() {
   return (
     <section style={{ background: C.teal, padding: "52px 32px", position: "relative", overflow: "hidden" }}>
+      <style>{`
+        @media (max-width: 499px) {
+          .contact-info-desktop { display: none !important; }
+          .contact-info-mobile  { display: grid !important; }
+        }
+        @media (min-width: 500px) {
+          .contact-info-desktop { display: grid !important; }
+          .contact-info-mobile  { display: none !important; }
+        }
+      `}</style>
+
       {/* Decorative quotation marks */}
       <div style={{ position: "absolute", top: 16, left: 20, fontSize: 48, color: "rgba(255,255,255,0.08)", lineHeight: 1, fontFamily: "serif" }}>"</div>
       <div style={{ position: "absolute", bottom: 16, right: 20, fontSize: 48, color: "rgba(255,255,255,0.08)", lineHeight: 1, fontFamily: "serif", transform: "rotate(180deg)" }}>"</div>
@@ -15,7 +26,7 @@ export default function ContactInfo() {
         </h2>
 
         {/* Desktop: 3-column grid (≥500px) */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }} className="hidden min-[500px]:grid">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }} className="contact-info-desktop">
           {contactInfo.map((item) => (
             <div key={item.primary} style={{ textAlign: "center" }}>
               <div style={{ fontSize: 26, marginBottom: 10 }}>{item.icon}</div>
@@ -31,7 +42,7 @@ export default function ContactInfo() {
         </div>
 
         {/* Mobile: 1-column stack (<500px) */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }} className="flex flex-col min-[500px]:hidden">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }} className="contact-info-mobile">
           {contactInfo.map((item) => (
             <div key={item.primary} style={{ textAlign: "center", background: "rgba(255,255,255,0.08)", padding: 16, borderRadius: 16 }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>{item.icon}</div>

@@ -8,20 +8,38 @@ import { stats } from "@/data/homeData";
 
 interface HeroProps {
   heroBg?: string;
-  title: string;
+  title?: string;
   subtitle?: string;
-  description: React.ReactNode;
+  description?: React.ReactNode;
   doctorName?: string;
   photoSlot?: React.ReactNode;
 }
 
 export default function Hero({
   heroBg,
-  title,
+  title = "Welcome to Mantra Medica",
   subtitle,
-  description,
-  doctorName,
-  photoSlot,
+  description = (
+    <>
+      Your <strong style={{ color: C.light }}>Health & Recovery Hub</strong> at the
+      Gateway to Rinjani. Nestled in the heart of{" "}
+      <strong style={{ color: C.light }}>Senaru</strong>, we cater to adventurers,
+      global travelers, and the local community — built on the belief that every great
+      journey begins with{" "}
+      <strong style={{ color: C.light }}>thorough preparation</strong> and concludes
+      with perfect recovery.
+    </>
+  ),
+  doctorName = "dr. I Gede Yoga Mahendra Putra",
+  photoSlot = (
+    <Image
+      src="/images/dryoga.webp"
+      alt="Dr. I Gede Yoga Mahendra Putra"
+      fill
+      style={{ objectFit: "cover" }}
+      priority
+    />
+  ),
 }: HeroProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -67,6 +85,16 @@ export default function Hero({
           from { opacity: 0; transform: scale(1.04); }
           to   { opacity: 1; transform: scale(1); }
         }
+        @media (max-width: 499px) {
+          .hero-stats   { display: none !important; }
+          .hero-desktop { display: none !important; }
+          .hero-mobile  { display: flex !important; }
+        }
+        @media (min-width: 500px) {
+          .hero-stats   { display: flex !important; }
+          .hero-desktop { display: block !important; }
+          .hero-mobile  { display: none !important; }
+        }
       `}</style>
 
       {/* ── z-index map ──────────────────────────────────────────
@@ -94,17 +122,14 @@ export default function Hero({
           Direct child of <section> so it has its own stacking context,
           not inheriting from the text/photo parent. */}
       <div
-        className="hidden min-[500px]:flex"
+        className="hero-stats"
         style={{
           position: "absolute",
           bottom: 0,
           left: -40,
-          // ↓ 63% width (60% + 5%)
           width: "63%",
           zIndex: 1,
           background: C.light,
-
-          // ↓ padding increased by 40%: top/bottom 18→25px to 26→36px; left/right stays
           padding: "clamp(25px, 2.5vw, 36px) clamp(24px, 3vw, 42px)",
           display: "flex",
           alignItems: "center",
@@ -147,9 +172,10 @@ export default function Hero({
 
       {/* ── DESKTOP text + photo — z:5, above image AND stats ── */}
       <div
-        className="hidden min-[500px]:block"
+        className="hero-desktop"
         style={{
           position: "relative",
+          display: "block",
           height: "calc(100vh - 51px)",
           maxWidth: 1400,
           zIndex: 5,
@@ -258,6 +284,7 @@ export default function Hero({
               animation: mounted ? "fadeIn 0.6s ease both" : "none",
               animationDelay: "600ms",
               opacity: 0,
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)",
             }}
           >
             {doctorName}
@@ -267,8 +294,14 @@ export default function Hero({
 
       {/* ── MOBILE layout (<500px) ── */}
       <div
-        className="flex flex-col min-[500px]:hidden"
-        style={{ zIndex: 5, position: "relative", padding: "32px 16px 0" }}
+        className="hero-mobile"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          zIndex: 5,
+          position: "relative",
+          padding: "32px 16px 0"
+        }}
       >
         <div style={{ paddingBottom: 16 }}>
           {subtitle && (
@@ -283,7 +316,7 @@ export default function Hero({
             {description}
           </div>
           {doctorName && (
-            <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 12, marginTop: 16, padding: "8px 20px", borderRadius: 100, background: `${C.tealLight}20`, backdropFilter: "blur(10px)", border: `1px solid ${C.tealLight}40`, display: "inline-block", animation: mounted ? "fadeIn 0.6s ease both" : "none", animationDelay: "600ms", opacity: 0 }}>
+            <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 12, marginTop: 16, padding: "8px 20px", borderRadius: 100, background: `${C.tealLight}20`, backdropFilter: "blur(10px)", border: `1px solid ${C.tealLight}40`, display: "inline-block", animation: mounted ? "fadeIn 0.6s ease both" : "none", animationDelay: "600ms", opacity: 0, boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)" }}>
               {doctorName}
             </p>
           )}
@@ -292,8 +325,8 @@ export default function Hero({
         <div style={{ display: "flex", justifyContent: "center", animation: mounted ? "fadeUp 0.8s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "550ms", opacity: 0 }}>
           <div
             style={{
-              width: "clamp(36px, 22vw, 56px)",
-              height: "clamp(46px, 28vw, 72px)",
+              width: "clamp(18px, 11vw, 28px)",
+              height: "clamp(23px, 14vw, 36px)",
               borderRadius: 24,
               overflow: "hidden",
               background: photoSlot ? "transparent" : `linear-gradient(to top, ${C.cardDark}, ${C.teal}40)`,

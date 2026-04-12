@@ -4,10 +4,16 @@ import { C } from "@/lib/constants";
 export default function EmergencyBanner() {
   return (
     <section style={{ background: C.light, padding: "32px 32px" }}>
+      <style>{`
+        @media (max-width: 860px) {
+          .banner-desktop { display: none !important; }
+          .banner-mobile  { display: flex !important; }
+        }
+      `}</style>
       <div style={{ maxWidth: 960, margin: "0 auto" }}>
-        {/* Desktop: Horizontal flex (≥500px) */}
+        {/* Desktop: Horizontal flex (≥860px) */}
         <div
-          className="hidden min-[500px]:flex"
+          className="banner-desktop"
           style={{
             background: C.teal,
             borderRadius: 100,
@@ -42,14 +48,14 @@ export default function EmergencyBanner() {
           </button>
         </div>
 
-        {/* Mobile: Vertical stack (<500px) */}
+        {/* Mobile: Vertical stack (<860px) */}
         <div
-          className="flex flex-col min-[500px]:hidden"
+          className="banner-mobile"
           style={{
             background: C.teal,
             borderRadius: 16,
             padding: "16px 20px",
-            display: "flex",
+            display: "none",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",

@@ -4,7 +4,7 @@ import { homeCareFeatures } from "@/data/recoveryData";
 
 export default function HomeCare() {
   return (
-    <section style={{ background: "#F7F2EA", padding: "64px 32px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
+    <section style={{ background: C.light, padding: "64px 32px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
       <div style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 32, alignItems: "flex-start" }}>
 
         {/* Left — 2 feature cards */}

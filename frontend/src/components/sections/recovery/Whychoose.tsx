@@ -12,9 +12,19 @@ export default function WhyChoose() {
   const next = () => setSlide((s) => (s + 1) % whyChooseSlides.length);
 
   return (
-    <section style={{ background: "#F7F2EA", padding: "72px 32px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
+    <section style={{ background: C.light, padding: "72px 32px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
+      <style>{`
+        @media (max-width: 499px) {
+          .why-choose-desktop { display: none !important; }
+          .why-choose-mobile  { display: flex !important; }
+        }
+        @media (min-width: 500px) {
+          .why-choose-desktop { display: flex !important; }
+          .why-choose-mobile  { display: none !important; }
+        }
+      `}</style>
       {/* Desktop: Side-by-side (≥500px) */}
-      <div className="hidden min-[500px]:flex" style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 48, alignItems: "center" }}>
+      <div className="why-choose-desktop" style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 48, alignItems: "center" }}>
 
         {/* Left — text */}
         <div style={{ flex: 1 }}>
@@ -82,7 +92,7 @@ export default function WhyChoose() {
       </div>
 
       {/* Mobile: Vertical stack (<500px) */}
-      <div className="flex flex-col min-[500px]:hidden" style={{ maxWidth: 860, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, alignItems: "center" }}>
+      <div className="why-choose-mobile" style={{ maxWidth: 860, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, alignItems: "center" }}>
 
         {/* Left — text */}
         <div style={{ width: "100%" }}>

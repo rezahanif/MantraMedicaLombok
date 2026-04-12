@@ -28,7 +28,7 @@ function ExpandedCard({ card, groupIdx }: { card: ServiceCard; groupIdx: number 
         height: "100%",
         // ↓ Replace with: background: `url('${card.imagePath}') center/cover no-repeat`
         background: cardBgs[groupIdx % cardBgs.length],
-        border: `1px solid ${C.border}`,
+        border: `3px solid ${C.border}`,
         boxShadow: "0 12px 32px rgba(0,0,0,0.15)",
       }}
     >
@@ -62,7 +62,7 @@ function SmallCard({ card, groupIdx, onClick }: { card: ServiceCard; groupIdx: n
         cursor: "pointer",
         // ↓ Replace with: background: `url('${card.imagePath}') center/cover no-repeat`
         background: cardBgs[groupIdx % cardBgs.length],
-        border: `1px solid ${C.border}`,
+        border: `3px solid ${C.border}`,
         transition: "transform 0.2s",
         minHeight: 0,
       }}
@@ -94,7 +94,7 @@ function TextBlock({ category, categoryDesc, textAlign }: { category: string; ca
         flexDirection: "column",
         justifyContent: "center",
         padding: "0 8px",
-        textAlign: textAlign === "right" ? "right" : "left",
+        textAlign: textAlign,
       }}
     >
       <h3 style={{ color: C.light, fontSize: 20, fontWeight: 700, lineHeight: 1.3, marginBottom: 16 }}>
@@ -120,7 +120,7 @@ function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; 
   const CardsColumn = (
     <div style={{ display: "flex", gap: 12, flex: 1.8, height: "100%" }}>
       {/* 2 small stacked */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 20, flex: 1 }}>
         {smallCards.map((card: ServiceCard) => (
           <SmallCard
             key={card.id}
@@ -138,7 +138,7 @@ function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; 
   );
 
   const TextColumn = (
-    <div style={{ flex: 1 }}>
+    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1 }}>
       <TextBlock
         category={group.category}
         categoryDesc={group.categoryDesc}
@@ -154,15 +154,33 @@ function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; 
         gap: 24,
         height: 320,
         alignItems: "stretch",
+        position: "relative",
       }}
     >
-      {group.textSide === "left" ? (
-        // text | cards
-        <>{TextColumn}{CardsColumn}</>
-      ) : (
-        // cards | text
-        <>{CardsColumn}{TextColumn}</>
-      )}
+      {/* Belt background - centered on gap between small cards */}
+      <div
+        style={{
+          position: "absolute",
+          left: -32,
+          right: -32,
+          top: 130,
+          height: 240,
+          background: C.teal,
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Content with higher z-index */}
+      <div style={{ display: "flex", gap: 24, width: "100%", zIndex: 1, alignItems: "stretch" }}>
+        {group.textSide === "left" ? (
+          // text | cards
+          <>{TextColumn}{CardsColumn}</>
+        ) : (
+          // cards | text
+          <>{CardsColumn}{TextColumn}</>
+        )}
+      </div>
     </div>
   );
 }
@@ -182,7 +200,7 @@ function MobileServiceGroups() {
           {/* All cards stacked */}
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {group.cards.map((card: ServiceCard) => (
-              <div key={card.id} style={{ borderRadius: 18, overflow: "hidden", position: "relative", minHeight: 220, background: cardBgs[gi % cardBgs.length], border: `1px solid ${C.border}` }}>
+              <div key={card.id} style={{ borderRadius: 18, overflow: "hidden", position: "relative", minHeight: 220, background: cardBgs[gi % cardBgs.length], border: `3px solid ${C.border}` }}>
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.2) 70%, transparent 100%)" }} />
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "22px 20px", zIndex: 2 }}>
                   <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", color: "rgba(250,250,250,0.75)", marginBottom: 8, width: "fit-content" }}>{card.tag}</div>
@@ -205,8 +223,8 @@ export default function ServiceGroups() {
   return (
     <section
       style={{
-        // Alternating teal band background to match the design
-        background: C.teal,
+        // Light background with teal belts for each group
+        background: C.light,
         padding: "64px 32px",
       }}
     >

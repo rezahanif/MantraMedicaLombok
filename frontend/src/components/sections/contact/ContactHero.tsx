@@ -1,6 +1,7 @@
 // src/components/contact/ContactHero.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { C } from "@/lib/constants";
 
@@ -22,7 +23,7 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
         width: "100%",
         maxWidth: "100vw",
         boxSizing: "border-box",
-        background: `linear-gradient(135deg, #1C3A2E 0%, #2A5240 40%, #87B2A8 100%)`,
+        background: `url('/images/ContactPage.webp') center -80px/cover no-repeat`,
         overflow: "hidden",
       }}
     >
@@ -44,24 +45,19 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           from { opacity: 0; transform: translateX(48px) translateY(0); }
           to   { opacity: 1; transform: translateX(0)    translateY(0); }
         }
+        @media (max-width: 499px) {
+          .contact-hero-desktop { display: none !important; }
+          .contact-hero-mobile  { display: flex !important; }
+        }
+        @media (min-width: 500px) {
+          .contact-hero-desktop { display: block !important; }
+          .contact-hero-mobile  { display: none !important; }
+        }
       `}</style>
-
-      {/* Gradient overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `linear-gradient(to right, rgba(15,30,20,0.88) 35%, rgba(15,30,20,0.3) 100%)`,
-          zIndex: 2,
-          pointerEvents: "none",
-          animation: mounted ? "fadeIn 0.8s ease both" : "none",
-          animationDelay: "100ms",
-        }}
-      />
 
       {/* Desktop layout */}
       <div
-        className="hidden min-[500px]:block"
+        className="contact-hero-desktop"
         style={{
           position: "relative",
           zIndex: 3,
@@ -81,20 +77,24 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
             boxSizing: "border-box",
           }}
         >
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.1)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 100, padding: "4px 12px", fontSize: "clamp(10px, 1vw, 12px)", color: "rgba(250,250,250,0.7)", marginBottom: 12, animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "200ms", opacity: 0 }}>
-            Home &nbsp;›&nbsp; Contact
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "4px 12px", fontSize: "clamp(10px, 1vw, 12px)", color: "rgba(250,250,250,0.7)", marginBottom: 12, animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "200ms", opacity: 0, boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+            <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
+              Home
+            </Link>
+            &nbsp;›&nbsp; Contact
           </div>
 
           <h1
             style={{
               color: C.light,
-              fontSize: "clamp(32px, 4vw, 48px)",
+              fontSize: "clamp(27px, 3.4vw, 41px)",
               fontWeight: 700,
               lineHeight: 1.15,
               marginBottom: 16,
               animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
               animationDelay: "300ms",
               opacity: 0,
+              whiteSpace: "nowrap",
             }}
           >
             Find Us & Get in Touch
@@ -113,42 +113,14 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
             We're always here — whether you need urgent care or want to book your recovery session.
           </p>
         </div>
-
-        {/* Photo card */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: "clamp(40px, 6vw, 120px)",
-            zIndex: 4,
-            width: "clamp(300px, 30vw, 510px)",
-            height: "clamp(390px, 40.5vw, 645px)",
-            borderRadius: 24,
-            overflow: "hidden",
-            background: photoSlot
-              ? "transparent"
-              : `linear-gradient(to top, ${C.cardDark}, ${C.teal}40)`,
-            border: photoSlot
-              ? "none"
-              : `1px solid ${C.tealLight}30`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "rgba(250,250,250,0.3)",
-            fontSize: 13,
-            animation: mounted ? "slideInRight 0.8s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
-            animationDelay: "350ms",
-            opacity: 0,
-          }}
-        >
-          {photoSlot ?? "Contact Hero Photo"}
-        </div>
       </div>
 
       {/* Mobile layout */}
       <div
-        className="flex flex-col min-[500px]:hidden"
+        className="contact-hero-mobile"
         style={{
+          display: "flex",
+          flexDirection: "column",
           zIndex: 3,
           position: "relative",
           padding: "clamp(32px, 8vw, 48px) clamp(16px, 5vw, 24px) 0",
@@ -156,18 +128,22 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           justifyContent: "center",
         }}
       >
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.1)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content" }}>
-          Home &nbsp;›&nbsp; Contact
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+          <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
+            Home
+          </Link>
+          &nbsp;›&nbsp; Contact
         </div>
 
         <div style={{ paddingBottom: 24 }}>
           <h1
             style={{
               color: C.light,
-              fontSize: "clamp(24px, 6vw, 32px)",
+              fontSize: "clamp(20px, 5.1vw, 27px)",
               fontWeight: 700,
               lineHeight: 1.2,
               marginBottom: 12,
+              whiteSpace: "nowrap",
             }}
           >
             Find Us & Get in Touch
@@ -181,30 +157,6 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           >
             We're always here — whether you need urgent care or want to book your recovery session.
           </p>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              width: "clamp(36px, 22vw, 56px)",
-              height: "clamp(46px, 28vw, 72px)",
-              borderRadius: 24,
-              overflow: "hidden",
-              background: photoSlot
-                ? "transparent"
-                : `linear-gradient(to top, ${C.cardDark}, ${C.teal}40)`,
-              border: photoSlot
-                ? "none"
-                : `1px solid ${C.tealLight}30`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "rgba(250,250,250,0.3)",
-              fontSize: 12,
-            }}
-          >
-            {photoSlot ?? "Contact Photo"}
-          </div>
         </div>
       </div>
     </section>

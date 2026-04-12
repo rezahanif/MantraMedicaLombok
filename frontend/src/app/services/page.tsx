@@ -1,9 +1,7 @@
 // src/app/services/page.tsx
 import Image from "next/image";
 import Navbar           from "@/components/shared/Navbar";
-import Footer           from "@/components/shared/Footer";
 import ServiceHero      from "@/components/sections/services/Servicehero";
-import ServiceStatsBar  from "@/components/sections/services/Servicestatbar";
 import ServiceGroups    from "@/components/sections/services/Servicegroups";
 
 export default function ServicesPage() {
@@ -21,7 +19,6 @@ export default function ServicesPage() {
           />
         }
       />
-      <ServiceStatsBar />
       <ServiceGroups />
     </main>
   );

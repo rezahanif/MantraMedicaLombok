@@ -18,7 +18,7 @@ export default function SignatureTreatment() {
   const [active, setActive] = useState(0);
 
   return (
-    <section style={{ background: "#F7F2EA", padding: "72px 32px" }}>
+    <section style={{ background: C.light, padding: "72px 32px" }}>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
 
         {/* Header — matches client's existing flourish style */}

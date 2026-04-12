@@ -86,16 +86,16 @@ export default function ServiceCards() {
         }
         /* Hint ring pulse */
         @keyframes pulseRing {
-          0%   { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
-          70%  { transform: translate(-50%,-50%) scale(1.9); opacity: 0;   }
-          100% { transform: translate(-50%,-50%) scale(1);   opacity: 0;   }
+          0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
+          70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
+          100% { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0;   }
         }
         .hint-pulse {
           position: absolute;
           width: 32px; height: 32px;
           border-radius: 50%;
           top: 50%; left: 50%;
-          transform: translate(-50%,-50%);
+          transform: translate(calc(-50% - 2px), calc(-50% - 2px));
           animation: pulseRing 2.2s ease-out infinite;
           pointer-events: none;
         }
@@ -246,7 +246,7 @@ export default function ServiceCards() {
                       />
                     </div>
                     <p style={{ fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>
-                      Expand
+                      Tap to Expand
                     </p>
                   </div>
                 )}
@@ -424,19 +424,20 @@ export default function ServiceCards() {
               <div
                 key={svc.id}
                 style={{
-                  borderRadius: 24, overflow: "hidden", position: "relative", minHeight: 280,
-                  background: style.color,
+                  borderRadius: 24, overflow: "hidden", position: "relative", minHeight: 294,
+                  background: `url('${getCardImage(svc.id)}') center/110% no-repeat`,
                   animation: inView ? "cardSlideUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                   animationDelay: `${100 + i * 120}ms`,
                   opacity: inView ? undefined : 0,
                 }}
               >
                 <div style={{ position: "absolute", inset: 0, background: "rgba(15,15,15,0.4)" }} />
+                
                 <div
                   style={{
                     position: "absolute", inset: 0,
                     display: "flex", flexDirection: "column", justifyContent: "flex-end",
-                    padding: "28px 24px", zIndex: 2,
+                    padding: "28px 24px 42px 24px", zIndex: 2,
                   }}
                 >
                   <div

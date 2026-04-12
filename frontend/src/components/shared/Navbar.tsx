@@ -191,7 +191,16 @@ export default function Navbar({ activePage }: { activePage?: string }) {
         @media (max-width: 860px) {
           .nav-links { display: none !important; }
           .hamburger { display: flex !important; }
-          .emergency-btn { padding: 6px 12px !important; font-size: 11px !important; }
+          .emergency-btn { 
+            width: 40px !important; 
+            height: 40px !important; 
+            padding: 0 !important; 
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 11px !important; 
+          }
           .emergency-btn span { display: none; }
         }
       `}</style>

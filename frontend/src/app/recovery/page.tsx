@@ -14,8 +14,8 @@ export default function RecoveryPage() {
       <RecoveryHero
         photoSlot={
           <Image
-            src="/images/dryoga.webp"
-            alt="Dr. I Gede Yoga Mahendra Putra"
+            src="/images/DrIra.webp"
+            alt="Dr. Nyoman Ardyatri Kairavini"
             fill
             style={{ objectFit: "cover" }}
             priority
