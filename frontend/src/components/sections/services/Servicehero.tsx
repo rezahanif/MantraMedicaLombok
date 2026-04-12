@@ -69,7 +69,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
 
       {/* Hero image — z:3, sits above stats card */}
       <Image
-        src="/images/medpage.webp"
+        src="/images/MedPage.webp"
         alt=""
         fill
         priority
