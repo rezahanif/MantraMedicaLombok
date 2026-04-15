@@ -69,7 +69,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
 
       {/* Hero image — z:3, sits above stats card */}
       <Image
-        src="/images/medpage.webp"
+        src="/images/MedPage.webp"
         alt=""
         fill
         priority
@@ -282,7 +282,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           inset: 0,
           zIndex: 5,
           minHeight: "100vh",
-          backgroundImage: `url('/images/medpage.webp')`,
+          backgroundImage: `url('/images/MedPage.webp')`,
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",

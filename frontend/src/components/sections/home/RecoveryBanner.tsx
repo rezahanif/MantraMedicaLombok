@@ -225,31 +225,32 @@ export default function WorldClassAndRecovery() {
                   pointerEvents: "none",
                   visibility: on ? "hidden" : "visible",
                   overflow: "hidden",
+                  animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+                  animationDelay: `${280 + i * 100}ms`,
                 }}>
                   <p style={{ ...CARD_TXT }}>{svc.title}</p>
                 </div>
 
                 {/* ── ACTIVE layer: title left-aligned, marginBottom 243, marginLeft 21 ── */}
-                {on && (
                 <div style={{
                   position: "absolute", inset: 0, zIndex: 6,
-                  display: "flex",
+                  display: on ? "flex" : "none",
                   flexDirection: "column",
                   justifyContent: "flex-end", alignItems: "flex-start",
                   paddingBottom: vw(243),
                   paddingLeft: vw(21), paddingRight: vw(20),
-                  opacity: 1, 
-                  visibility: "visible",
+                  opacity: on ? 1 : 0, 
+                  visibility: on ? "visible" : "hidden",
                   transition: "opacity 0.3s ease 0.06s",
                   pointerEvents: "none",
                   overflow: "hidden",
+                  animation: on ? "fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                 }}>
                   <p style={{ ...CARD_TXT, textAlign: "left", marginBottom: "0.4em" }}>{svc.title}</p>
                   <p style={{ color: "rgba(255,255,255,0.82)", fontFamily: "Inter, sans-serif", fontSize: vw(13), lineHeight: 1.55, margin: 0 }}>
                     {svc.desc}
                   </p>
                 </div>
-                )}
 
                 {/* White arrow — active only, bottom-right */}
                 <span style={{
