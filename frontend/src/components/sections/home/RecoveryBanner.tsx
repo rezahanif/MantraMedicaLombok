@@ -131,7 +131,7 @@ export default function WorldClassAndRecovery() {
             <h2 style={{
               color: C.light,
               fontFamily: "Lato, sans-serif",
-              fontSize: vw(40), fontWeight: 800,
+              fontSize: vw(37), fontWeight: 800,
               lineHeight: "150%", letterSpacing: "-0.352px",
               textShadow: "0 4px 4px rgba(0,0,0,0.25)",
               margin: 0,
@@ -146,7 +146,7 @@ export default function WorldClassAndRecovery() {
               background: C.light, color: C.dark,
               border: "none", borderRadius: vw(100),
               fontFamily: "Inter, sans-serif",
-              fontSize: vw(20), fontWeight: 500, letterSpacing: "0.45px",
+              fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
               cursor: "pointer", display: "inline-flex",
               alignItems: "center", justifyContent: "center", gap: vw(8),
               animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
@@ -273,7 +273,7 @@ export default function WorldClassAndRecovery() {
               background: "rgba(255,255,255,0.15)", color: C.light,
               border: "none", borderRadius: vw(100),
               fontFamily: "Inter, sans-serif",
-              fontSize: vw(20), fontWeight: 500, letterSpacing: "0.45px",
+              fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
               cursor: "pointer", display: "inline-flex",
               alignItems: "center", justifyContent: "center", gap: vw(8),
               backdropFilter: "blur(10px)",
@@ -281,14 +281,14 @@ export default function WorldClassAndRecovery() {
               animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
               opacity: inView ? undefined : 0,
             }}>
-              ← &nbsp; &nbsp; &nbsp; More Services
+              <span style={{ fontSize: vw(20), fontWeight: 600 }}>←</span> &nbsp; &nbsp; &nbsp; More Services
             </button>
 
             {/* Figma: w 465, h 174, fontSize 40, weight 800, Lato, right-aligned */}
             <h2 style={{
               color: "#FAFAFA",
               fontFamily: "Lato, sans-serif",
-              fontSize: vw(40), fontWeight: 800,
+              fontSize: vw(35), fontWeight: 800,
               lineHeight: "normal",
               textAlign: "right",
               textShadow: "0 4px 4px rgba(0,0,0,0.25)",
