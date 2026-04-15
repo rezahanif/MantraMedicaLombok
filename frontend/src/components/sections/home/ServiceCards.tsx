@@ -69,7 +69,7 @@ export default function ServiceCards() {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ background: "#FFFFFF" }} className="px-6 md:px-12 py-24">
+    <section ref={sectionRef} style={{ background: C.light }} className="px-6 md:px-12 py-24">
       <style>{`
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(32px); }

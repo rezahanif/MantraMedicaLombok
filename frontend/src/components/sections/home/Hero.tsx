@@ -36,7 +36,7 @@ export default function Hero({
       src="/images/dryoga.webp"
       alt="Dr. I Gede Yoga Mahendra Putra"
       fill
-      style={{ objectFit: "cover" }}
+      style={{ objectFit: "cover", objectPosition: "center top" }}
       priority
     />
   ),
@@ -56,7 +56,7 @@ export default function Hero({
         width: "100%",
         maxWidth: "100vw",
         boxSizing: "border-box",
-        background: heroBg ?? "#FFFFFF",
+        background: heroBg ?? C.light,
       }}
       className="overflow-visible"
     >
@@ -112,15 +112,13 @@ export default function Hero({
         priority
         style={{
           objectFit: "cover",
-          objectPosition: "center -80px",
+          objectPosition: "center bottom",
           zIndex: 3,
           animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
         }}
       />
 
-      {/* ── STATS CARD — z:1, sits BEHIND the hero image ──
-          Direct child of <section> so it has its own stacking context,
-          not inheriting from the text/photo parent. */}
+      {/* ── STATS CARD — z:1, sits BEHIND the hero image ── */}
       <div
         className="hero-stats"
         style={{
@@ -170,7 +168,7 @@ export default function Hero({
         ))}
       </div>
 
-      {/* ── DESKTOP text + photo — z:5, above image AND stats ── */}
+      {/* ── DESKTOP text + photo — z:5 ── */}
       <div
         className="hero-desktop"
         style={{
@@ -240,7 +238,7 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Photo card — bottom right, z:4 inherited from parent z:5 */}
+        {/* Photo card — bottom right */}
         <div
           style={{
             position: "absolute",
@@ -296,51 +294,158 @@ export default function Hero({
       <div
         className="hero-mobile"
         style={{
-          display: "flex",
+          display: "none",           // media query overrides to flex
           flexDirection: "column",
+          justifyContent: "flex-end",
+          position: "absolute",
+          inset: 0,
           zIndex: 5,
-          position: "relative",
-          padding: "32px 16px 0"
         }}
       >
-        <div style={{ paddingBottom: 16 }}>
-          {subtitle && (
-            <p style={{ fontSize: 11, letterSpacing: "3px", textTransform: "uppercase", color: C.light, marginBottom: 10, fontWeight: 400, animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "200ms", opacity: 0 }}>
-              {subtitle}
-            </p>
-          )}
-          <h1 style={{ color: C.light, fontSize: 28, fontWeight: 700, lineHeight: 1.2, marginBottom: 12, animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "300ms", opacity: 0 }}>
-            {title}
-          </h1>
-          <div style={{ color: "rgba(250,250,250,0.85)", fontSize: 13, lineHeight: 1.8, animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "450ms", opacity: 0 }}>
-            {description}
-          </div>
-          {doctorName && (
-            <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 12, marginTop: 16, padding: "8px 20px", borderRadius: 100, background: `${C.tealLight}20`, backdropFilter: "blur(10px)", border: `1px solid ${C.tealLight}40`, display: "inline-block", animation: mounted ? "fadeIn 0.6s ease both" : "none", animationDelay: "600ms", opacity: 0, boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)" }}>
-              {doctorName}
-            </p>
+        {/* Doctor photo — reduced size, right side */}
+        <div
+          style={{
+            position: "absolute",
+            width: "50%",
+            height: "65%",
+            right: 0,
+            bottom: "15%",
+            zIndex: 0,
+            overflow: "hidden",
+            borderRadius: "16px 0 0 0",
+          }}
+        >
+          {photoSlot ?? (
+            <div style={{ width: "100%", height: "100%", background: C.teal }} />
           )}
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", animation: mounted ? "fadeUp 0.8s cubic-bezier(0.22,0.61,0.36,1) both" : "none", animationDelay: "550ms", opacity: 0 }}>
-          <div
+        {/* Text content — left side, upper-mid zone */}
+        <div
+          style={{
+            position: "absolute",
+            top: "18%",
+            left: 24,
+            right: "52%",    // leave right side for doctor photo
+            width: 200,
+            zIndex: 2,
+            overflow: "visible",
+          }}
+        >
+          {subtitle && (
+            <p
+              style={{
+                fontSize: 10, letterSpacing: "2.5px", textTransform: "uppercase",
+                color: "rgba(255,255,255,0.8)", marginBottom: 8, fontWeight: 400,
+                wordBreak: "break-word",
+                whiteSpace: "normal",
+                margin: 0,
+                animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+                animationDelay: "200ms",
+                opacity: mounted ? 1 : 0,
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
+          <h1
             style={{
-              width: "clamp(18px, 11vw, 28px)",
-              height: "clamp(23px, 14vw, 36px)",
-              borderRadius: 24,
-              overflow: "hidden",
-              background: photoSlot ? "transparent" : `linear-gradient(to top, ${C.cardDark}, ${C.teal}40)`,
-              border: photoSlot ? "none" : `1px solid ${C.tealLight}30`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "rgba(250,250,250,0.3)",
-              fontSize: 13,
+              color: C.light, fontSize: 28, fontWeight: 700,
+              lineHeight: 1.3, marginBottom: 14,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "300ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
-            {photoSlot ?? "Doctor Photo"}
+            {title}
+          </h1>
+
+          <div
+            style={{
+              color: "rgba(250,250,250,0.85)",
+              fontSize: 12,
+              lineHeight: 1.6,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "400ms",
+              opacity: mounted ? 1 : 0,
+            }}
+          >
+            Your <strong style={{ color: C.light }}>Health & Recovery Hub</strong> at the
+            Gateway to Rinjani. Nestled in the heart of{" "}
+            <strong style={{ color: C.light }}>Senaru</strong>.
           </div>
         </div>
+
+        {/* Stats card — bay/cove shape (large rounded top), anchored to bottom */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 3,
+            background: C.light,
+            borderRadius: "44px 44px 0 0",
+            padding: "32px 20px 48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            // Subtle top shadow to lift card off photo
+            boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
+            animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+            animationDelay: "580ms",
+            opacity: 0,
+          }}
+        >
+          {stats.map((s, i) => (
+            <div
+              key={s.label}
+              style={{
+                display: "flex", flexDirection: "column",
+                alignItems: "center", gap: 6,
+                animation: mounted ? "fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+                animationDelay: `${640 + i * 70}ms`,
+                opacity: 0,
+              }}
+            >
+              <span style={{ fontSize: 22 }}>{s.icon}</span>
+              <span
+                style={{
+                  color: C.dark,
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.4px",
+                  textAlign: "center",
+                  lineHeight: 1.3,
+                }}
+              >
+                {s.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {doctorName && (
+          <p
+            style={{
+              position: "absolute",
+              bottom: "40%",
+              left: 120,
+              color: "rgba(250,250,250,0.85)",
+              fontSize: 10,
+              padding: "6px 12px",
+              borderRadius: 100,
+              background: `rgba(250,250,250,0.15)`,
+              backdropFilter: "blur(10px)",
+              border: `1px solid rgba(250,250,250,0.3)`,
+              display: "inline-block",
+              animation: mounted ? "fadeIn 0.6s ease both" : "none",
+              animationDelay: "600ms",
+              opacity: 0,
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+              zIndex: 4,
+            }}
+          >
+            {doctorName}
+          </p>
+        )}
       </div>
     </section>
   );

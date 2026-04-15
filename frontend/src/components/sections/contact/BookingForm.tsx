@@ -24,10 +24,22 @@ export default function BookingForm() {
         position: "relative",
       }}
     >
+      <style>{`
+        @media (max-width: 499px) {
+          .booking-desktop { display: none !important; }
+          .booking-mobile  { display: flex !important; }
+        }
+        @media (min-width: 500px) {
+          .booking-desktop { display: flex !important; }
+          .booking-mobile  { display: none !important; }
+        }
+      `}</style>
+
       {/* Wood texture overlay */}
       <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 40px)", pointerEvents: "none" }} />
 
-      <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", gap: 40, alignItems: "flex-start", position: "relative", zIndex: 2 }}>
+      {/* Desktop: 2-column (≥500px) */}
+      <div className="booking-desktop" style={{ maxWidth: 960, margin: "0 auto", display: "flex", gap: 40, alignItems: "flex-start", position: "relative", zIndex: 2 }}>
 
         {/* Left — form */}
         <div style={{ flex: 1 }}>
@@ -145,6 +157,124 @@ export default function BookingForm() {
           <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
             {testimonials.map((_, i) => (
               <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? C.teal : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Mobile: Stacked (<500px) */}
+      <div className="booking-mobile" style={{ maxWidth: 960, margin: "0 auto", display: "flex", flexDirection: "column", gap: 32, position: "relative", zIndex: 2 }}>
+
+        {/* Form */}
+        <div>
+          <h2 style={{ color: "#FAFAFA", fontSize: 22, fontWeight: 700, marginBottom: 18 }}>Book Your Visit</h2>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Name + Whatsapp stacked */}
+            {[
+              { label: "Full Name", key: "fullName", type: "text", placeholder: "" },
+              { label: "Whatsapp Number", key: "whatsapp", type: "tel", placeholder: "" },
+            ].map((f) => (
+              <div key={f.key}>
+                <label style={{ color: "rgba(250,250,250,0.6)", fontSize: 10, display: "block", marginBottom: 4 }}>{f.label}</label>
+                <input
+                  type={f.type}
+                  value={form[f.key as keyof typeof form]}
+                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                  style={{ width: "100%", background: "rgba(255,255,255,0.12)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 10px", color: "#FAFAFA", fontSize: 12, outline: "none" }}
+                />
+              </div>
+            ))}
+
+            {/* Service type */}
+            <div>
+              <label style={{ color: "rgba(250,250,250,0.6)", fontSize: 10, display: "block", marginBottom: 4 }}>Service Type</label>
+              <select
+                value={form.serviceType}
+                onChange={(e) => setForm({ ...form, serviceType: e.target.value })}
+                style={{ width: "100%", background: "rgba(255,255,255,0.12)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 10px", color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.4)", fontSize: 12, outline: "none", cursor: "pointer" }}
+              >
+                <option value="" disabled style={{ background: "#3D2208" }}>Select a service</option>
+                {serviceTypes.map((s) => (
+                  <option key={s} value={s} style={{ background: "#3D2208", color: "#FAFAFA" }}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date + Notes stacked */}
+            <div>
+              <label style={{ color: "rgba(250,250,250,0.6)", fontSize: 10, display: "block", marginBottom: 4 }}>Preferred Date</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 12 }}>📅</span>
+                <input
+                  type="date"
+                  value={form.preferredDate}
+                  onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
+                  style={{ width: "100%", background: "rgba(255,255,255,0.12)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 10px 8px 30px", color: "#FAFAFA", fontSize: 12, outline: "none" }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ color: "rgba(250,250,250,0.6)", fontSize: 10, display: "block", marginBottom: 4 }}>Preferred Time</label>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", fontSize: 12 }}>⏰</span>
+                <input
+                  type="time"
+                  value={form.preferredTime}
+                  onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
+                  style={{ width: "100%", background: "rgba(255,255,255,0.12)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 10px 8px 30px", color: "#FAFAFA", fontSize: 12, outline: "none" }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ color: "rgba(250,250,250,0.6)", fontSize: 10, display: "block", marginBottom: 4 }}>Additional Notes</label>
+              <textarea
+                value={form.additionalNotes}
+                onChange={(e) => setForm({ ...form, additionalNotes: e.target.value })}
+                rows={2}
+                style={{ width: "100%", background: "rgba(255,255,255,0.12)", border: "0.5px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 10px", color: "#FAFAFA", fontSize: 12, outline: "none", resize: "vertical" }}
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              style={{ background: C.teal, color: "#FAFAFA", border: "none", borderRadius: 100, padding: "10px 24px", fontSize: 12, fontWeight: 600, cursor: "pointer", letterSpacing: "0.5px", width: "100%" }}
+            >
+              Submit Booking
+            </button>
+          </div>
+        </div>
+
+        {/* Image carousel + testimonial */}
+        <div>
+          <div style={{ borderRadius: 16, overflow: "hidden", position: "relative", aspectRatio: "4/3", background: "linear-gradient(135deg, #1A2E2B, #2C4A3A)", marginBottom: 14 }}>
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)", fontSize: 12 }}>
+              Gallery Photo {slide + 1}
+            </div>
+
+            {/* Arrows */}
+            <button onClick={prev} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
+            <button onClick={next} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
+
+            {/* Testimonial overlay */}
+            <div style={{ position: "absolute", bottom: 12, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 10, padding: "10px 12px", backdropFilter: "blur(4px)" }}>
+              <div style={{ display: "flex", gap: 2, marginBottom: 4 }}>
+                {"★★★★★".split("").map((s, i) => (
+                  <span key={i} style={{ color: i < testimonials[slide].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 11 }}>{s}</span>
+                ))}
+              </div>
+              <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 11, lineHeight: 1.4, marginBottom: 3 }}>"{testimonials[slide].text}"</p>
+              <p style={{ color: "rgba(250,250,250,0.45)", fontSize: 10 }}>— {testimonials[slide].author}</p>
+            </div>
+          </div>
+
+          {/* Dots */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 5 }}>
+            {testimonials.map((_, i) => (
+              <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 18 : 6, height: 6, borderRadius: 100, background: i === slide ? C.teal : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />
             ))}
           </div>
         </div>

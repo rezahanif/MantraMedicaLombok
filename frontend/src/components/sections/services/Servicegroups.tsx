@@ -228,6 +228,17 @@ export default function ServiceGroups() {
         padding: "64px 32px",
       }}
     >
+      <style>{`
+        @media (max-width: 860px) {
+          .sg-desktop { display: none !important; }
+          .sg-mobile  { display: block !important; }
+        }
+        @media (min-width: 861px) {
+          .sg-desktop { display: block !important; }
+          .sg-mobile  { display: none !important; }
+        }
+      `}</style>
+
       <div className="max-w-5xl mx-auto" style={{ display: "flex", flexDirection: "column", gap: 56 }}>
 
         {/* Desktop rows */}
@@ -245,13 +256,6 @@ export default function ServiceGroups() {
         </div>
 
       </div>
-
-      <style>{`
-        @media (max-width: 860px) {
-          .sg-desktop { display: none !important; }
-          .sg-mobile  { display: block !important; }
-        }
-      `}</style>
     </section>
   );
 }

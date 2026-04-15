@@ -113,8 +113,8 @@ export default function Footer() {
                 <Image
                   src="/images/logonavbar.webp"
                   alt="Mantra Medica"
-                  width={60}
-                  height={60}
+                  width={150}
+                  height={150}
                   style={{ objectFit: "contain" }}
                 />
               </div>
@@ -127,18 +127,6 @@ export default function Footer() {
                 {navLinks.map((item) => (
                   <p key={item.label} style={{ color: C.teal, fontSize: 12, opacity: 0.7 }}>
                     <Link href={item.href} style={{ color: "inherit", textDecoration: "none" }}>{item.label}</Link>
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            {/* Departments */}
-            <div>
-              <p style={{ color: C.teal, fontWeight: 600, fontSize: 12, marginBottom: 10 }}>Departments</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                {["General Clinic", "Dental Clinic", "Pharmacy", "Radiology & Imaging", "Emergency", "Laboratory"].map((l) => (
-                  <p key={l} style={{ color: C.teal, fontSize: 12, opacity: 0.7 }}>
-                    <a href="#" style={{ color: "inherit", textDecoration: "none" }}>{l}</a>
                   </p>
                 ))}
               </div>

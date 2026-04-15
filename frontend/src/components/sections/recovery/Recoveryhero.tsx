@@ -22,7 +22,7 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
         width: "100%",
         maxWidth: "100vw",
         boxSizing: "border-box",
-        background: `url('/images/RelaxPage.webp') center -80px/cover no-repeat`,
+        background: `url('/images/RelaxPage.webp') center bottom/cover no-repeat`,
         overflow: "hidden",
       }}
     >
@@ -192,96 +192,137 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
           flexDirection: "column",
           zIndex: 3,
           position: "relative",
-          padding: "clamp(32px, 8vw, 48px) clamp(16px, 5vw, 24px) 0",
           minHeight: "100vh",
-          justifyContent: "center",
+          justifyContent: "flex-end",
+          backgroundImage: `url('/images/RelaxPage.webp')`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
-          <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
-            Home
-          </Link>
-          &nbsp;›&nbsp; Recovery
-        </div>
-        
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(133, 90, 49, 0.3)", border: "0.5px solid rgba(240, 200, 150, 0.4)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.85)", marginBottom: 9, marginTop: 6, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(240, 200, 150, 0.2), 0 8px 32px rgba(0, 0, 0, 0.25)", backdropFilter: "blur(10px)" }}>
-          dr. Nyoman Ardyatri Kairavini
+        {/* Doctor photo — reduced size, right side */}
+        <div
+          style={{
+            position: "absolute",
+            width: "50%",
+            height: "65%",
+            right: 0,
+            bottom: "15%",
+            zIndex: 0,
+            overflow: "hidden",
+            borderRadius: "16px 0 0 0",
+          }}
+        >
+          {photoSlot ?? (
+            <div style={{ width: "100%", height: "100%", background: C.teal }} />
+          )}
         </div>
 
-        <div style={{ paddingBottom: 24 }}>
+        {/* Text content — left side, upper-mid zone */}
+        <div
+          style={{
+            position: "absolute",
+            top: "18%",
+            left: 24,
+            right: "52%",
+            width: 160,
+            zIndex: 2,
+            overflow: "visible",
+          }}
+        >
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+            <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
+              Home
+            </Link>
+            &nbsp;›&nbsp; Recovery
+          </div>
+
           <h1
             style={{
               color: C.light,
-              fontSize: "clamp(24px, 6vw, 32px)",
+              fontSize: 28,
               fontWeight: 700,
-              lineHeight: 1.2,
+              lineHeight: 1.3,
               marginBottom: 6,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "300ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
             Recovery & Wellness
           </h1>
+
           <p
             style={{
               color: "#C8A96A",
               fontSize: "clamp(12px, 1.2vw, 14px)",
               fontStyle: "italic",
-              marginBottom: 12,
+              marginBottom: 8,
+              animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "200ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
             Rejuvenate with a View
           </p>
+
           <p
             style={{
               color: "rgba(250,250,250,0.85)",
-              fontSize: "clamp(12px, 1.1vw, 14px)",
-              lineHeight: 1.8,
+              fontSize: 12,
+              lineHeight: 1.6,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "400ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
             At Mantra Medica, we believe that true healing happens when professional technique meets a tranquil environment.
           </p>
-          <p
-            style={{
-              color: "rgba(250,250,250,0.85)",
-              fontSize: 12,
-              marginTop: 16,
-              padding: "8px 20px",
-              borderRadius: 100,
-              background: "rgba(133, 90, 49, 0.3)",
-              backdropFilter: "blur(10px)",
-              border: "0.5px solid rgba(240, 200, 150, 0.4)",
-              display: "inline-block",
-              animation: mounted ? "fadeIn 0.6s ease both" : "none",
-              animationDelay: "600ms",
-              opacity: 0,
-              boxShadow: "inset 0 1px 2px rgba(240, 200, 150, 0.2), 0 8px 32px rgba(0, 0, 0, 0.25)",
-            }}
-          >
-            dr. Nyoman Ardyatri Kairavini
-          </p>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              width: "clamp(18px, 11vw, 28px)",
-              height: "clamp(23px, 14vw, 36px)",
-              borderRadius: 24,
-              overflow: "hidden",
-              background: photoSlot ? "transparent" : "#f0f0f0",
-              border: photoSlot ? "none" : `1px solid rgba(200,169,106,0.2)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "rgba(250,250,250,0.3)",
-              fontSize: 12,
-              backgroundImage: photoSlot ? undefined : `url('/images/DrIra.webp')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            {!photoSlot && !photoSlot ? null : photoSlot}
-          </div>
-        </div>
+        {/* Stats card — bay/cove shape (large rounded top), anchored to bottom */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 3,
+            background: C.light,
+            borderRadius: "44px 44px 0 0",
+            padding: "32px 20px 48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
+            animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+            animationDelay: "580ms",
+            opacity: mounted ? 1 : 0,
+            marginTop: "-40px",
+            minHeight: "45px",
+          }}
+        />
+
+        {/* Doctor breadcrumb — left side */}
+        <p
+          style={{
+            position: "absolute",
+            bottom: "40%",
+            left: 120,
+            color: "rgba(250,250,250,0.85)",
+            fontSize: 10,
+            padding: "6px 12px",
+            borderRadius: 100,
+            background: `rgba(250,250,250,0.15)`,
+            backdropFilter: "blur(10px)",
+            border: `1px solid rgba(250,250,250,0.3)`,
+            display: "inline-block",
+            animation: mounted ? "fadeIn 0.6s ease both" : "none",
+            animationDelay: "600ms",
+            opacity: 0,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+            zIndex: 4,
+          }}
+        >
+          dr. Nyoman Ardyatri Kairavini
+        </p>
       </div>
     </section>
   );

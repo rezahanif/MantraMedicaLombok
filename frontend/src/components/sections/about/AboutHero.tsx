@@ -22,7 +22,7 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
         width: "100%",
         maxWidth: "100vw",
         boxSizing: "border-box",
-        background: `url('/images/ContactPage.webp') center -80px/cover no-repeat`,
+        background: `url('/images/ContactPage.webp') center bottom/cover no-repeat`,
         overflow: "hidden",
       }}
     >
@@ -43,6 +43,10 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
         @keyframes slideInRight {
           from { opacity: 0; transform: translateX(48px) translateY(0); }
           to   { opacity: 1; transform: translateX(0)    translateY(0); }
+        }
+        @keyframes slideUpStats {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes scaleOverlay {
           from { opacity: 0; transform: scale(1.04); }
@@ -124,63 +128,84 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
         style={{
           display: "flex",
           flexDirection: "column",
-          zIndex: 3,
-          position: "relative",
-          padding: "clamp(32px, 8vw, 48px) clamp(16px, 5vw, 24px) 0",
+          justifyContent: "flex-end",
+          position: "absolute",
+          inset: 0,
+          zIndex: 5,
           minHeight: "100vh",
-          justifyContent: "center",
+          backgroundImage: `url('/images/ContactPage.webp')`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        <nav className="flex items-center gap-2" aria-label="Breadcrumb" style={{ fontSize: 11, marginBottom: 9, display: "inline-flex", background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)" }}>
-          <Link
-            href="/"
-            className="px-0 py-1 rounded-full transition-all"
-            style={{
-              textDecoration: "none",
-              color: C.tealLight,
-              fontWeight: "normal",
-              transition: "font-weight 0.2s ease",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"}
-            onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}
-          >
-            Home
-          </Link>
-          <span style={{ color: C.tealLight, opacity: 0.5 }}>›</span>
-          <span
-            className="px-0 py-1 rounded-full"
-            style={{
-              color: C.light,
-            }}
-          >
-            About
-          </span>
-        </nav>
+        {/* Text content — left side, upper-mid zone */}
+        <div
+          style={{
+            position: "absolute",
+            top: "18%",
+            left: 24,
+            right: "52%",
+            width: 200,
+            zIndex: 2,
+            overflow: "visible",
+          }}
+        >
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+            <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
+              Home
+            </Link>
+            &nbsp;›&nbsp; About
+          </div>
 
-        <div style={{ paddingBottom: 24 }}>
           <h1
             style={{
               color: C.light,
-              fontSize: "clamp(20px, 5.1vw, 27px)",
+              fontSize: 28,
               fontWeight: 700,
-              lineHeight: 1.2,
-              marginBottom: 12,
-              whiteSpace: "nowrap",
+              lineHeight: 1.3,
+              marginBottom: 6,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "300ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
             Where Science Meets the Spirit of Rinjani
           </h1>
+
           <p
             style={{
               color: "rgba(250,250,250,0.85)",
-              fontSize: "clamp(12px, 1.1vw, 14px)",
-              lineHeight: 1.8,
+              fontSize: 12,
+              lineHeight: 1.6,
+              animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+              animationDelay: "400ms",
+              opacity: mounted ? 1 : 0,
             }}
           >
             Founded to serve adventurers and the local community with equal heart.
           </p>
         </div>
+
+        {/* Stats card — bay/cove shape (large rounded top), anchored to bottom */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 3,
+            background: C.light,
+            borderRadius: "44px 44px 0 0",
+            padding: "32px 20px 48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
+            animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+            animationDelay: "580ms",
+            opacity: mounted ? 1 : 0,
+            marginTop: "-40px",
+            minHeight: "45px",
+          }}
+        />
       </div>
     </section>
   );

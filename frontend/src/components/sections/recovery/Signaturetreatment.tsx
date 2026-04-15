@@ -19,6 +19,16 @@ export default function SignatureTreatment() {
 
   return (
     <section style={{ background: C.light, padding: "72px 32px" }}>
+      <style>{`
+        @media (max-width: 860px) {
+          .treat-desktop { display: none !important; }
+          .treat-mobile  { display: flex !important; }
+        }
+        @media (min-width: 861px) {
+          .treat-desktop { display: flex !important; }
+          .treat-mobile  { display: none !important; }
+        }
+      `}</style>
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
 
         {/* Header — matches client's existing flourish style */}
@@ -107,12 +117,6 @@ export default function SignatureTreatment() {
         </div>
 
       </div>
-      <style>{`
-        @media (max-width: 860px) {
-          .treat-desktop { display: none !important; }
-          .treat-mobile  { display: flex !important; }
-        }
-      `}</style>
     </section>
   );
 }
