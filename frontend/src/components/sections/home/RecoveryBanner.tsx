@@ -152,7 +152,7 @@ export default function WorldClassAndRecovery() {
               animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
               opacity: inView ? undefined : 0,
             }}>
-              More Services &nbsp; &nbsp; &nbsp; →
+              More Services &nbsp; &nbsp; &nbsp; <span style={{ fontSize: vw(30), fontWeight: 900 }}>→</span>
             </button>
           </div>
 
@@ -215,32 +215,41 @@ export default function WorldClassAndRecovery() {
                 {/* ── INACTIVE layer: title centered, marginBottom 77 ── */}
                 <div style={{
                   position: "absolute", inset: 0, zIndex: 5,
-                  display: "flex", flexDirection: "column",
+                  display: on ? "none" : "flex",
+                  flexDirection: "column",
                   justifyContent: "flex-end", alignItems: "center",
                   paddingBottom: vw(77),
                   paddingLeft: vw(20), paddingRight: vw(20),
                   textAlign: "center",
                   opacity: on ? 0 : 1, transition: "opacity 0.22s ease",
                   pointerEvents: "none",
+                  visibility: on ? "hidden" : "visible",
+                  overflow: "hidden",
                 }}>
                   <p style={{ ...CARD_TXT }}>{svc.title}</p>
                 </div>
 
                 {/* ── ACTIVE layer: title left-aligned, marginBottom 243, marginLeft 21 ── */}
+                {on && (
                 <div style={{
                   position: "absolute", inset: 0, zIndex: 6,
-                  display: "flex", flexDirection: "column",
+                  display: "flex",
+                  flexDirection: "column",
                   justifyContent: "flex-end", alignItems: "flex-start",
                   paddingBottom: vw(243),
                   paddingLeft: vw(21), paddingRight: vw(20),
-                  opacity: on ? 1 : 0, transition: "opacity 0.3s ease 0.06s",
+                  opacity: 1, 
+                  visibility: "visible",
+                  transition: "opacity 0.3s ease 0.06s",
                   pointerEvents: "none",
+                  overflow: "hidden",
                 }}>
                   <p style={{ ...CARD_TXT, textAlign: "left", marginBottom: "0.4em" }}>{svc.title}</p>
                   <p style={{ color: "rgba(255,255,255,0.82)", fontFamily: "Inter, sans-serif", fontSize: vw(13), lineHeight: 1.55, margin: 0 }}>
                     {svc.desc}
                   </p>
                 </div>
+                )}
 
                 {/* White arrow — active only, bottom-right */}
                 <span style={{
@@ -281,7 +290,7 @@ export default function WorldClassAndRecovery() {
               animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
               opacity: inView ? undefined : 0,
             }}>
-              <span style={{ fontSize: vw(20), fontWeight: 600 }}>←</span> &nbsp; &nbsp; &nbsp; More Services
+              <span style={{ fontSize: vw(30), fontWeight: 900 }}>←</span> &nbsp; &nbsp; &nbsp; More Services
             </button>
 
             {/* Figma: w 465, h 174, fontSize 40, weight 800, Lato, right-aligned */}
@@ -337,7 +346,7 @@ export default function WorldClassAndRecovery() {
                   <Image src={svc.imagePath} alt={svc.title} fill style={{ objectFit: "cover", opacity: on ? 0.18 : 0.82, transition: "opacity 0.4s ease" }} />
                   <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(to top, rgba(6,6,6,0.72) 0%, transparent 60%)", opacity: on ? 0 : 1, transition: "opacity 0.35s ease" }} />
                   <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "rgba(8,14,10,0.85)", opacity: on ? 1 : 0, transition: "opacity 0.35s ease" }} />
-                  <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(255,255,255,0.15)", borderRadius: 8, padding: "4px 6px", fontSize: 12, backdropFilter: "blur(4px)", zIndex: 3 }}>{svc.icon}</div>
+                  <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(107, 18, 18, 0.15)", borderRadius: 8, padding: "4px 6px", fontSize: 12, backdropFilter: "blur(4px)", zIndex: 3 }}>{svc.icon}</div>
                   <div style={{ position: "absolute", inset: 0, zIndex: 4, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", padding: "0 8px 12px", textAlign: "center", opacity: on ? 0 : 1, transition: "opacity 0.22s ease", pointerEvents: "none" }}>
                     <p style={{ color: "#65A396", fontSize: 10, fontWeight: 600, lineHeight: 1.3, margin: 0 }}>{svc.title}</p>
                   </div>

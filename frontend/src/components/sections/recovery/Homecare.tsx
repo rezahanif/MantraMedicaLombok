@@ -4,7 +4,7 @@ import { homeCareFeatures } from "@/data/recoveryData";
 
 export default function HomeCare() {
   return (
-    <section style={{ background: C.light, padding: "64px 32px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
+    <section style={{ background: C.light, padding: "64px 40px", borderTop: "1px solid rgba(139,99,64,0.12)" }}>
       <style>{`
         @media (max-width: 499px) {
           .homecare-desktop { display: none !important; }
@@ -17,7 +17,7 @@ export default function HomeCare() {
       `}</style>
 
       {/* Desktop: 2-column layout (≥500px) */}
-      <div className="homecare-desktop" style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 32, alignItems: "flex-start" }}>
+      <div className="homecare-desktop" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", gap: 32, alignItems: "flex-start" }}>
 
         {/* Left — 2 feature cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, flex: 1 }}>
@@ -69,7 +69,7 @@ export default function HomeCare() {
       </div>
 
       {/* Mobile: Stacked layout (<500px) */}
-      <div className="homecare-mobile" style={{ maxWidth: 860, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
+      <div className="homecare-mobile" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
         {/* Main text first */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h2 style={{ color: "#2C1A0E", fontSize: 22, fontWeight: 700, lineHeight: 1.3, marginBottom: 8 }}>

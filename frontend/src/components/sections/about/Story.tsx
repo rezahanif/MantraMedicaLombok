@@ -6,163 +6,311 @@ export default function Story() {
     <>
       {/* ─── Story Row ─── */}
       <section
-        className="py-20 overflow-hidden"
-        style={{ backgroundColor: C.light }}
+        style={{
+          backgroundColor: C.light,
+          padding: "80px 0",
+          overflow: "hidden",
+        }}
       >
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            {/* Doctor image with decorative circle */}
-            <div className="relative flex justify-center md:justify-start">
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "0 32px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 64,
+            alignItems: "center",
+          }}
+          className="story-grid"
+        >
+          {/* Left — Doctor portrait in circle */}
+          <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
+            {/* Decorative large circle bg */}
+            <div
+              style={{
+                position: "relative",
+                width: 320,
+                height: 320,
+                borderRadius: "50%",
+                backgroundColor: `${C.teal}28`,
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "center",
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              {/* Decorative ring */}
               <div
-                className="relative w-72 h-72 md:w-80 md:h-80 rounded-full flex items-end justify-center overflow-hidden"
-                style={{ backgroundColor: `${C.teal}30` }}
-              >
-                {/* Decorative circle rings */}
-                <div
-                  className="absolute -top-4 -left-4 w-20 h-20 rounded-full border-2 opacity-30"
-                  style={{ borderColor: C.teal }}
-                  aria-hidden
-                />
-                <div
-                  className="absolute top-8 -right-6 w-10 h-10 rounded-full opacity-60"
-                  style={{ backgroundColor: C.teal }}
-                  aria-hidden
-                />
-
-                <Image
-                  src="/assets/images/team/dr-nyoman.jpg"
-                  alt="dr. Nyoman Ardyatri Kairavini"
-                  width={320}
-                  height={360}
-                  className="object-cover object-top rounded-b-full"
-                  style={{ maxHeight: "90%" }}
-                />
-              </div>
-              {/* Name tag */}
-              <div
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-0 text-xs px-4 py-2 rounded-full shadow-lg whitespace-nowrap"
                 style={{
-                  backgroundColor: C.dark,
-                  color: C.tealLight,
-                  border: `1px solid ${C.border}`,
+                  position: "absolute",
+                  top: -16,
+                  left: -16,
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  border: `2px solid ${C.teal}`,
+                  opacity: 0.3,
                 }}
-              >
-                dr. Nyoman Ardyatri Kairavini
-              </div>
+                aria-hidden
+              />
+              {/* Decorative dot */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 32,
+                  right: -20,
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  backgroundColor: C.teal,
+                  opacity: 0.6,
+                }}
+                aria-hidden
+              />
+
+              <Image
+                src="/assets/images/team/dr-nyoman.jpg"
+                alt="dr. Nyoman Ardyatri Kairavini"
+                width={290}
+                height={340}
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "top",
+                  maxHeight: "90%",
+                  borderRadius: "0 0 50% 50%",
+                }}
+              />
             </div>
 
-            {/* Story text */}
-            <div>
-              <p
-                className="text-xs uppercase tracking-[0.3em] font-semibold mb-3"
-                style={{ color: C.teal }}
-              >
-                Our Story
-              </p>
-              <h2
-                className="font-display text-4xl md:text-5xl font-bold mb-8"
-                style={{ color: C.dark }}
-              >
-                Our Story
-              </h2>
-              <p
-                className="text-base md:text-lg leading-relaxed"
-                style={{ color: `${C.dark}cc` }}
-              >
-                Mantra Medica was founded on the realization that the journey to
-                Rinjani's summit—or even the trek to Senaru's waterfalls—demands
-                peak physical resilience. We identified a vital need for a medical
-                service that is not only responsive in emergencies but also provides
-                a premium recovery experience for travelers.
-              </p>
+            {/* Name pill */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: C.dark,
+                color: C.tealLight ?? C.teal,
+                border: `1px solid ${C.border}`,
+                borderRadius: 100,
+                padding: "6px 20px",
+                fontSize: 12,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+              }}
+            >
+              dr. Nyoman Ardyatri Kairavini
             </div>
+          </div>
+
+          {/* Right — Story text */}
+          <div>
+            <p
+              style={{
+                fontSize: 11,
+                textTransform: "uppercase",
+                letterSpacing: "0.3em",
+                fontWeight: 700,
+                color: C.teal,
+                marginBottom: 12,
+              }}
+            >
+              Our Story
+            </p>
+            <h2
+              style={{
+                fontSize: "clamp(32px, 4vw, 56px)",
+                fontWeight: 800,
+                color: C.dark,
+                marginBottom: 28,
+                lineHeight: 1.1,
+              }}
+            >
+              Our Story
+            </h2>
+            <p
+              style={{
+                fontSize: "clamp(15px, 1.5vw, 18px)",
+                lineHeight: 1.75,
+                color: `${C.dark}cc`,
+              }}
+            >
+              Mantra Medica was founded on the realization that the journey to
+              Rinjani's summit—or even the trek to Senaru's waterfalls—demands
+              peak physical resilience. We identified a vital need for a medical
+              service that is not only responsive in emergencies but also provides
+              a premium recovery experience for travelers.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ─── Name Meaning Quote ─── */}
+      {/* ─── Name Meaning Quote — Teal background ─── */}
       <section
-        className="py-16 relative overflow-hidden"
-        style={{ backgroundColor: C.teal }}
+        style={{
+          backgroundColor: C.teal,
+          padding: "72px 0",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
         {/* Background texture circles */}
         <div
-          className="absolute -left-24 top-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-10"
-          style={{ backgroundColor: C.light }}
+          style={{
+            position: "absolute",
+            left: -96,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 256,
+            height: 256,
+            borderRadius: "50%",
+            backgroundColor: C.light,
+            opacity: 0.1,
+          }}
           aria-hidden
         />
         <div
-          className="absolute -right-16 -bottom-16 w-48 h-48 rounded-full opacity-10"
-          style={{ backgroundColor: C.dark }}
+          style={{
+            position: "absolute",
+            right: -64,
+            bottom: -64,
+            width: 192,
+            height: 192,
+            borderRadius: "50%",
+            backgroundColor: C.dark,
+            opacity: 0.1,
+          }}
           aria-hidden
         />
 
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 items-center">
-            {/* Quote text */}
-            <div className="relative">
-              <span
-                className="absolute -top-6 -left-2 text-7xl font-serif opacity-20 leading-none select-none"
-                style={{ color: C.light }}
-                aria-hidden
-              >
-                "
-              </span>
-              <p
-                className="text-base md:text-lg leading-relaxed relative z-10"
-                style={{ color: C.light }}
-              >
-                The name{" "}
-                <strong className="font-bold">"Mantra"</strong> reflects our
-                intention of peace and mindfulness in healing, while{" "}
-                <strong className="font-bold">"Medica"</strong> affirms our
-                commitment to evidence-based medical science. We are proud to
-                continue a legacy of dedicated care in this region, enhanced by
-                modern facilities and a design that honors the natural beauty of
-                North Lombok.
-              </p>
-              <span
-                className="block text-right text-7xl font-serif opacity-20 leading-none select-none -mt-4"
-                style={{ color: C.light }}
-                aria-hidden
-              >
-                "
-              </span>
-            </div>
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "0 32px",
+            display: "grid",
+            gridTemplateColumns: "1fr auto",
+            gap: 40,
+            alignItems: "center",
+          }}
+          className="quote-grid"
+        >
+          {/* Quote */}
+          <div style={{ position: "relative" }}>
+            {/* Opening quote mark */}
+            <span
+              style={{
+                position: "absolute",
+                top: -24,
+                left: -8,
+                fontSize: 80,
+                fontFamily: "Georgia, serif",
+                lineHeight: 1,
+                color: C.light,
+                opacity: 0.2,
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+              aria-hidden
+            >
+              "
+            </span>
 
-            {/* Logo */}
-            <div className="flex flex-col items-center gap-2 min-w-[120px]">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: `${C.light}22` }}
-              >
-                {/* Placeholder logo mark — replace with actual <Image> */}
-                <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
-                  <path
-                    d="M20 4 L36 13 L36 31 L20 40 L4 31 L4 13 Z"
-                    fill={C.light}
-                    opacity="0.2"
-                  />
-                  <path
-                    d="M14 20 L20 8 L26 20 M14 28 L20 16 L26 28"
-                    stroke={C.light}
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
-              <div className="text-center">
-                <p className="font-display font-bold text-sm" style={{ color: C.light }}>
-                  mantra medica
-                </p>
-                <p className="text-xs opacity-60" style={{ color: C.light }}>
-                  your health journey
-                </p>
-              </div>
+            <p
+              style={{
+                fontSize: "clamp(15px, 1.5vw, 18px)",
+                lineHeight: 1.75,
+                color: C.light,
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
+              The name{" "}
+              <strong style={{ fontWeight: 800 }}>"Mantra"</strong> reflects our
+              intention of peace and mindfulness in healing, while{" "}
+              <strong style={{ fontWeight: 800 }}>"Medica"</strong> affirms our
+              commitment to evidence-based medical science. We are proud to
+              continue a legacy of dedicated care in this region, enhanced by
+              modern facilities and a design that honors the natural beauty of
+              North Lombok.
+            </p>
+
+            {/* Closing quote mark */}
+            <span
+              style={{
+                display: "block",
+                textAlign: "right",
+                fontSize: 80,
+                fontFamily: "Georgia, serif",
+                lineHeight: 1,
+                color: C.light,
+                opacity: 0.2,
+                marginTop: -16,
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+              aria-hidden
+            >
+              "
+            </span>
+          </div>
+
+          {/* Logo mark */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
+              minWidth: 120,
+            }}
+          >
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 14,
+                backgroundColor: `${C.light}22`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg viewBox="0 0 40 40" style={{ width: 40, height: 40 }} fill="none">
+                <path
+                  d="M20 4 L36 13 L36 31 L20 40 L4 31 L4 13 Z"
+                  fill={C.light}
+                  opacity="0.2"
+                />
+                <path
+                  d="M14 20 L20 8 L26 20 M14 28 L20 16 L26 28"
+                  stroke={C.light}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontWeight: 700, fontSize: 13, color: C.light, margin: 0 }}>
+                mantra medica
+              </p>
+              <p style={{ fontSize: 11, color: C.light, opacity: 0.6, margin: 0 }}>
+                your health journey
+              </p>
             </div>
           </div>
         </div>
       </section>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .story-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .quote-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </>
   );
 }

@@ -53,9 +53,9 @@ export const services: Service[] = [
     hours: "24 Hours",
     desc: "Health concerns can arise at any time, especially when you are far from home. Mantra Medica offers round-the-clock medical assistance for guests experiencing illness or requiring emergency care.",
     bullets: [
-      "Emergency & Acute Care — Expert management of altitude sickness, physical injuries, heat exhaustion, and common travel-related ailments.",
-      "Home Visits & On-Call Services — If you are unable to visit the clinic, our doctors are available for hotel visits to provide treatment in the comfort of your accommodation.",
-      "Professional Expertise — Rest easy knowing you are in the hands of experienced practitioners who understand the specific health risks of mountain and tropical environments.",
+      "Emergency & Acute Care — Expert management of altitude sickness, heat exhaustion, and common travel-related ailments.",
+      "Home Visits & On-Call Services — Our doctors are available for hotel visits to provide treatment in the comfort of your accommodation.",
+      "Professional Expertise — Rest easy knowing you are in the hands of experienced practitioners.",
     ],
     cta: "Call Now",
     ctaSecondary: "See More Services",

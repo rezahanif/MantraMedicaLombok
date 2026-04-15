@@ -11,25 +11,24 @@ import { treatments } from "@/data/recoveryData";
 const cardGradients = [
   `linear-gradient(150deg, #3D2208 0%, #6B4425 100%)`,
   `linear-gradient(150deg, #2A1F0E 0%, #4A3520 100%)`,
-  `linear-gradient(150deg, #1A2C28 0%, #2E4A3E 100%)`,
 ];
 
 export default function SignatureTreatment() {
   const [active, setActive] = useState(0);
 
   return (
-    <section style={{ background: C.light, padding: "72px 32px" }}>
+    <section style={{ background: `url('/images/bgcoffee1.webp') center/cover no-repeat`, padding: "72px 40px" }}>
       <style>{`
-        @media (max-width: 860px) {
+        @media (max-width: 499px) {
           .treat-desktop { display: none !important; }
           .treat-mobile  { display: flex !important; }
         }
-        @media (min-width: 861px) {
+        @media (min-width: 500px) {
           .treat-desktop { display: flex !important; }
           .treat-mobile  { display: none !important; }
         }
       `}</style>
-      <div style={{ maxWidth: 860, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
 
         {/* Header — matches client's existing flourish style */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -49,7 +48,7 @@ export default function SignatureTreatment() {
 
         {/* Desktop expand/shrink */}
         <div className="treat-desktop" style={{ display: "flex", gap: 14, height: 460 }}>
-          {treatments.map((t, i) => {
+          {treatments.slice(0, 2).map((t, i) => {
             const isActive = active === i;
             return (
               <div
@@ -102,7 +101,7 @@ export default function SignatureTreatment() {
 
         {/* Mobile: vertical stack */}
         <div className="treat-mobile" style={{ display: "none", flexDirection: "column", gap: 16 }}>
-          {treatments.map((t, i) => (
+          {treatments.slice(0, 2).map((t, i) => (
             <div key={t.id} style={{ borderRadius: 20, overflow: "hidden", position: "relative", minHeight: 260, background: cardGradients[i], border: "0.5px solid rgba(139,99,64,0.2)" }}>
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)" }} />
               <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>

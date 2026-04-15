@@ -30,6 +30,7 @@ export default function Navbar({ activePage }: { activePage?: string }) {
 
   return (
     <div
+      className="navbar-container"
       style={{
         position: "fixed",
         top: 0,
@@ -59,7 +60,7 @@ export default function Navbar({ activePage }: { activePage?: string }) {
         }}
       >
         {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none", marginTop: -6, marginLeft: -8 }}>
+        <Link href="/" className="navbar-logo" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none", marginTop: -6, marginLeft: -8 }}>
           <Image
             src="/images/logonavbar.webp"
             alt="Mantra Medica"
@@ -189,6 +190,13 @@ export default function Navbar({ activePage }: { activePage?: string }) {
 
       <style>{`
         @media (max-width: 860px) {
+          .navbar-container { 
+            padding: 20px !important; 
+            margin-right: 20px !important;
+          }
+          .navbar-logo {
+            margin-left: -32px !important;
+          }
           .nav-links { display: none !important; }
           .hamburger { display: flex !important; }
           .emergency-btn { 

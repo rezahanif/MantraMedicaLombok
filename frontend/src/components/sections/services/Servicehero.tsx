@@ -69,13 +69,13 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
 
       {/* Hero image — z:3, sits above stats card */}
       <Image
-        src="/images/MedPage.webp"
+        src="/images/medpage.webp"
         alt=""
         fill
         priority
         style={{
           objectFit: "cover",
-          objectPosition: "center",
+          objectPosition: "center -37px",
           zIndex: 3,
           animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
         }}
@@ -374,7 +374,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
             boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
             animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
             animationDelay: "580ms",
-            opacity: mounted ? 1 : 0,
+            opacity: 0,
           }}
         >
           {stats.map((s, i) => (
@@ -421,7 +421,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
             display: "inline-block",
             animation: mounted ? "fadeIn 0.6s ease both" : "none",
             animationDelay: "600ms",
-            opacity: mounted ? 1 : 0,
+            opacity: 0,
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
             zIndex: 4,
           }}

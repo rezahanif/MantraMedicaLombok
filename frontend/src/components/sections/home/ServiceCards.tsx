@@ -15,14 +15,6 @@ const getServiceStyle = (serviceId: number) => {
   return { icon: "/icons/stethoscopewhite.webp", color: "#65A396", rgb: "101,163,150" };
 };
 
-// Light base for expanded card — warm-neutral per service
-const getExpandBase = (serviceId: number) => {
-  if (serviceId === 1) return "#F4FAF9";
-  if (serviceId === 2) return "#F5F0EB";
-  if (serviceId === 3) return "#FDF5F5";
-  return "#FAFAFA";
-};
-
 const getCardImage = (serviceId: number) => {
   if (serviceId === 1) return "/images/medcuphome.webp";
   if (serviceId === 2) return "/images/spahome.webp";
@@ -79,12 +71,10 @@ export default function ServiceCards() {
           from { opacity: 0; transform: translateY(48px) scale(0.97); }
           to   { opacity: 1; transform: translateY(0)    scale(1);    }
         }
-        /* Smooth content reveal — replaces jarring fadeIn */
         @keyframes contentReveal {
           from { opacity: 0; transform: translateY(12px); }
           to   { opacity: 1; transform: translateY(0);    }
         }
-        /* Hint ring pulse */
         @keyframes pulseRing {
           0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
           70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
@@ -132,7 +122,6 @@ export default function ServiceCards() {
           {services.map((svc, i) => {
             const isActive = active === i;
             const style    = getServiceStyle(svc.id);
-            const baseColor = getExpandBase(svc.id);
 
             return (
               <div
@@ -145,35 +134,22 @@ export default function ServiceCards() {
                   overflow: "hidden",
                   position: "relative",
                   cursor: isActive ? "default" : "pointer",
-                  // Collapsed → photo; Expanded → tinted base + glass inset shadow
+                  // Expanded: glassy tinted bg; Collapsed: photo
                   background: isActive
-                    ? baseColor
-                    : `url('${getCardImage(svc.id)}') center/cover`,
+                    ? `rgba(${style.rgb}, 0.40)`
+                    : undefined,
                   backgroundImage: isActive ? undefined : `url('${getCardImage(svc.id)}')`,
                   backgroundSize: isActive ? undefined : "cover",
                   backgroundPosition: isActive ? undefined : "center",
-                  // Glass inner shadow when expanded
+                  // Glassy inset shadow when expanded
                   boxShadow: isActive
-                    ? `inset 0 0 90px rgba(${style.rgb}, 0.18), inset 0 0 30px rgba(${style.rgb}, 0.10), inset 0 2px 0 rgba(255,255,255,0.7)`
+                    ? "0px 4px 4px rgba(0,0,0,0.25) inset, 0px 4px 4px rgba(0,0,0,0.25) inset"
                     : "none",
                   animation: inView ? "cardSlideUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                   animationDelay: `${100 + i * 120}ms`,
                   opacity: inView ? undefined : 0,
                 }}
               >
-                {/* Subtle colored tint overlay when expanded */}
-                {isActive && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: `radial-gradient(ellipse at top left, rgba(${style.rgb},0.08) 0%, transparent 70%)`,
-                      pointerEvents: "none",
-                      zIndex: 0,
-                    }}
-                  />
-                )}
-
                 {/* Dark photo overlay (collapsed only) */}
                 {!isActive && (
                   <div
@@ -194,11 +170,11 @@ export default function ServiceCards() {
                         style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
                           borderRadius: 100, padding: "6px 10px",
-                          fontSize: 10, letterSpacing: "1px", textTransform: "uppercase",
+                          fontSize: 12, letterSpacing: "1px", textTransform: "uppercase",
                           color: "rgba(250,250,250,0.9)",
                         }}
                       >
-                        <Image src={style.icon} alt={svc.tag} width={14} height={14} style={{ objectFit: "contain" }} />
+                        <Image src={style.icon} alt={svc.tag} width={21} height={21} style={{ objectFit: "contain" }} />
                         {svc.tag}
                       </div>
                     </div>
@@ -222,7 +198,7 @@ export default function ServiceCards() {
                   </>
                 )}
 
-                {/* Expand hint — no outer ring, just icon + pulse */}
+                {/* Expand hint */}
                 {!isActive && (
                   <div
                     style={{
@@ -239,7 +215,6 @@ export default function ServiceCards() {
                         height={28}
                         style={{ objectFit: "contain", opacity: 0.8 }}
                       />
-                      {/* Pulse ring behind icon */}
                       <div
                         className="hint-pulse"
                         style={{ border: `1.5px solid rgba(255,255,255,0.5)` }}
@@ -251,58 +226,52 @@ export default function ServiceCards() {
                   </div>
                 )}
 
-                {/* Card content */}
-                <div
-                  style={{
-                    position: "absolute", inset: 0,
-                    display: "flex", flexDirection: "column",
-                    // Collapsed → anchor to bottom; Expanded → start from top
-                    justifyContent: isActive ? "flex-start" : "flex-end",
-                    padding: isActive ? "0" : "24px 18px",
-                    zIndex: 2, transition: "padding 0.4s",
-                  }}
-                >
-                  {/* Expanded: image on left (fixed, full height) */}
-                  {isActive && (
+                {/* ── EXPANDED CARD CONTENT ── */}
+                {isActive && (
+                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "row", zIndex: 2 }}>
+
+                    {/* Photo — marginLeft 19, vertically centered */}
                     <div
                       style={{
-                        position: "absolute", left: 0, top: 0, bottom: 0, width: "40%",
-                        display: "flex", alignItems: "center", justifyContent: "center", padding: "16px",
+                        flexShrink: 0,
+                        width: "40%",
+                        marginLeft: 1,
+                        marginTop: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       <Image
                         src={getCardImage(svc.id)}
                         alt={svc.title}
-                        width={200} height={300}
+                        width={200}
+                        height={300}
                         style={{ objectFit: "contain", width: "90%", height: "auto" }}
                       />
                     </div>
-                  )}
 
-                  {/* Content — right panel, scrollable when expanded */}
-                  <div
-                    style={{
-                      marginLeft: isActive ? "40%" : 0,
-                      transition: "margin-left 0.4s",
-                      maxWidth: isActive ? "60%" : "100%",
-                      // Scrollable panel — fills full card height when expanded
-                      height: isActive ? "100%" : "auto",
-                      overflowY: isActive ? "auto" : "visible",
-                      padding: isActive ? "24px 24px 24px 20px" : "0",
-                      scrollbarWidth: "none",
-                    }}
-                    className={isActive ? "svc-scroll" : undefined}
-                  >
-
-                    {/* Tag — always at the top when expanded */}
-                    {isActive && (
+                    {/* Text panel — 26px gap from photo, no scroll, vertically centered */}
+                    <div
+                      style={{
+                        flex: 1,
+                        marginTop: 15,
+                        marginLeft: 10,
+                        paddingRight: 28,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        overflowY: "visible",
+                      }}
+                    >
+                      {/* Tag */}
                       <div
                         style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
                           background: style.color,
                           borderRadius: 100, padding: "4px 12px",
                           fontSize: 10, letterSpacing: "1px", textTransform: "uppercase",
-                          color: "rgba(250,250,250,0.9)", marginBottom: 10, width: "fit-content",
+                          color: "rgba(250,250,250,0.9)", marginBottom: -10, width: "fit-content",
                           animation: "contentReveal 0.4s ease both",
                           animationDelay: "120ms",
                         }}
@@ -310,55 +279,60 @@ export default function ServiceCards() {
                         <Image src={style.icon} alt={svc.tag} width={14} height={14} style={{ objectFit: "contain" }} />
                         {svc.tag}
                       </div>
-                    )}
 
-                    {/* Title */}
-                    {isActive && (
+                      {/* Title */}
                       <h3
                         style={{
                           color: "#000000", fontSize: 22, fontWeight: 700,
-                          lineHeight: 1.2, marginBottom: 4,
+                          lineHeight: 1, marginBottom: 1,
                           animation: "contentReveal 0.4s ease both",
                           animationDelay: "180ms",
                         }}
                       >
                         {svc.title}
                       </h3>
-                    )}
 
-                    {/* Scrollable body — no max-height clipping, just opacity fade-in */}
-                    <div
-                      style={{
-                        opacity: isActive ? 1 : 0,
-                        transition: "opacity 0.35s",
-                      }}
-                    >
-                      <div style={{ width: "100%", height: 1, background: `${style.color}60`, margin: "10px 0" }} />
+                      {/* Subtitle */}
                       <p
                         style={{
                           color: style.color, fontSize: 12, fontWeight: 500,
-                          marginBottom: 8, fontStyle: "italic",
-                          animation: isActive ? "contentReveal 0.45s ease both" : "none",
+                          marginBottom: -5, fontStyle: "italic",
+                          animation: "contentReveal 0.45s ease both",
                           animationDelay: "240ms",
                         }}
                       >
                         {svc.subtitle}
                       </p>
+
+                      {/* Description */}
                       <p
                         style={{
-                          color: "#333", fontSize: 13, lineHeight: 1.7, marginBottom: 14,
-                          animation: isActive ? "contentReveal 0.45s ease both" : "none",
+                          color: "#333", fontSize: 12, lineHeight: 1.5, marginBottom: 10,
+                          animation: "contentReveal 0.45s ease both",
                           animationDelay: "290ms",
                         }}
                       >
                         {svc.desc}
                       </p>
 
+                      {/* Divider */}
+                      <div
+                        style={{
+                          width: "100%", height: 1.5,
+                          background: `${style.color}60`,
+                          margin: "0px 0",
+                          marginBottom: 0,
+                          marginTop: -4,
+                          animation: "contentReveal 0.4s ease both",
+                          animationDelay: "210ms",
+                        }}
+                      />
+
                       {/* Bullets */}
                       <ul
                         style={{
-                          listStyle: "none", padding: 0, margin: "0 0 18px",
-                          animation: isActive ? "contentReveal 0.45s ease both" : "none",
+                          listStyle: "none", padding: 0, margin: "0 0 10px", marginTop: 3,
+                          animation: "contentReveal 0.45s ease both",
                           animationDelay: "330ms",
                         }}
                       >
@@ -371,16 +345,20 @@ export default function ServiceCards() {
                       <div
                         style={{
                           display: "flex", gap: 10, flexWrap: "wrap",
-                          animation: isActive ? "contentReveal 0.45s ease both" : "none",
+                          animation: "contentReveal 0.45s ease both",
                           animationDelay: "380ms",
+                          marginTop: "auto",
+                          marginBottom: 16,
                         }}
                       >
                         <button
                           style={{
                             background: style.color,
                             color: C.light,
-                            border: "none", borderRadius: 100,
-                            padding: "10px 22px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                            border: "none",
+                            borderRadius: 9999,
+                            padding: "11px 26px",
+                            fontSize: 12, fontWeight: 600, cursor: "pointer",
                           }}
                         >
                           {svc.cta}
@@ -395,8 +373,8 @@ export default function ServiceCards() {
                                 background: "transparent",
                                 color: style.color,
                                 border: `1px solid ${style.color}`,
-                                borderRadius: 100,
-                                padding: "10px 18px",
+                                borderRadius: 9999,
+                                padding: "11px 22px",
                                 fontSize: 12, cursor: "pointer",
                               }}
                             >
@@ -407,7 +385,8 @@ export default function ServiceCards() {
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
+
               </div>
             );
           })}
@@ -432,7 +411,7 @@ export default function ServiceCards() {
                 }}
               >
                 <div style={{ position: "absolute", inset: 0, background: "rgba(15,15,15,0.4)" }} />
-                
+
                 <div
                   style={{
                     position: "absolute", inset: 0,
@@ -459,7 +438,7 @@ export default function ServiceCards() {
                     style={{
                       background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)",
                       color: C.light, border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: 100, padding: "12px 24px",
+                      borderRadius: 9999, padding: "12px 28px",
                       fontSize: 13, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start",
                     }}
                   >

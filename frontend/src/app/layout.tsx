@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" style={{ overflowX: "hidden", width: "100%" }}>
       <body
         style={{
-          background: "#FFFFFF",
+          background: C.light,
           fontFamily: "'Inter', sans-serif",
           color: C.dark,
           margin: 0,
