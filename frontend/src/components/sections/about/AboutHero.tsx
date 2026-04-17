@@ -60,6 +60,11 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
           .about-hero-desktop { display: block !important; }
           .about-hero-mobile  { display: none !important; }
         }
+        @media (max-width: 499px) and (min-height: 800px) {
+          .about-text-mobile { top: 10% !important; }
+          .about-mobile-breadcrumb { margin-bottom: 4px !important; }
+          .about-mobile-title { margin-bottom: 6px !important; }
+        }
       `}</style>
       {/* ── DESKTOP layout (≥500px) ── */}
       <div
@@ -141,6 +146,7 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
       >
         {/* Text content — left side, upper-mid zone */}
         <div
+          className="about-text-mobile"
           style={{
             position: "absolute",
             top: "18%",
@@ -151,7 +157,7 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
             overflow: "visible",
           }}
         >
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+          <div className="about-mobile-breadcrumb" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
             <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "color 0.2s ease", cursor: "pointer" }}>
               Home
             </Link>
@@ -159,6 +165,7 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
           </div>
 
           <h1
+            className="about-mobile-title"
             style={{
               color: C.light,
               fontSize: 28,

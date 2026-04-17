@@ -65,6 +65,12 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           .service-hero-desktop { display: block !important; }
           .service-hero-mobile  { display: none !important; }
         }
+        @media (max-width: 499px) and (min-height: 800px) {
+          .service-photo-mobile { top: 80px !important; }
+          .service-text-mobile { top: 10% !important; }
+          .service-mobile-breadcrumb { margin-bottom: 4px !important; }
+          .service-mobile-title { margin-bottom: 6px !important; }
+        }
       `}</style>
 
       {/* Hero image — Desktop — z:3, sits above stats card */}
@@ -76,7 +82,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
         priority
         style={{
           objectFit: "cover",
-          objectPosition: "center -85px",
+          objectPosition: "center bottom",
           zIndex: 3,
           animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
           display: "none",
@@ -92,7 +98,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
         priority
         style={{
           objectFit: "cover",
-          objectPosition: "center -37px",
+          objectPosition: "center bottom",
           zIndex: 3,
           animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
           display: "none",
@@ -167,14 +173,16 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
       >
         {/* Text — top left */}
         <div
+          className="service-hero-text-container"
           style={{
             maxWidth: 480,
-            paddingTop: "clamp(32px, 8vh, 80px)",
+            paddingTop: "clamp(16px, 5vh, 80px)",
             paddingLeft: "clamp(0px, 2vw, 40px)",
             boxSizing: "border-box",
           }}
         >
           <div
+            className="service-breadcrumb"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -185,7 +193,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
               padding: "4px 12px",
               fontSize: "clamp(10px, 1vw, 12px)",
               color: "rgba(250,250,250,0.7)",
-              marginBottom: 12,
+              marginBottom: "clamp(4px, 1.5vh, 12px)",
               animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
               animationDelay: "200ms",
               opacity: 0,
@@ -307,8 +315,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
         }}
       >
         {/* Doctor photo — reduced size, right side */}
-        <div
-          style={{
+        <div          className="service-photo-mobile"          style={{
             position: "absolute",
             width: "70%",
             right: 0,
@@ -326,6 +333,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
 
         {/* Text content — left side, upper-mid zone */}
         <div
+          className="service-text-mobile"
           style={{
             position: "absolute",
             top: "18%",

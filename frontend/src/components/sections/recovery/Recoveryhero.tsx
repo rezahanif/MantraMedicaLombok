@@ -52,6 +52,12 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
           .recovery-hero-desktop { display: block !important; }
           .recovery-hero-mobile  { display: none !important; }
         }
+        @media (max-width: 499px) and (min-height: 800px) {
+          .recovery-photo-mobile { top: 80px !important; }
+          .recovery-text-mobile { top: 10% !important; }
+          .recovery-mobile-breadcrumb { margin-bottom: 4px !important; }
+          .recovery-mobile-title { margin-bottom: 6px !important; }
+        }
       `}</style>
 
       {/* ── DESKTOP layout (≥500px) ── */}
@@ -202,9 +208,10 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
       >
         {/* Doctor photo — reduced size, right side */}
         <div
+          className="recovery-photo-mobile"
           style={{
             position: "absolute",
-            width: "55%",
+            width: "70%",
             right: 0,
             top: 120,
             bottom: "15%",
@@ -220,6 +227,7 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
 
         {/* Text content — left side, upper-mid zone */}
         <div
+          className="recovery-text-mobile"
           style={{
             position: "absolute",
             top: "18%",
@@ -230,7 +238,7 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
             overflow: "visible",
           }}
         >
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+          <div className="recovery-mobile-breadcrumb" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
             <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
               Home
             </Link>
@@ -238,6 +246,7 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
           </div>
 
           <h1
+            className="recovery-mobile-title"
             style={{
               color: C.light,
               fontSize: 28,

@@ -95,6 +95,12 @@ export default function Hero({
           .hero-desktop { display: block !important; }
           .hero-mobile  { display: none !important; }
         }
+        @media (max-width: 499px) and (min-height: 800px) {
+          .hero-photo-mobile { top: 80px !important; }
+          .hero-text-mobile { top: 10% !important; }
+          .hero-mobile-breadcrumb { margin-bottom: 4px !important; }
+          .hero-mobile-title { margin-bottom: 6px !important; }
+        }
       `}</style>
 
       {/* ── z-index map ──────────────────────────────────────────
@@ -305,6 +311,7 @@ export default function Hero({
         {/* Doctor photo — right half, stretches from top to just above stats card.
             No fixed height — fills the space so the doctor isn't cropped. */}
         <div
+          className="hero-photo-mobile"
           style={{
             position: "absolute",
             width: "70%",
@@ -324,6 +331,7 @@ export default function Hero({
         {/* Text content — left column only.
             Uses right:"52%" instead of a fixed width so it scales on any phone. */}
         <div
+          className="hero-text-mobile"
           style={{
             position: "absolute",
             top: "12%",
@@ -334,6 +342,7 @@ export default function Hero({
         >
           {subtitle && (
             <p
+              className="hero-mobile-breadcrumb"
               style={{
                 fontSize: 10, letterSpacing: "2.5px", textTransform: "uppercase",
                 color: "rgba(255,255,255,0.8)", marginBottom: 8, fontWeight: 400,
@@ -346,6 +355,7 @@ export default function Hero({
             </p>
           )}
           <h1
+            className="hero-mobile-title"
             style={{
               color: C.light,
               fontSize: "clamp(22px, 7.5vw, 30px)",  // scales with screen width

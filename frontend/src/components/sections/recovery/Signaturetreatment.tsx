@@ -34,13 +34,14 @@ const CARD1_ZOOM_EXPANDED = 1;       // Zoom scale when card is expanded/active
 // Card 1 (Mountain & Waterfall Rescue) – Mobile Only
 const CARD1_MOBILE_POS_X = 0;          // Horizontal offset in px: positive = right, negative = left
 const CARD1_MOBILE_POS_Y = 0;          // Vertical offset in px: positive = down, negative = up
-const CARD1_MOBILE_ZOOM = 1.1;           // Zoom scale for mobile
+const CARD1_MOBILE_ZOOM = 1;           // Zoom scale for mobile (454px baseline - scales via media queries)
 
 // Card 2 (Referral)
 const CARD2_POS_X = 0;                 // Horizontal offset in px
 const CARD2_POS_Y = 0;                 // Vertical offset in px
 const CARD2_ZOOM_SHRUNK = 2;           // Zoom scale when card is shrunk/inactive
 const CARD2_ZOOM_EXPANDED = 1;         // Zoom scale when card is expanded/active
+const CARD2_MOBILE_ZOOM = 1;           // Zoom scale for mobile (same as Card1, scales via media queries)
 
 // ── Background image positioning – adjust independently for desktop & mobile
 // Desktop: backgroundPosition X/Y offsets and zoom
@@ -134,6 +135,23 @@ export default function SignatureTreatment() {
           .treatment-header { margin-bottom: ${HEADER_TO_CARDS_GAP_MOBILE}px !important; }
           .bunga-desktop { display: none !important; }
           .bunga-mobile  { display: block !important; }
+          .card-img-zoom { backgroundSize: 100% !important; }
+        }
+        /* Gradual zoom scaling for mobile: 454px (1x) → 250px (2x) */
+        @media (max-width: 454px) {
+          .card-img-zoom { backgroundSize: 105% !important; }
+        }
+        @media (max-width: 400px) {
+          .card-img-zoom { backgroundSize: 125% !important; }
+        }
+        @media (max-width: 350px) {
+          .card-img-zoom { backgroundSize: 150% !important; }
+        }
+        @media (max-width: 300px) {
+          .card-img-zoom { backgroundSize: 175% !important; }
+        }
+        @media (max-width: 250px) {
+          .card-img-zoom { backgroundSize: 200% !important; }
         }
         @media (min-width: 500px) {
           .treat-desktop { display: flex !important; }
@@ -262,7 +280,7 @@ export default function SignatureTreatment() {
           {treatments.slice(0, 2).map((t, i) => {
             const posX = i === 0 ? CARD1_MOBILE_POS_X : CARD2_POS_X;
             const posY = i === 0 ? CARD1_MOBILE_POS_Y : CARD2_POS_Y;
-            const imgZoom = i === 0 ? CARD1_MOBILE_ZOOM : CARD2_ZOOM_EXPANDED;
+            const imgZoom = i === 0 ? CARD1_MOBILE_ZOOM : CARD2_MOBILE_ZOOM;
             
             return (
               <div 
@@ -275,7 +293,7 @@ export default function SignatureTreatment() {
                   border: "0.5px solid rgba(139,99,64,0.2)" 
                 }}>
                 {/* Blurred background image layer */}
-                <div style={{ position: "absolute", inset: 0, backgroundImage: `url('${cardImages[i]}')`, backgroundPosition: `calc(50% + ${posX}px) calc(50% + ${posY}px)`, backgroundSize: `${imgZoom * 100}%`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
+                <div className="card-img-zoom" style={{ position: "absolute", inset: 0, backgroundImage: `url('${cardImages[i]}')`, backgroundPosition: `calc(50% + ${posX}px) calc(50% + ${posY}px)`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
                 
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)", zIndex: 1 }} />
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>

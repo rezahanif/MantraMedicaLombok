@@ -83,6 +83,10 @@ export default function HomeCare() {
           .kembang3-mobile  { display: none !important; }
           .bg3-mobile { display: none !important; }
         }
+        @media (max-width: 299px) {
+          .homecare-buttons-mobile { flex-direction: column !important; }
+          .homecare-btn-mobile { flex: 1 0 auto !important; width: 100% !important; }
+        }
       `}</style>
 
       {/* ── Kembang3 (flower) mirrored layer – Desktop */}
@@ -212,11 +216,11 @@ export default function HomeCare() {
         </div>
 
         {/* Buttons stacked */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 20px", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", width: "100%" }}>
+        <div className="homecare-buttons-mobile" style={{ display: "flex", flexDirection: "row", gap: "clamp(8px, 2vw, 12px)" }}>
+          <button className="homecare-btn-mobile" style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1 }}>
             Book Your Session
           </button>
-          <button style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "10px 20px", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", width: "100%" }}>
+          <button className="homecare-btn-mobile" style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1 }}>
             Request Home Care
           </button>
         </div>

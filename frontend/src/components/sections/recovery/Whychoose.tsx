@@ -1,65 +1,77 @@
 "use client";
 
 // src/components/recovery/WhyChoose.tsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { C } from "@/lib/constants";
 import { whyChooseSlides } from "@/data/recoveryData";
 
 // ── Bunga (flower) decorative image – positioned behind content
-// Desktop Bunga
-const BUNGA_POS_X = -400;                   // Horizontal offset in px: positive = right, negative = left
-const BUNGA_POS_Y = -355;                   // Vertical offset in px: positive = down, negative = up
-const BUNGA_ZOOM = 0.4;                    // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BUNGA_OPACITY = 1;                 // Opacity: 0 = invisible, 1 = fully visible
+const BUNGA_POS_X = -400;
+const BUNGA_POS_Y = -355;
+const BUNGA_ZOOM = 0.4;
+const BUNGA_OPACITY = 1;
 
-// Mobile Bunga
-const BUNGA_MOBILE_POS_X = -150;            // Horizontal offset in px: positive = right, negative = left
-const BUNGA_MOBILE_POS_Y = -355;            // Vertical offset in px: positive = down, negative = up
-const BUNGA_MOBILE_ZOOM = 0.45;           // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BUNGA_MOBILE_OPACITY = 1;          // Opacity: 0 = invisible, 1 = fully visible
+const BUNGA_MOBILE_POS_X = -150;
+const BUNGA_MOBILE_POS_Y = -355;
+const BUNGA_MOBILE_ZOOM = 0.45;
+const BUNGA_MOBILE_OPACITY = 1;
 
-// ── Background image positioning – adjust separately for desktop & mobile
-// Desktop: backgroundPosition X/Y offsets and zoom
-const BG_DESKTOP_POS_X = 200;              // Horizontal offset in px: positive = right, negative = left
-const BG_DESKTOP_POS_Y = 50;              // Vertical offset in px: positive = down, negative = up
-const BG_DESKTOP_ZOOM = 0.5;               // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
+const BG_DESKTOP_POS_X = 200;
+const BG_DESKTOP_POS_Y = 50;
+const BG_DESKTOP_ZOOM = 0.5;
 
-// Mobile: backgroundPosition X/Y offsets and zoom
-const BG_MOBILE_POS_X = 0;               // Horizontal offset in px
-const BG_MOBILE_POS_Y = -160;               // Vertical offset in px
-const BG_MOBILE_ZOOM = 1;                // Zoom scale
+const BG_MOBILE_POS_X = 0;
+const BG_MOBILE_POS_Y = -160;
+const BG_MOBILE_ZOOM = 1;
 
-// ── BgCoffee3 object image – positioned behind cards
-// Desktop BgCoffee3
-const BG3_DESKTOP_POS_X = 300;               // Horizontal offset in px: positive = right, negative = left
-const BG3_DESKTOP_POS_Y = -250;               // Vertical offset in px: positive = down, negative = up
-const BG3_DESKTOP_ZOOM = 0.2;                // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BG3_DESKTOP_OPACITY = 1;             // Opacity: 0 = invisible, 1 = fully visible
+const BG3_DESKTOP_POS_X = 300;
+const BG3_DESKTOP_POS_Y = -250;
+const BG3_DESKTOP_ZOOM = 0.2;
+const BG3_DESKTOP_OPACITY = 1;
 
-// Mobile BgCoffee3
-const BG3_MOBILE_POS_X = -40;                // Horizontal offset in px: positive = right, negative = left
-const BG3_MOBILE_POS_Y = 280;                // Vertical offset in px: positive = down, negative = up
-const BG3_MOBILE_ZOOM = 0.35;                 // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BG3_MOBILE_OPACITY = 1;              // Opacity: 0 = invisible, 1 = fully visible
+const BG3_MOBILE_POS_X = -40;
+const BG3_MOBILE_POS_Y = 280;
+const BG3_MOBILE_ZOOM = 0.35;
+const BG3_MOBILE_OPACITY = 1;
 
-// ── Kembang3 (flower) mirrored – positioned behind content
-// Desktop Kembang3 (mirrored)
-const KEMBANG3_DESKTOP_POS_X = -450;           // Horizontal offset in px: positive = right, negative = left
-const KEMBANG3_DESKTOP_POS_Y = 300;           // Vertical offset in px: positive = down, negative = up
-const KEMBANG3_DESKTOP_ZOOM = 0.3;            // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const KEMBANG3_DESKTOP_OPACITY = 1;         // Opacity: 0 = invisible, 1 = fully visible
+const KEMBANG3_DESKTOP_POS_X = -450;
+const KEMBANG3_DESKTOP_POS_Y = 300;
+const KEMBANG3_DESKTOP_ZOOM = 0.3;
+const KEMBANG3_DESKTOP_OPACITY = 1;
 
-// Mobile Kembang3 (mirrored)
-const KEMBANG3_MOBILE_POS_X = -150;            // Horizontal offset in px: positive = right, negative = left
-const KEMBANG3_MOBILE_POS_Y = 330;            // Vertical offset in px: positive = down, negative = up
-const KEMBANG3_MOBILE_ZOOM = 0.5;             // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const KEMBANG3_MOBILE_OPACITY = 1;          // Opacity: 0 = invisible, 1 = fully visible
+const KEMBANG3_MOBILE_POS_X = -150;
+const KEMBANG3_MOBILE_POS_Y = 330;
+const KEMBANG3_MOBILE_ZOOM = 0.5;
+const KEMBANG3_MOBILE_OPACITY = 1;
+
+// ── Swipe hook ────────────────────────────────────────────────
+function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
+  const touchStartX = useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 40) {
+      delta > 0 ? onSwipeLeft() : onSwipeRight();
+    }
+    touchStartX.current = null;
+  };
+
+  return { onTouchStart, onTouchEnd };
+}
 
 export default function WhyChoose() {
   const [slide, setSlide] = useState(0);
 
   const prev = () => setSlide((s) => (s - 1 + whyChooseSlides.length) % whyChooseSlides.length);
   const next = () => setSlide((s) => (s + 1) % whyChooseSlides.length);
+
+  // Swipe left → next, swipe right → prev
+  const swipe = useSwipe(next, prev);
 
   return (
     <section className="why-choose-section" style={{ background: C.light, padding: "72px 40px", borderTop: "1px solid rgba(139,99,64,0)", position: "relative", margin: 0 }}>
@@ -80,21 +92,13 @@ export default function WhyChoose() {
           from { opacity: 0; transform: translateX(32px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        .whychoose-header {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-        }
-        .whychoose-content {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-          animation-delay: 0.2s;
-        }
-        .whychoose-buttons {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-          animation-delay: 0.3s;
-        }
+        .whychoose-header  { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .whychoose-content { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.2s; }
+        .whychoose-buttons { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.3s; }
         @keyframes pulseRing {
-          0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
-          70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
-          100% { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0;   }
+          0%   { transform: translate(calc(-50%), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
+          70%  { transform: translate(calc(-50%), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
+          100% { transform: translate(calc(-50%), calc(-50% - 2px)) scale(1);   opacity: 0;   }
         }
         .hint-pulse {
           position: absolute;
@@ -105,15 +109,20 @@ export default function WhyChoose() {
           animation: pulseRing 2.2s ease-out infinite;
           pointer-events: none;
         }
+        .carousel-slide {
+          user-select: none;
+          -webkit-user-select: none;
+          touch-action: pan-y;
+        }
         @media (max-width: 499px) {
           .why-choose-desktop { display: none !important; }
           .why-choose-mobile  { display: flex !important; }
-          .bunga-desktop { display: none !important; }
-          .bunga-mobile  { display: block !important; }
-          .bg3-desktop { display: none !important; }
-          .bg3-mobile  { display: block !important; }
-          .kembang3-desktop { display: none !important; }
-          .kembang3-mobile  { display: block !important; }
+          .bunga-desktop      { display: none !important; }
+          .bunga-mobile       { display: block !important; }
+          .bg3-desktop        { display: none !important; }
+          .bg3-mobile         { display: block !important; }
+          .kembang3-desktop   { display: none !important; }
+          .kembang3-mobile    { display: block !important; }
           .why-choose-section {
             background-image: url('/images/bgcoffee2.webp') !important;
             background-position: calc(50% + ${BG_MOBILE_POS_X}px) calc(50% + ${BG_MOBILE_POS_Y}px) !important;
@@ -125,12 +134,12 @@ export default function WhyChoose() {
         @media (min-width: 500px) {
           .why-choose-desktop { display: flex !important; }
           .why-choose-mobile  { display: none !important; }
-          .bunga-desktop { display: block !important; }
-          .bunga-mobile  { display: none !important; }
-          .bg3-desktop { display: block !important; }
-          .bg3-mobile  { display: none !important; }
-          .kembang3-desktop { display: block !important; }
-          .kembang3-mobile  { display: none !important; }
+          .bunga-desktop      { display: block !important; }
+          .bunga-mobile       { display: none !important; }
+          .bg3-desktop        { display: block !important; }
+          .bg3-mobile         { display: none !important; }
+          .kembang3-desktop   { display: block !important; }
+          .kembang3-mobile    { display: none !important; }
           .why-choose-section {
             background-image: url('/images/bgcoffee2.webp') !important;
             background-position: calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px) !important;
@@ -139,186 +148,158 @@ export default function WhyChoose() {
             background-repeat: no-repeat !important;
           }
         }
-          0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
-          70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
-          100% { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0;   }
-        }
       `}</style>
 
-      {/* ── BgCoffee3 (object) layer – Desktop */}
-      <div className="bg3-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bgcoffee3.webp')`, backgroundPosition: `calc(50% + ${BG3_DESKTOP_POS_X}px) calc(50% + ${BG3_DESKTOP_POS_Y}px)`, backgroundSize: `${BG3_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BG3_DESKTOP_OPACITY }} />
+      {/* ── BgCoffee3 – Desktop */}
+      <div className="bg3-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bgcoffee3.webp')`, backgroundPosition: `calc(50% + ${BG3_DESKTOP_POS_X}px) calc(50% + ${BG3_DESKTOP_POS_Y}px)`, backgroundSize: `${BG3_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BG3_DESKTOP_OPACITY }} />
       </div>
 
-      {/* ── BgCoffee3 (object) layer – Mobile */}
-      <div className="bg3-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bgcoffee3.webp')`, backgroundPosition: `calc(50% + ${BG3_MOBILE_POS_X}px) calc(50% + ${BG3_MOBILE_POS_Y}px)`, backgroundSize: `${BG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BG3_MOBILE_OPACITY }} />
+      {/* ── BgCoffee3 – Mobile */}
+      <div className="bg3-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bgcoffee3.webp')`, backgroundPosition: `calc(50% + ${BG3_MOBILE_POS_X}px) calc(50% + ${BG3_MOBILE_POS_Y}px)`, backgroundSize: `${BG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BG3_MOBILE_OPACITY }} />
       </div>
 
-      {/* ── Kembang3 (flower) mirrored layer – Desktop */}
-      <div className="kembang3-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_DESKTOP_POS_X}px) calc(50% + ${KEMBANG3_DESKTOP_POS_Y}px)`, backgroundSize: `${KEMBANG3_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: KEMBANG3_DESKTOP_OPACITY, transform: "scaleX(-1)" }} />
+      {/* ── Kembang3 – Desktop */}
+      <div className="kembang3-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_DESKTOP_POS_X}px) calc(50% + ${KEMBANG3_DESKTOP_POS_Y}px)`, backgroundSize: `${KEMBANG3_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: KEMBANG3_DESKTOP_OPACITY, transform: "scaleX(-1)" }} />
       </div>
 
-      {/* ── Kembang3 (flower) mirrored layer – Mobile */}
-      <div className="kembang3-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_MOBILE_POS_X}px) calc(50% + ${KEMBANG3_MOBILE_POS_Y}px)`, backgroundSize: `${KEMBANG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: KEMBANG3_MOBILE_OPACITY, transform: "scaleX(-1)" }} />
+      {/* ── Kembang3 – Mobile */}
+      <div className="kembang3-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_MOBILE_POS_X}px) calc(50% + ${KEMBANG3_MOBILE_POS_Y}px)`, backgroundSize: `${KEMBANG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: KEMBANG3_MOBILE_OPACITY, transform: "scaleX(-1)" }} />
       </div>
 
-      {/* ── Bunga (flower) layer – Desktop */}
-      <div className="bunga-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_POS_X}px) calc(50% + ${BUNGA_POS_Y}px)`, backgroundSize: `${BUNGA_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_OPACITY }} />
+      {/* ── Bunga – Desktop */}
+      <div className="bunga-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_POS_X}px) calc(50% + ${BUNGA_POS_Y}px)`, backgroundSize: `${BUNGA_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BUNGA_OPACITY }} />
       </div>
 
-      {/* ── Bunga (flower) layer – Mobile */}
-      <div className="bunga-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", borderRadius: 0 }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_MOBILE_POS_X}px) calc(50% + ${BUNGA_MOBILE_POS_Y}px)`, backgroundSize: `${BUNGA_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_MOBILE_OPACITY }} />
+      {/* ── Bunga – Mobile */}
+      <div className="bunga-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_MOBILE_POS_X}px) calc(50% + ${BUNGA_MOBILE_POS_Y}px)`, backgroundSize: `${BUNGA_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BUNGA_MOBILE_OPACITY }} />
       </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
-      {/* Decorative flourish separator — centered on page */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 40, maxWidth: 1400, margin: "0 auto 40px" }}>
-        <div style={{ height: 1, flex: 1, maxWidth: 150, background: "linear-gradient(to right, transparent, #8B6340)", position: "relative" }}>
-          <span style={{ position: "absolute", top: "50%", right: -4, transform: "translateY(-50%)", color: "#8B6340", fontSize: 13 }}>❧</span>
-        </div>
-        <div style={{ height: 1, flex: 1, maxWidth: 150, background: "linear-gradient(to left, transparent, #8B6340)", position: "relative" }}>
-          <span style={{ position: "absolute", top: "50%", left: -4, transform: "translateY(-50%) scaleX(-1)", color: "#8B6340", fontSize: 13 }}>❧</span>
-        </div>
-      </div>
-
-      {/* Desktop: Side-by-side (≥500px) */}
-      <div className="why-choose-desktop" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", gap: 48, alignItems: "center" }}>
-
-        {/* Left — text */}
-        <div style={{ flex: 1 }} className="whychoose-content">
-          <h2 style={{ color: "#2C1A0E", fontSize: 28, fontWeight: 700, marginBottom: 16 }} className="whychoose-header">
-            Why Choose Mantra Medica?
-          </h2>
-          <p style={{ color: "#7A6248", fontSize: 14, lineHeight: 1.85 }}>
-            The Best View in Senaru. Unlike any other spa in the area, our facility is designed to harmonize with nature.
-            While you receive your treatment, you are treated to breathtaking panoramic views of the lush valleys and
-            the Rinjani foothills. It is an immersive experience of comfort and beauty that you won't find anywhere
-            else in Senaru.
-          </p>
+        {/* Decorative separator */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 40, maxWidth: 1400, margin: "0 auto 40px" }}>
+          <div style={{ height: 1, flex: 1, maxWidth: 150, background: "linear-gradient(to right, transparent, #8B6340)", position: "relative" }}>
+            <span style={{ position: "absolute", top: "50%", right: -4, transform: "translateY(-50%)", color: "#8B6340", fontSize: 13 }}>❧</span>
+          </div>
+          <div style={{ height: 1, flex: 1, maxWidth: 150, background: "linear-gradient(to left, transparent, #8B6340)", position: "relative" }}>
+            <span style={{ position: "absolute", top: "50%", left: -4, transform: "translateY(-50%) scaleX(-1)", color: "#8B6340", fontSize: 13 }}>❧</span>
+          </div>
         </div>
 
-        {/* Right — image carousel */}
-        <div style={{ flex: 1, position: "relative" }}>
-          {/* Slide image placeholder
-              ↓ Replace inner div with:
-              <Image src={whyChooseSlides[slide].imagePath} fill style={{ objectFit: "cover" }} alt="" /> */}
-          <div style={{ borderRadius: 20, overflow: "hidden", aspectRatio: "4/3", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)` }}>
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>
-              {whyChooseSlides[slide].caption}
-            </div>
+        {/* ── DESKTOP ≥500px ── */}
+        <div className="why-choose-desktop" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", gap: 48, alignItems: "center" }}>
 
-            {/* Prev / Next arrows */}
-            {[{ dir: "prev", fn: prev, pos: 12, arrow: "‹" }, { dir: "next", fn: next, pos: 12, arrow: "›" }].map((btn, bi) => (
-              <button
-                key={bi}
-                onClick={btn.fn}
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  [bi === 0 ? "left" : "right"]: btn.pos,
-                  transform: "translateY(-50%)",
-                  background: "rgba(255,255,255,0.15)",
-                  border: "0.5px solid rgba(255,255,255,0.3)",
-                  borderRadius: "50%",
-                  width: 36,
-                  height: 36,
-                  color: "#fff",
-                  fontSize: 20,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                {btn.arrow}
-              </button>
-            ))}
+          {/* Left — text */}
+          <div style={{ flex: 1 }} className="whychoose-content">
+            <h2 style={{ color: "#2C1A0E", fontSize: 28, fontWeight: 700, marginBottom: 16 }} className="whychoose-header">
+              Why Choose Mantra Medica?
+            </h2>
+            <p style={{ color: "#7A6248", fontSize: 14, lineHeight: 1.85 }}>
+              The Best View in Senaru. Unlike any other spa in the area, our facility is designed to harmonize with nature.
+              While you receive your treatment, you are treated to breathtaking panoramic views of the lush valleys and
+              the Rinjani foothills. It is an immersive experience of comfort and beauty that you won't find anywhere
+              else in Senaru.
+            </p>
+          </div>
 
-            {/* Dots */}
-            <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
-              {whyChooseSlides.map((_, i) => (
-                <div
-                  key={i}
-                  onClick={() => setSlide(i)}
-                  style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }}
-                />
+          {/* Right — carousel */}
+          <div style={{ flex: 1, position: "relative" }}>
+            <div
+              className="carousel-slide"
+              {...swipe}
+              style={{ borderRadius: 20, overflow: "hidden", aspectRatio: "4/3", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)`, cursor: "grab" }}
+            >
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>
+                {whyChooseSlides[slide].caption}
+              </div>
+
+              {[{ fn: prev, side: "left",  arrow: "‹" }, { fn: next, side: "right", arrow: "›" }].map((btn, bi) => (
+                <button
+                  key={bi}
+                  onClick={btn.fn}
+                  style={{
+                    position: "absolute", top: "50%",
+                    [btn.side]: 12,
+                    transform: "translateY(-50%)",
+                    background: "rgba(255,255,255,0.15)",
+                    border: "0.5px solid rgba(255,255,255,0.3)",
+                    borderRadius: "50%", width: 36, height: 36,
+                    color: "#fff", fontSize: 20, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)",
+                  }}
+                >
+                  {btn.arrow}
+                </button>
               ))}
+
+              <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
+                {whyChooseSlides.map((_, i) => (
+                  <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile: Vertical stack (<500px) */}
-      <div className="why-choose-mobile" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, alignItems: "center" }}>
+        {/* ── MOBILE <500px ── */}
+        <div className="why-choose-mobile" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", flexDirection: "column", gap: 24, alignItems: "center" }}>
 
-        {/* Left — text */}
-        <div style={{ width: "100%" }}>
-          <h2 style={{ color: "#2C1A0E", fontSize: 22, fontWeight: 700, marginBottom: 12 }}>
-            Why Choose Mantra Medica?
-          </h2>
-          <p style={{ color: "#7A6248", fontSize: 13, lineHeight: 1.8 }}>
-            The Best View in Senaru. Unlike any other spa in the area, our facility is designed to harmonize with nature.
-            While you receive your treatment, you are treated to breathtaking panoramic views of the lush valleys and
-            the Rinjani foothills. It is an immersive experience of comfort and beauty that you won't find anywhere
-            else in Senaru.
-          </p>
-        </div>
+          <div style={{ width: "100%" }}>
+            <h2 style={{ color: "#2C1A0E", fontSize: 22, fontWeight: 700, marginBottom: 12 }}>
+              Why Choose Mantra Medica?
+            </h2>
+            <p style={{ color: "#7A6248", fontSize: 13, lineHeight: 1.8 }}>
+              The Best View in Senaru. Unlike any other spa in the area, our facility is designed to harmonize with nature.
+              While you receive your treatment, you are treated to breathtaking panoramic views of the lush valleys and
+              the Rinjani foothills. It is an immersive experience of comfort and beauty that you won't find anywhere
+              else in Senaru.
+            </p>
+          </div>
 
-        {/* Right — image carousel */}
-        <div style={{ width: "100%", position: "relative" }}>
-          {/* Slide image placeholder */}
-          <div style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "3/2", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)` }}>
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
-              {whyChooseSlides[slide].caption}
-            </div>
+          <div style={{ width: "100%", position: "relative" }}>
+            <div
+              className="carousel-slide"
+              {...swipe}
+              style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "3/2", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)`, cursor: "grab" }}
+            >
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
+                {whyChooseSlides[slide].caption}
+              </div>
 
-            {/* Prev / Next arrows */}
-            {[{ dir: "prev", fn: prev, pos: 8, arrow: "‹" }, { dir: "next", fn: next, pos: 8, arrow: "›" }].map((btn, bi) => (
-              <button
-                key={bi}
-                onClick={btn.fn}
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  [bi === 0 ? "left" : "right"]: btn.pos,
-                  transform: "translateY(-50%)",
-                  background: "rgba(255,255,255,0.15)",
-                  border: "0.5px solid rgba(255,255,255,0.3)",
-                  borderRadius: "50%",
-                  width: 32,
-                  height: 32,
-                  color: "#fff",
-                  fontSize: 18,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                {btn.arrow}
-              </button>
-            ))}
-
-            {/* Dots */}
-            <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 5 }}>
-              {whyChooseSlides.map((_, i) => (
-                <div
-                  key={i}
-                  onClick={() => setSlide(i)}
-                  style={{ width: i === slide ? 16 : 6, height: 6, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }}
-                />
+              {[{ fn: prev, side: "left",  arrow: "‹" }, { fn: next, side: "right", arrow: "›" }].map((btn, bi) => (
+                <button
+                  key={bi}
+                  onClick={btn.fn}
+                  style={{
+                    position: "absolute", top: "50%",
+                    [btn.side]: 8,
+                    transform: "translateY(-50%)",
+                    background: "rgba(255,255,255,0.15)",
+                    border: "0.5px solid rgba(255,255,255,0.3)",
+                    borderRadius: "50%", width: 32, height: 32,
+                    color: "#fff", fontSize: 18, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)",
+                  }}
+                >
+                  {btn.arrow}
+                </button>
               ))}
+
+              <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 5 }}>
+                {whyChooseSlides.map((_, i) => (
+                  <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 16 : 6, height: 6, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </section>
   );

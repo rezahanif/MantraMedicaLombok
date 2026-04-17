@@ -57,6 +57,11 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           .contact-hero-desktop { display: block !important; }
           .contact-hero-mobile  { display: none !important; }
         }
+        @media (max-width: 499px) and (min-height: 800px) {
+          .contact-text-mobile { top: 10% !important; }
+          .contact-mobile-breadcrumb { margin-bottom: 4px !important; }
+          .contact-mobile-title { margin-bottom: 6px !important; }
+        }
       `}</style>
 
       {/* Desktop layout */}
@@ -138,6 +143,7 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
       >
         {/* Text content — left side, upper-mid zone */}
         <div
+          className="contact-text-mobile"
           style={{
             position: "absolute",
             top: "18%",
@@ -148,7 +154,7 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
             overflow: "visible",
           }}
         >
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
+          <div className="contact-mobile-breadcrumb" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.2)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: 100, padding: "3px 10px", fontSize: 10, color: "rgba(250,250,250,0.65)", marginBottom: 9, width: "fit-content", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 32px rgba(0, 0, 0, 0.2)", backdropFilter: "blur(10px)", textDecoration: "none" }}>
             <Link href="/" style={{ textDecoration: "none", color: "inherit", fontWeight: "normal", transition: "font-weight 0.2s ease", cursor: "pointer" }} onMouseEnter={(e) => e.currentTarget.style.fontWeight = "bold"} onMouseLeave={(e) => e.currentTarget.style.fontWeight = "normal"}>
               Home
             </Link>
@@ -156,6 +162,7 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           </div>
 
           <h1
+            className="contact-mobile-title"
             style={{
               color: C.light,
               fontSize: 28,
