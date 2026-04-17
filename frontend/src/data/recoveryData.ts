@@ -16,7 +16,7 @@ export const treatments: Treatment[] = [
     tag: "Body Therapy",
     title: "Therapeutic Body Massage",
     hours: "08.00 - 17.00",
-    desc: 'Our specialized massage techniques focus on deep tissue recovery. Whatever you are dealing with, our therapists use a medical-grade understanding of anatomy to release tension and restore mobility.',
+    desc: 'Our specialized massage focus on deep tissue recovery. Whatever you are dealing with, our therapists use medical-grade understanding to release tension and restore mobility.',
     cta: "Book Now",
     imagePath: "/images/body-massage.jpg",
   },
