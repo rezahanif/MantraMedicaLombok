@@ -311,7 +311,7 @@ export default function SignatureTreatment() {
                     <h3 style={{ color: "#FFF5E4", fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{t.title}</h3>
                   </div>
                   <p style={{ color: "rgba(250,250,250,0.4)", fontSize: 11, marginBottom: 10 }}>{t.hours}</p>
-                  <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 13, lineHeight: 1.75, marginBottom: 16 }}>{t.desc}</p>
+                  <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 12, lineHeight: 1.6, marginBottom: 16 }}>{t.desc}</p>
                   <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>{t.cta}</button>
                 </div>
               </div>
