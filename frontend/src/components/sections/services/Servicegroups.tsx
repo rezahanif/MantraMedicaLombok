@@ -276,7 +276,11 @@ function MobileGroupCarousel({
                   ? `0 10px 32px rgba(0,0,0,0), 0 0 0 1px ${C.teal}50`
                   : "0 4px 12px rgba(0,0,0,0.18)",
               transform: ci === activeDot ? "scale(1)" : "scale(0.965)",
+              WebkitTransform: ci === activeDot ? "scale(1)" : "scale(0.965)",
               transition: "transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease",
+              WebkitTransition: "transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease",
+              WebkitBackfaceVisibility: "hidden",
+              backfaceVisibility: "hidden",
             }}
           >
             {/* Gradient overlay */}
