@@ -302,17 +302,18 @@ export default function Hero({
           zIndex: 5,
         }}
       >
-        {/* Doctor photo — reduced size, right side */}
+        {/* Doctor photo — right half, stretches from top to just above stats card.
+            No fixed height — fills the space so the doctor isn't cropped. */}
         <div
           style={{
             position: "absolute",
-            width: "50%",
-            height: "65%",
+            width: "54%",
             right: 0,
-            bottom: "15%",
+            top: 80,
+            bottom: "18%",           // stays above stats card
             zIndex: 0,
             overflow: "hidden",
-            borderRadius: "16px 0 0 0",
+            borderRadius: "0 0 0 16px",
           }}
         >
           {photoSlot ?? (
@@ -320,16 +321,15 @@ export default function Hero({
           )}
         </div>
 
-        {/* Text content — left side, upper-mid zone */}
+        {/* Text content — left column only.
+            Uses right:"52%" instead of a fixed width so it scales on any phone. */}
         <div
           style={{
             position: "absolute",
-            top: "18%",
-            left: 24,
-            right: "52%",    // leave right side for doctor photo
-            width: 200,
+            top: "12%",
+            left: 20,
+            right: "52%",            // percentage boundary — no hardcoded width
             zIndex: 2,
-            overflow: "visible",
           }}
         >
           {subtitle && (
@@ -337,9 +337,6 @@ export default function Hero({
               style={{
                 fontSize: 10, letterSpacing: "2.5px", textTransform: "uppercase",
                 color: "rgba(255,255,255,0.8)", marginBottom: 8, fontWeight: 400,
-                wordBreak: "break-word",
-                whiteSpace: "normal",
-                margin: 0,
                 animation: mounted ? "fadeDown 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                 animationDelay: "200ms",
                 opacity: mounted ? 1 : 0,
@@ -350,8 +347,11 @@ export default function Hero({
           )}
           <h1
             style={{
-              color: C.light, fontSize: 28, fontWeight: 700,
-              lineHeight: 1.3, marginBottom: 14,
+              color: C.light,
+              fontSize: "clamp(22px, 7.5vw, 30px)",  // scales with screen width
+              fontWeight: 700,
+              lineHeight: 1.25,
+              marginBottom: 12,
               animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
               animationDelay: "300ms",
               opacity: mounted ? 1 : 0,
@@ -363,7 +363,7 @@ export default function Hero({
           <div
             style={{
               color: "rgba(250,250,250,0.85)",
-              fontSize: 12,
+              fontSize: "clamp(11px, 3vw, 13px)",
               lineHeight: 1.6,
               animation: mounted ? "fadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
               animationDelay: "400ms",
@@ -376,18 +376,47 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Stats card — bay/cove shape (large rounded top), anchored to bottom */}
+        {/* Doctor name badge — right-anchored so it never overflows on any phone size.
+            maxWidth keeps it inside the photo column. */}
+        {doctorName && (
+          <p
+            style={{
+              position: "absolute",
+              bottom: "calc(30% + 12px)",  // floats just above the stats card
+              right: 32,                   // right-anchored — no left pixel that breaks on small screens
+              maxWidth: "52%",             // bounded to photo column width
+              color: "rgba(250,250,250,0.9)",
+              fontSize: 10,
+              padding: "6px 12px",
+              borderRadius: 100,
+              background: `${C.tealLight}20`,
+              backdropFilter: "blur(10px)",
+              border: `1px solid ${C.tealLight}40`,
+              textAlign: "center",
+              lineHeight: 1.4,
+              animation: mounted ? "fadeIn 0.6s ease both" : "none",
+              animationDelay: "600ms",
+              opacity: 0,
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+              zIndex: 4,
+              whiteSpace: "normal",        // allow wrapping inside the badge gracefully
+            }}
+          >
+            {doctorName}
+          </p>
+        )}
+
+        {/* Stats card — anchored to bottom with rounded top */}
         <div
           style={{
             position: "relative",
             zIndex: 3,
             background: C.light,
             borderRadius: "44px 44px 0 0",
-            padding: "32px 20px 48px",
+            padding: "28px 16px 44px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
-            // Subtle top shadow to lift card off photo
             boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
             animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
             animationDelay: "580ms",
@@ -409,7 +438,7 @@ export default function Hero({
               <span
                 style={{
                   color: C.dark,
-                  fontSize: "0.65rem",
+                  fontSize: "clamp(0.58rem, 2.5vw, 0.68rem)",
                   fontWeight: 700,
                   letterSpacing: "0.4px",
                   textAlign: "center",
@@ -421,31 +450,6 @@ export default function Hero({
             </div>
           ))}
         </div>
-
-        {doctorName && (
-          <p
-            style={{
-              position: "absolute",
-              bottom: "40%",
-              left: 210,
-              color: "rgba(250,250,250,0.85)",
-              fontSize: 10,
-              padding: "6px 12px",
-              borderRadius: 100,
-              background: `${C.tealLight}20`,
-              backdropFilter: "blur(10px)",
-              border: `1px solid ${C.tealLight}40`,
-              display: "inline-block",
-              animation: mounted ? "fadeIn 0.6s ease both" : "none",
-              animationDelay: "600ms",
-              opacity: 0,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-              zIndex: 4,
-            }}
-          >
-            {doctorName}
-          </p>
-        )}
       </div>
     </section>
   );

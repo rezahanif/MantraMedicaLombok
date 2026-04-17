@@ -460,6 +460,10 @@ export default function ServiceGroups() {
           .sg-mobile  { display: block !important; }
           /* Let carousel bleed to screen edges */
           .sg-outer { padding-left: 0 !important; padding-right: 0 !important; }
+          /* Increase border opacity on mobile for better visibility */
+          .mob-scroll > div {
+            border: 2px solid rgba(101, 163, 150, 0.6) !important;
+          }
         }
         @media (min-width: 861px) {
           .sg-desktop { display: block !important; }
