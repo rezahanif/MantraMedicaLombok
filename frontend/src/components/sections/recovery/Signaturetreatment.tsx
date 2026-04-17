@@ -46,7 +46,7 @@ const CARD2_MOBILE_ZOOM = 1;           // Zoom scale for mobile (same as Card1, 
 // ── Background image positioning – adjust independently for desktop & mobile
 // Desktop: backgroundPosition X/Y offsets and zoom
 const BG_DESKTOP_POS_X = 0;            // Horizontal offset in px: positive = right, negative = left
-const BG_DESKTOP_POS_Y = 370;            // Vertical offset in px: positive = down, negative = up
+const BG_DESKTOP_POS_Y = 390;            // Vertical offset in px: positive = down, negative = up
 const BG_DESKTOP_ZOOM = 1;             // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
 
 // Mobile: backgroundPosition X/Y offsets and zoom
