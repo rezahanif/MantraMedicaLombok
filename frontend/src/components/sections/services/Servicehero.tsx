@@ -310,13 +310,13 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
         <div
           style={{
             position: "absolute",
-            width: "50%",
-            height: "65%",
+            width: "70%",
             right: 0,
+            top: 120,
             bottom: "15%",
             zIndex: 0,
             overflow: "hidden",
-            borderRadius: "16px 0 0 0",
+            borderRadius: "0 0 0 16px",
           }}
         >
           {photoSlot ?? (
@@ -385,7 +385,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
             zIndex: 3,
             background: C.light,
             borderRadius: "44px 44px 0 0",
-            padding: "32px 20px 48px",
+            padding: "50px 16px 70px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
@@ -401,6 +401,8 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
               style={{
                 display: "flex", flexDirection: "column",
                 alignItems: "center", gap: 6,
+                flex: 1,
+                minWidth: 60,
                 animation: mounted ? "fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                 animationDelay: `${640 + i * 70}ms`,
                 opacity: 0,
@@ -410,11 +412,14 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
               <span
                 style={{
                   color: C.dark,
-                  fontSize: "0.65rem",
+                  fontSize: "clamp(0.58rem, 2.5vw, 0.68rem)",
                   fontWeight: 700,
                   letterSpacing: "0.4px",
                   textAlign: "center",
                   lineHeight: 1.3,
+                  wordBreak: "break-word",
+                  wordWrap: "break-word",
+                  whiteSpace: "normal",
                 }}
               >
                 {s.label}
@@ -423,25 +428,28 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           ))}
         </div>
 
-        {/* Doctor breadcrumb — left side */}
+        {/* Doctor name badge — right-anchored so it never overflows on any phone size */}
         <p
           style={{
             position: "absolute",
-            bottom: "40%",
-            left: 220,
-            color: "rgba(250,250,250,0.85)",
+            bottom: "calc(30% + 12px)",
+            right: "30%",
+            maxWidth: "52%",
+            color: "rgba(250,250,250,0.9)",
             fontSize: 10,
             padding: "6px 12px",
             borderRadius: 100,
             background: `${C.tealLight}20`,
             backdropFilter: "blur(10px)",
             border: `1px solid ${C.tealLight}40`,
-            display: "inline-block",
+            textAlign: "center",
+            lineHeight: 1.4,
             animation: mounted ? "fadeIn 0.6s ease both" : "none",
             animationDelay: "600ms",
             opacity: 0,
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
             zIndex: 4,
+            whiteSpace: "normal",
           }}
         >
           dr. I Gede Yoga Mahendra Putra

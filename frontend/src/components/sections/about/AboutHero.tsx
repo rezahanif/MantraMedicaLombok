@@ -187,23 +187,23 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
           </p>
         </div>
 
-        {/* Stats card — bay/cove shape (large rounded top), anchored to bottom */}
+        {/* Stats card shape — bay/cove shape (large rounded top), anchored to bottom */}
         <div
           style={{
             position: "relative",
             zIndex: 3,
             background: C.light,
             borderRadius: "44px 44px 0 0",
-            padding: "32px 20px 48px",
+            padding: "50px 16px 70px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-around",
+            justifyContent: "center",
             boxShadow: "0 -8px 32px rgba(0,0,0,0.08)",
             animation: mounted ? "slideUpStats 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
             animationDelay: "580ms",
             opacity: mounted ? 1 : 0,
             marginTop: "-40px",
-            minHeight: "45px",
+            minHeight: "80px",
           }}
         />
       </div>

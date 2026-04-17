@@ -126,6 +126,7 @@ export default function SignatureTreatment() {
         @media (max-width: 499px) {
           .treat-desktop { display: none !important; }
           .treat-mobile  { display: flex !important; }
+          .treat-mobile-tag { display: none !important; }
           .sig-treatment-section {
             background-position: calc(50% + ${BG_MOBILE_POS_X}px) calc(50% + ${BG_MOBILE_POS_Y}px) !important;
             background-size: ${BG_MOBILE_ZOOM * 100}% !important;
@@ -278,7 +279,7 @@ export default function SignatureTreatment() {
                 
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)", zIndex: 1 }} />
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>
-                  <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 8, width: "fit-content" }}>{t.tag}</div>
+                  <div className="treat-mobile-tag" style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 8, width: "fit-content" }}>{t.tag}</div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {cardIcons[i] && (
                       <Image

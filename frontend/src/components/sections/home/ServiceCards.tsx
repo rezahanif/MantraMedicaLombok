@@ -168,6 +168,9 @@ export default function ServiceCards() {
           .service-mobile  { display: flex !important; }
         }
         @media (max-width: 500px) {
+          .service-mobile .svc-mobile-tag {
+            display: none !important;
+          }
           .service-mobile .svc-card-content { 
             padding: 24px 20px 36px 20px !important; 
           }
@@ -575,6 +578,19 @@ export default function ServiceCards() {
                   }}
                   className="svc-card-content"
                 >
+                  <div
+                    className="svc-mobile-tag"
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      background: "rgba(255,255,255,0.1)", borderRadius: 100,
+                      padding: "4px 12px", fontSize: 10, letterSpacing: "1px",
+                      textTransform: "uppercase", color: "rgba(250,250,250,0.85)",
+                      marginBottom: 10, width: "fit-content",
+                    }}
+                  >
+                    <Image src={style.icon} alt={svc.tag} width={getServiceIconSizeExpanded(svc.id).width} height={getServiceIconSizeExpanded(svc.id).height} style={{ objectFit: "contain" }} />
+                    {svc.tag}
+                  </div>
                   <h3 style={{ color: C.light, fontSize: 22, fontWeight: 700, lineHeight: 1.2, marginBottom: 6 }}>{svc.title}</h3>
                   <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, fontWeight: 500, marginBottom: 8, fontStyle: "italic" }}>{svc.subtitle}</p>
                   <p style={{ color: "rgba(250,250,250,0.6)", fontSize: 13, lineHeight: 1.7, marginBottom: 20 }}>{svc.desc}</p>
