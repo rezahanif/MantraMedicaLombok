@@ -8,7 +8,7 @@ import { whyChooseSlides } from "@/data/recoveryData";
 // ── Bunga (flower) decorative image – positioned behind content
 // Desktop Bunga
 const BUNGA_POS_X = -400;                   // Horizontal offset in px: positive = right, negative = left
-const BUNGA_POS_Y = -335;                   // Vertical offset in px: positive = down, negative = up
+const BUNGA_POS_Y = -355;                   // Vertical offset in px: positive = down, negative = up
 const BUNGA_ZOOM = 0.4;                    // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
 const BUNGA_OPACITY = 1;                 // Opacity: 0 = invisible, 1 = fully visible
 
@@ -21,7 +21,7 @@ const BUNGA_MOBILE_OPACITY = 1;          // Opacity: 0 = invisible, 1 = fully vi
 // ── Background image positioning – adjust separately for desktop & mobile
 // Desktop: backgroundPosition X/Y offsets and zoom
 const BG_DESKTOP_POS_X = 200;              // Horizontal offset in px: positive = right, negative = left
-const BG_DESKTOP_POS_Y = 40;              // Vertical offset in px: positive = down, negative = up
+const BG_DESKTOP_POS_Y = 50;              // Vertical offset in px: positive = down, negative = up
 const BG_DESKTOP_ZOOM = 0.5;               // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
 
 // Mobile: backgroundPosition X/Y offsets and zoom
@@ -38,7 +38,7 @@ const BG3_DESKTOP_OPACITY = 1;             // Opacity: 0 = invisible, 1 = fully 
 
 // Mobile BgCoffee3
 const BG3_MOBILE_POS_X = -40;                // Horizontal offset in px: positive = right, negative = left
-const BG3_MOBILE_POS_Y = 270;                // Vertical offset in px: positive = down, negative = up
+const BG3_MOBILE_POS_Y = 280;                // Vertical offset in px: positive = down, negative = up
 const BG3_MOBILE_ZOOM = 0.35;                 // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
 const BG3_MOBILE_OPACITY = 1;              // Opacity: 0 = invisible, 1 = fully visible
 
@@ -64,6 +64,33 @@ export default function WhyChoose() {
   return (
     <section className="why-choose-section" style={{ background: C.light, padding: "72px 40px", borderTop: "1px solid rgba(139,99,64,0)", position: "relative", margin: 0 }}>
       <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        .whychoose-header {
+          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        .whychoose-content {
+          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation-delay: 0.2s;
+        }
+        .whychoose-buttons {
+          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation-delay: 0.3s;
+        }
         @keyframes pulseRing {
           0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
           70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
@@ -163,8 +190,8 @@ export default function WhyChoose() {
       <div className="why-choose-desktop" style={{ maxWidth: 1400, margin: "0 auto", display: "flex", gap: 48, alignItems: "center" }}>
 
         {/* Left — text */}
-        <div style={{ flex: 1 }}>
-          <h2 style={{ color: "#2C1A0E", fontSize: 28, fontWeight: 700, marginBottom: 16 }}>
+        <div style={{ flex: 1 }} className="whychoose-content">
+          <h2 style={{ color: "#2C1A0E", fontSize: 28, fontWeight: 700, marginBottom: 16 }} className="whychoose-header">
             Why Choose Mantra Medica?
           </h2>
           <p style={{ color: "#7A6248", fontSize: 14, lineHeight: 1.85 }}>

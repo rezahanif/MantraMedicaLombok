@@ -229,10 +229,10 @@ function MobileGroupCarousel({
           </span>
           <div style={{ flex: 1, height: 1, background: `${C.teal}40` }} />
         </div>
-        <h3 style={{ color: C.light, fontSize: 20, fontWeight: 800, lineHeight: 1.3, margin: "0 0 8px" }}>
+        <h3 style={{ color: C.teal, fontSize: 20, fontWeight: 800, lineHeight: 1.3, margin: "0 0 8px" }}>
           {group.category}
         </h3>
-        <p style={{ color: "rgba(250,250,250,0.5)", fontSize: 13, lineHeight: 1.75, margin: 0 }}>
+        <p style={{ color: C.teal, fontSize: 13, lineHeight: 1.75, margin: 0, opacity: 0.7 }}>
           {group.categoryDesc}
         </p>
       </div>

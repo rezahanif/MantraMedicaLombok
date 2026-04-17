@@ -14,6 +14,12 @@ const cardImages = [
   "/images/recovcard2.webp",  // Card 2
 ];
 
+// ── Card icons
+const cardIcons = [
+  "/icons/bodymassage.webp", // Card 1
+  "/icons/iconbatu.webp",     // Card 2
+];
+
 // ── Card image blur effect (shrunk vs expanded)
 const CARD_BLUR_SHRUNK = 6;   // Blur px when card is shrunk/inactive
 const CARD_BLUR_EXPANDED = 0; // Blur px when card is expanded/active
@@ -67,12 +73,42 @@ const HEADER_TO_CARDS_GAP_MOBILE = 48;   // Gap in px between "Treatment" title 
 // ── Header internal spacing – gap between "Our Signature" and "Treatment" title
 const SIGNATURE_TO_TITLE_GAP = -10;        // Gap in px between "Our Signature" flourish and "Treatment" heading
 
+// ── Icon positioning – adjust vertical position via marginBottom in px (positive = down, negative = up)
+const ICON_MARGIN_BOTTOM_DESKTOP_SHRUNK = -20;    // Icon margin bottom when card shrunk (desktop)
+const ICON_MARGIN_BOTTOM_DESKTOP_EXPANDED = -15;  // Icon margin bottom when card expanded (desktop)
+const ICON_MARGIN_BOTTOM_MOBILE = -15;            // Icon margin bottom on mobile
+
 export default function SignatureTreatment() {
   const [active, setActive] = useState(0);
 
   return (
     <section className="sig-treatment-section" style={{ backgroundImage: `url('/images/bgcoffee1.webp')`, backgroundPosition: `calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px)`, backgroundSize: `${BG_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", padding: "60px 40px", position: "relative", margin: 0 }}>
       <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        .treatment-header {
+          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        .treatment-card {
+          animation: slideInLeft 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        .treatment-card:nth-child(2) {
+          animation: slideInRight 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
         @keyframes pulseRing {
           0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
           70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
@@ -152,6 +188,7 @@ export default function SignatureTreatment() {
             return (
               <div
                 key={t.id}
+                className="treatment-card"
                 onClick={() => setActive(i)}
                 style={{
                   flex: isActive ? 2.4 : 1,
@@ -189,9 +226,20 @@ export default function SignatureTreatment() {
                   <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 10, width: "fit-content" }}>
                     {t.tag}
                   </div>
-                  <h3 style={{ color: "#FFF5E4", fontSize: isActive ? 24 : 17, fontWeight: 600, lineHeight: 1.2, marginBottom: isActive ? 6 : 0, transition: "font-size 0.4s" }}>
-                    {t.title}
-                  </h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {cardIcons[i] && (
+                      <Image
+                        src={cardIcons[i]}
+                        alt={t.title}
+                        width={isActive ? 28 : 20}
+                        height={isActive ? 28 : 20}
+                        style={{ objectFit: "contain", flexShrink: 0, marginBottom: isActive ? ICON_MARGIN_BOTTOM_DESKTOP_EXPANDED : ICON_MARGIN_BOTTOM_DESKTOP_SHRUNK }}
+                      />
+                    )}
+                    <h3 style={{ color: "#FFF5E4", fontSize: isActive ? 24 : 17, fontWeight: 600, lineHeight: 1.2, marginBottom: isActive ? 6 : 0, transition: "font-size 0.4s" }}>
+                      {t.title}
+                    </h3>
+                  </div>
                   <p style={{ fontSize: 11, color: "rgba(250,250,250,0.4)", letterSpacing: "1px", marginBottom: isActive ? 12 : 0 }}>{t.hours}</p>
 
                   {/* Expandable */}
@@ -231,7 +279,18 @@ export default function SignatureTreatment() {
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)", zIndex: 1 }} />
                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>
                   <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 8, width: "fit-content" }}>{t.tag}</div>
-                  <h3 style={{ color: "#FFF5E4", fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{t.title}</h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {cardIcons[i] && (
+                      <Image
+                        src={cardIcons[i]}
+                        alt={t.title}
+                        width={18}
+                        height={18}
+                        style={{ objectFit: "contain", flexShrink: 0, marginBottom: ICON_MARGIN_BOTTOM_MOBILE }}
+                      />
+                    )}
+                    <h3 style={{ color: "#FFF5E4", fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{t.title}</h3>
+                  </div>
                   <p style={{ color: "rgba(250,250,250,0.4)", fontSize: 11, marginBottom: 10 }}>{t.hours}</p>
                   <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 13, lineHeight: 1.75, marginBottom: 16 }}>{t.desc}</p>
                   <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>{t.cta}</button>

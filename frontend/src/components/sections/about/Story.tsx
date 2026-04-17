@@ -1,6 +1,11 @@
 import Image from "next/image";
 import { C } from "@/lib/constants";
 
+// ── BlubDoctor background positioning
+const BLUB_DOCTOR_DESKTOP_POS_X = 0;          // Horizontal offset in px: positive = right, negative = left
+const BLUB_DOCTOR_DESKTOP_POS_Y = 0;          // Vertical offset in px: positive = down, negative = up
+const BLUB_DOCTOR_DESKTOP_ZOOM = 1;           // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
+
 export default function Story() {
   return (
     <>
@@ -11,6 +16,7 @@ export default function Story() {
           padding: "80px 0",
           overflow: "hidden",
         }}
+        className="story-section"
       >
         <div
           style={{
@@ -24,62 +30,20 @@ export default function Story() {
           }}
           className="story-grid"
         >
-          {/* Left — Doctor portrait in circle */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
-            {/* Decorative large circle bg */}
-            <div
-              style={{
-                position: "relative",
-                width: 320,
-                height: 320,
-                borderRadius: "50%",
-                backgroundColor: `${C.teal}28`,
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-                overflow: "hidden",
-                flexShrink: 0,
-              }}
-            >
-              {/* Decorative ring */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: -16,
-                  left: -16,
-                  width: 80,
-                  height: 80,
-                  borderRadius: "50%",
-                  border: `2px solid ${C.teal}`,
-                  opacity: 0.3,
-                }}
-                aria-hidden
-              />
-              {/* Decorative dot */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: 32,
-                  right: -20,
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  backgroundColor: C.teal,
-                  opacity: 0.6,
-                }}
-                aria-hidden
-              />
-
+          {/* Left — Doctor portrait */}
+          <div style={{ position: "relative", display: "flex", justifyContent: "center", left: "clamp(40px, 6vw, 120px)", width: "clamp(270px, 27vw, 459px)", height: "clamp(351px, 36.45vw, 581px)" }}>
+            {/* BlubDoctor background layer */}
+            <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/blubdoctor.webp')`, backgroundPosition: `calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_X}px) calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_Y}px)`, backgroundSize: `${BLUB_DOCTOR_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
+            
+            {/* Doctor photo layer */}
+            <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
               <Image
-                src="/assets/images/team/dr-nyoman.jpg"
+                src="/images/DrIra.webp"
                 alt="dr. Nyoman Ardyatri Kairavini"
-                width={290}
-                height={340}
+                fill
                 style={{
                   objectFit: "cover",
-                  objectPosition: "top",
-                  maxHeight: "90%",
-                  borderRadius: "0 0 50% 50%",
+                  objectPosition: "center",
                 }}
               />
             </div>
@@ -91,15 +55,17 @@ export default function Story() {
                 bottom: 0,
                 left: "50%",
                 transform: "translateX(-50%)",
-                backgroundColor: C.dark,
-                color: C.tealLight ?? C.teal,
-                border: `1px solid ${C.border}`,
+                backgroundColor: C.teal,
+                color: "rgba(250,250,250,0.85)",
+                border: `1px solid ${C.tealLight}40`,
+                backdropFilter: "blur(10px)",
                 borderRadius: 100,
                 padding: "6px 20px",
                 fontSize: 12,
                 fontWeight: 600,
                 whiteSpace: "nowrap",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+                zIndex: 2,
               }}
             >
               dr. Nyoman Ardyatri Kairavini
@@ -270,44 +236,40 @@ export default function Story() {
           >
             <div
               style={{
-                width: 64,
-                height: 64,
+                position: "relative",
+                bottom: 25,
+                left: 0,
+                width: 160,
+                height: 120,
                 borderRadius: 14,
-                backgroundColor: `${C.light}22`,
+                backgroundColor: C.light,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <svg viewBox="0 0 40 40" style={{ width: 40, height: 40 }} fill="none">
-                <path
-                  d="M20 4 L36 13 L36 31 L20 40 L4 31 L4 13 Z"
-                  fill={C.light}
-                  opacity="0.2"
-                />
-                <path
-                  d="M14 20 L20 8 L26 20 M14 28 L20 16 L26 28"
-                  stroke={C.light}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ fontWeight: 700, fontSize: 13, color: C.light, margin: 0 }}>
-                mantra medica
-              </p>
-              <p style={{ fontSize: 11, color: C.light, opacity: 0.6, margin: 0 }}>
-                your health journey
-              </p>
+              <Image
+                src="/images/logovertical.webp"
+                alt="Mantra Medica Logo"
+                width={180}
+                height={240}
+                style={{ objectFit: "contain", position: "relative", left: 3}}
+              />
             </div>
           </div>
         </div>
       </section>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 499px) {
+          .story-section { margin-top: 0 !important; }
           .story-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .story-grid > div:first-child { 
+            left: 0 !important; 
+            width: 100% !important; 
+            height: auto !important;
+            aspect-ratio: 16 / 20;
+          }
           .quote-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>

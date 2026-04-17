@@ -48,12 +48,12 @@ export const whyChooseSlides = [
 
 export const homeCareFeatures = [
   {
-    icon: "📚",
+    icon: "icons/handuk.webp",
     title: "Professional Setup",
     desc: "Our therapists arrive with everything needed to transform your private space into a personal wellness retreat.",
   },
   {
-    icon: "🚪",
+    icon: "icons/pintu.webp",
     title: "In-Villa Service",
     desc: "We offer professional Home Care treatments at your villa or hotel within Senaru and the surrounding areas.",
   },
