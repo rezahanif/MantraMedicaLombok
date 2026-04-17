@@ -54,18 +54,6 @@ const BG_MOBILE_POS_X = 10;             // Horizontal offset in px
 const BG_MOBILE_POS_Y = 0;             // Vertical offset in px
 const BG_MOBILE_ZOOM = 1.1;              // Zoom scale
 
-// ── Bunga (flower) decorative image – positioned behind cards
-// Desktop Bunga
-const BUNGA_POS_X = -400;                 // Horizontal offset in px: positive = right, negative = left
-const BUNGA_POS_Y = 300;                 // Vertical offset in px: positive = down, negative = up
-const BUNGA_ZOOM = 0.4;                  // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BUNGA_OPACITY = 1;                // Opacity: 0 = invisible, 1 = fully visible
-
-// Mobile Bunga
-const BUNGA_MOBILE_POS_X = -150;            // Horizontal offset in px: positive = right, negative = left
-const BUNGA_MOBILE_POS_Y = 350;            // Vertical offset in px: positive = down, negative = up
-const BUNGA_MOBILE_ZOOM = 0.45;           // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
-const BUNGA_MOBILE_OPACITY = 1;          // Opacity: 0 = invisible, 1 = fully visible
 
 // ── Header spacing to cards – adjust separately for desktop & mobile
 const HEADER_TO_CARDS_GAP_DESKTOP = 30;  // Gap in px between "Treatment" title and cards (desktop)
@@ -133,8 +121,7 @@ export default function SignatureTreatment() {
             background-size: ${BG_MOBILE_ZOOM * 100}% !important;
           }
           .treatment-header { margin-bottom: ${HEADER_TO_CARDS_GAP_MOBILE}px !important; }
-          .bunga-desktop { display: none !important; }
-          .bunga-mobile  { display: block !important; }
+
           .card-img-zoom { backgroundSize: 100% !important; }
         }
         /* Gradual zoom scaling for mobile: 454px (1x) → 250px (2x) */
@@ -161,21 +148,12 @@ export default function SignatureTreatment() {
             background-size: ${BG_DESKTOP_ZOOM * 100}% !important;
           }
           .treatment-header { margin-bottom: ${HEADER_TO_CARDS_GAP_DESKTOP}px !important; }
-          .bunga-desktop { display: block !important; }
-          .bunga-mobile  { display: none !important; }
+
         }
       `}</style>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
         
-        {/* ── Bunga (flower) layer – Desktop */}
-        <div className="bunga-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: 0 }}>
-          <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_POS_X}px) calc(50% + ${BUNGA_POS_Y}px)`, backgroundSize: `${BUNGA_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_OPACITY }} />
-        </div>
 
-        {/* ── Bunga (flower) layer – Mobile */}
-        <div className="bunga-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", borderRadius: 0 }}>
-          <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_MOBILE_POS_X}px) calc(50% + ${BUNGA_MOBILE_POS_Y}px)`, backgroundSize: `${BUNGA_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_MOBILE_OPACITY }} />
-        </div>
 
         <div style={{ position: "relative", zIndex: 1 }}>
 

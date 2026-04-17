@@ -5,16 +5,7 @@ import { useState, useRef } from "react";
 import { C } from "@/lib/constants";
 import { whyChooseSlides } from "@/data/recoveryData";
 
-// ── Bunga (flower) decorative image – positioned behind content
-const BUNGA_POS_X = -400;
-const BUNGA_POS_Y = -355;
-const BUNGA_ZOOM = 0.4;
-const BUNGA_OPACITY = 1;
 
-const BUNGA_MOBILE_POS_X = -150;
-const BUNGA_MOBILE_POS_Y = -355;
-const BUNGA_MOBILE_ZOOM = 0.45;
-const BUNGA_MOBILE_OPACITY = 1;
 
 const BG_DESKTOP_POS_X = 200;
 const BG_DESKTOP_POS_Y = 50;
@@ -34,15 +25,7 @@ const BG3_MOBILE_POS_Y = 280;
 const BG3_MOBILE_ZOOM = 0.35;
 const BG3_MOBILE_OPACITY = 1;
 
-const KEMBANG3_DESKTOP_POS_X = -450;
-const KEMBANG3_DESKTOP_POS_Y = 300;
-const KEMBANG3_DESKTOP_ZOOM = 0.3;
-const KEMBANG3_DESKTOP_OPACITY = 1;
 
-const KEMBANG3_MOBILE_POS_X = -150;
-const KEMBANG3_MOBILE_POS_Y = 330;
-const KEMBANG3_MOBILE_ZOOM = 0.5;
-const KEMBANG3_MOBILE_OPACITY = 1;
 
 // ── Swipe hook ────────────────────────────────────────────────
 function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
@@ -74,7 +57,7 @@ export default function WhyChoose() {
   const swipe = useSwipe(next, prev);
 
   return (
-    <section className="why-choose-section" style={{ background: C.light, padding: "72px 40px", borderTop: "1px solid rgba(139,99,64,0)", position: "relative", margin: 0 }}>
+    <section className="why-choose-section" style={{ background: C.light, padding: "72px 40px", borderTop: "1px solid rgba(139,99,64,0)", position: "relative", margin: 0, overflow: "visible" }}>
       <style>{`
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(24px); }
@@ -117,12 +100,10 @@ export default function WhyChoose() {
         @media (max-width: 499px) {
           .why-choose-desktop { display: none !important; }
           .why-choose-mobile  { display: flex !important; }
-          .bunga-desktop      { display: none !important; }
-          .bunga-mobile       { display: block !important; }
+
           .bg3-desktop        { display: none !important; }
           .bg3-mobile         { display: block !important; }
-          .kembang3-desktop   { display: none !important; }
-          .kembang3-mobile    { display: block !important; }
+
           .why-choose-section {
             background-image: url('/images/bgcoffee2.webp') !important;
             background-position: calc(50% + ${BG_MOBILE_POS_X}px) calc(50% + ${BG_MOBILE_POS_Y}px) !important;
@@ -134,12 +115,10 @@ export default function WhyChoose() {
         @media (min-width: 500px) {
           .why-choose-desktop { display: flex !important; }
           .why-choose-mobile  { display: none !important; }
-          .bunga-desktop      { display: block !important; }
-          .bunga-mobile       { display: none !important; }
+
           .bg3-desktop        { display: block !important; }
           .bg3-mobile         { display: none !important; }
-          .kembang3-desktop   { display: block !important; }
-          .kembang3-mobile    { display: none !important; }
+
           .why-choose-section {
             background-image: url('/images/bgcoffee2.webp') !important;
             background-position: calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px) !important;
@@ -160,25 +139,9 @@ export default function WhyChoose() {
         <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bgcoffee3.webp')`, backgroundPosition: `calc(50% + ${BG3_MOBILE_POS_X}px) calc(50% + ${BG3_MOBILE_POS_Y}px)`, backgroundSize: `${BG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BG3_MOBILE_OPACITY }} />
       </div>
 
-      {/* ── Kembang3 – Desktop */}
-      <div className="kembang3-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_DESKTOP_POS_X}px) calc(50% + ${KEMBANG3_DESKTOP_POS_Y}px)`, backgroundSize: `${KEMBANG3_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: KEMBANG3_DESKTOP_OPACITY, transform: "scaleX(-1)" }} />
-      </div>
 
-      {/* ── Kembang3 – Mobile */}
-      <div className="kembang3-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/kembang3.webp')`, backgroundPosition: `calc(50% + ${KEMBANG3_MOBILE_POS_X}px) calc(50% + ${KEMBANG3_MOBILE_POS_Y}px)`, backgroundSize: `${KEMBANG3_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: KEMBANG3_MOBILE_OPACITY, transform: "scaleX(-1)" }} />
-      </div>
 
-      {/* ── Bunga – Desktop */}
-      <div className="bunga-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_POS_X}px) calc(50% + ${BUNGA_POS_Y}px)`, backgroundSize: `${BUNGA_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BUNGA_OPACITY }} />
-      </div>
 
-      {/* ── Bunga – Mobile */}
-      <div className="bunga-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_MOBILE_POS_X}px) calc(50% + ${BUNGA_MOBILE_POS_Y}px)`, backgroundSize: `${BUNGA_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", opacity: BUNGA_MOBILE_OPACITY }} />
-      </div>
 
       <div style={{ position: "relative", zIndex: 1 }}>
         {/* Decorative separator */}
