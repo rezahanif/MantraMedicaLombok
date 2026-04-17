@@ -167,6 +167,42 @@ export default function ServiceCards() {
           .service-desktop { display: none !important; }
           .service-mobile  { display: flex !important; }
         }
+        @media (max-width: 500px) {
+          .service-mobile .svc-card-content { 
+            padding: 24px 20px 36px 20px !important; 
+          }
+          .service-mobile .svc-btn { 
+            padding: 10px 20px !important; 
+            font-size: 12px !important; 
+          }
+        }
+        @media (max-width: 400px) {
+          .service-mobile .svc-card-content { 
+            padding: 20px 16px 30px 16px !important; 
+          }
+          .service-mobile .svc-btn { 
+            padding: 9px 16px !important; 
+            font-size: 11px !important; 
+          }
+        }
+        @media (max-width: 350px) {
+          .service-mobile .svc-card-content { 
+            padding: 16px 12px 24px 12px !important; 
+          }
+          .service-mobile .svc-btn { 
+            padding: 8px 12px !important; 
+            font-size: 11px !important; 
+          }
+        }
+        @media (max-width: 300px) {
+          .service-mobile .svc-card-content { 
+            padding: 12px 8px 20px 8px !important; 
+          }
+          .service-mobile .svc-btn { 
+            padding: 6px 10px !important; 
+            font-size: 10px !important; 
+          }
+        }
       `}</style>
 
       <div className="max-w-6xl mx-auto">
@@ -537,24 +573,14 @@ export default function ServiceCards() {
                     display: "flex", flexDirection: "column", justifyContent: "flex-end",
                     padding: "28px 24px 42px 24px", zIndex: 2,
                   }}
+                  className="svc-card-content"
                 >
-                  <div
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: 6,
-                      background: "rgba(255,255,255,0.1)", borderRadius: 100,
-                      padding: "4px 12px", fontSize: 10, letterSpacing: "1px",
-                      textTransform: "uppercase", color: "rgba(250,250,250,0.85)",
-                      marginBottom: 10, width: "fit-content",
-                    }}
-                  >
-                    <Image src={style.icon} alt={svc.tag} width={getServiceIconSizeExpanded(svc.id).width} height={getServiceIconSizeExpanded(svc.id).height} style={{ objectFit: "contain" }} />
-                    {svc.tag}
-                  </div>
                   <h3 style={{ color: C.light, fontSize: 22, fontWeight: 700, lineHeight: 1.2, marginBottom: 6 }}>{svc.title}</h3>
                   <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, fontWeight: 500, marginBottom: 8, fontStyle: "italic" }}>{svc.subtitle}</p>
                   <p style={{ color: "rgba(250,250,250,0.6)", fontSize: 13, lineHeight: 1.7, marginBottom: 20 }}>{svc.desc}</p>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     <button
+                      className="svc-btn"
                       style={{
                         background: style.color,
                         color: C.light, border: "none",
@@ -567,6 +593,7 @@ export default function ServiceCards() {
                     {(svc.id === 1 || svc.id === 2) && (
                       <Link href={svc.id === 1 ? "/services" : "/recovery"} style={{ textDecoration: "none" }}>
                         <button
+                          className="svc-btn"
                           style={{
                             background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)",
                             color: C.light, border: "1px solid rgba(255,255,255,0.2)",

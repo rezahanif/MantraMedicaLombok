@@ -307,10 +307,10 @@ export default function Hero({
         <div
           style={{
             position: "absolute",
-            width: "54%",
+            width: "70%",
             right: 0,
-            top: 80,
-            bottom: "18%",           // stays above stats card
+            top: 120,
+            bottom: "15%",           // stays above stats card
             zIndex: 0,
             overflow: "hidden",
             borderRadius: "0 0 0 16px",
@@ -383,7 +383,7 @@ export default function Hero({
             style={{
               position: "absolute",
               bottom: "calc(30% + 12px)",  // floats just above the stats card
-              right: 32,                   // right-anchored — no left pixel that breaks on small screens
+              right: "30%",                   // right-anchored — no left pixel that breaks on small screens
               maxWidth: "52%",             // bounded to photo column width
               color: "rgba(250,250,250,0.9)",
               fontSize: 10,
@@ -413,7 +413,7 @@ export default function Hero({
             zIndex: 3,
             background: C.light,
             borderRadius: "44px 44px 0 0",
-            padding: "28px 16px 44px",
+            padding: "50px 16px 70px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
@@ -429,6 +429,8 @@ export default function Hero({
               style={{
                 display: "flex", flexDirection: "column",
                 alignItems: "center", gap: 6,
+                flex: 1,
+                minWidth: 60,
                 animation: mounted ? "fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                 animationDelay: `${640 + i * 70}ms`,
                 opacity: 0,
@@ -443,6 +445,9 @@ export default function Hero({
                   letterSpacing: "0.4px",
                   textAlign: "center",
                   lineHeight: 1.3,
+                  wordBreak: "break-word",
+                  wordWrap: "break-word",
+                  whiteSpace: "normal",
                 }}
               >
                 {s.label}
