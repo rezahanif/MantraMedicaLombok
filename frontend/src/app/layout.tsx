@@ -1,20 +1,21 @@
+"use client";
+
 import "./globals.css";
 import { C } from "@/lib/constants";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-
-export const metadata = {
-  title: "Mantra Medica",
-  description: "Your Health & Recovery Hub at the Gateway to Rinjani",
-};
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAdminPage = pathname?.startsWith("/admin") || pathname?.startsWith("/login");
+
   return (
     <html lang="en" style={{ overflowX: "hidden", width: "100%" }}>
       <body
         style={{
           background: C.light,
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Lato', sans-serif",
           color: C.dark,
           margin: 0,
           overflowX: "hidden",
@@ -23,9 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           position: "relative",
         }}
       >
-        <Navbar />
+        {!isAdminPage && <Navbar />}
         {children}
-        <Footer />
+        {!isAdminPage && <Footer />}
       </body>
     </html>
   );

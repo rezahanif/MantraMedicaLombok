@@ -5,34 +5,128 @@
 // but warm brown/cream palette to match Recovery page
 
 import { useState } from "react";
-import { C } from "@/lib/constants";
+import Image from "next/image";
 import { treatments } from "@/data/recoveryData";
 
-const cardGradients = [
-  `linear-gradient(150deg, #3D2208 0%, #6B4425 100%)`,
-  `linear-gradient(150deg, #2A1F0E 0%, #4A3520 100%)`,
+// ── Card background images
+const cardImages = [
+  "/images/recovcard1.webp",  // Card 1
+  "/images/recovcard2.webp",  // Card 2
 ];
+
+// ── Card image blur effect (shrunk vs expanded)
+const CARD_BLUR_SHRUNK = 6;   // Blur px when card is shrunk/inactive
+const CARD_BLUR_EXPANDED = 0; // Blur px when card is expanded/active
+
+// ── Card image positioning and zoom – adjust independently per card
+// Card 1 (Mountain & Waterfall Rescue) – Desktop
+const CARD1_POS_X = 0;                 // Horizontal offset in px: positive = right, negative = left
+const CARD1_POS_Y = 0;                 // Vertical offset in px: positive = down, negative = up
+const CARD1_ZOOM_SHRUNK = 2;         // Zoom scale when card is shrunk/inactive
+const CARD1_ZOOM_EXPANDED = 1;       // Zoom scale when card is expanded/active
+
+// Card 1 (Mountain & Waterfall Rescue) – Mobile Only
+const CARD1_MOBILE_POS_X = 0;          // Horizontal offset in px: positive = right, negative = left
+const CARD1_MOBILE_POS_Y = 0;          // Vertical offset in px: positive = down, negative = up
+const CARD1_MOBILE_ZOOM = 1.1;           // Zoom scale for mobile
+
+// Card 2 (Referral)
+const CARD2_POS_X = 0;                 // Horizontal offset in px
+const CARD2_POS_Y = 0;                 // Vertical offset in px
+const CARD2_ZOOM_SHRUNK = 2;           // Zoom scale when card is shrunk/inactive
+const CARD2_ZOOM_EXPANDED = 1;         // Zoom scale when card is expanded/active
+
+// ── Background image positioning – adjust independently for desktop & mobile
+// Desktop: backgroundPosition X/Y offsets and zoom
+const BG_DESKTOP_POS_X = 0;            // Horizontal offset in px: positive = right, negative = left
+const BG_DESKTOP_POS_Y = 370;            // Vertical offset in px: positive = down, negative = up
+const BG_DESKTOP_ZOOM = 1;             // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
+
+// Mobile: backgroundPosition X/Y offsets and zoom
+const BG_MOBILE_POS_X = 10;             // Horizontal offset in px
+const BG_MOBILE_POS_Y = 0;             // Vertical offset in px
+const BG_MOBILE_ZOOM = 1.1;              // Zoom scale
+
+// ── Bunga (flower) decorative image – positioned behind cards
+// Desktop Bunga
+const BUNGA_POS_X = -400;                 // Horizontal offset in px: positive = right, negative = left
+const BUNGA_POS_Y = 300;                 // Vertical offset in px: positive = down, negative = up
+const BUNGA_ZOOM = 0.4;                  // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
+const BUNGA_OPACITY = 1;                // Opacity: 0 = invisible, 1 = fully visible
+
+// Mobile Bunga
+const BUNGA_MOBILE_POS_X = -150;            // Horizontal offset in px: positive = right, negative = left
+const BUNGA_MOBILE_POS_Y = 350;            // Vertical offset in px: positive = down, negative = up
+const BUNGA_MOBILE_ZOOM = 0.45;           // Zoom scale: 1 = 100%, 1.2 = 120%, etc.
+const BUNGA_MOBILE_OPACITY = 1;          // Opacity: 0 = invisible, 1 = fully visible
+
+// ── Header spacing to cards – adjust separately for desktop & mobile
+const HEADER_TO_CARDS_GAP_DESKTOP = 30;  // Gap in px between "Treatment" title and cards (desktop)
+const HEADER_TO_CARDS_GAP_MOBILE = 48;   // Gap in px between "Treatment" title and cards (mobile)
+
+// ── Header internal spacing – gap between "Our Signature" and "Treatment" title
+const SIGNATURE_TO_TITLE_GAP = -10;        // Gap in px between "Our Signature" flourish and "Treatment" heading
 
 export default function SignatureTreatment() {
   const [active, setActive] = useState(0);
 
   return (
-    <section style={{ background: `url('/images/bgcoffee1.webp') center/cover no-repeat`, padding: "72px 40px" }}>
+    <section className="sig-treatment-section" style={{ backgroundImage: `url('/images/bgcoffee1.webp')`, backgroundPosition: `calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px)`, backgroundSize: `${BG_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", padding: "60px 40px", position: "relative", margin: 0 }}>
       <style>{`
+        @keyframes pulseRing {
+          0%   { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
+          70%  { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
+          100% { transform: translate(calc(-50% ), calc(-50% - 2px)) scale(1);   opacity: 0;   }
+        }
+        .hint-pulse {
+          position: absolute;
+          width: 32px; height: 32px;
+          border-radius: 50%;
+          top: 50%; left: 50%;
+          transform: translate(calc(-50% - 2px), calc(-50% - 2px));
+          animation: pulseRing 2.2s ease-out infinite;
+          pointer-events: none;
+        }
         @media (max-width: 499px) {
           .treat-desktop { display: none !important; }
           .treat-mobile  { display: flex !important; }
+          .sig-treatment-section {
+            background-position: calc(50% + ${BG_MOBILE_POS_X}px) calc(50% + ${BG_MOBILE_POS_Y}px) !important;
+            background-size: ${BG_MOBILE_ZOOM * 100}% !important;
+          }
+          .treatment-header { margin-bottom: ${HEADER_TO_CARDS_GAP_MOBILE}px !important; }
+          .bunga-desktop { display: none !important; }
+          .bunga-mobile  { display: block !important; }
         }
         @media (min-width: 500px) {
           .treat-desktop { display: flex !important; }
           .treat-mobile  { display: none !important; }
+          .sig-treatment-section {
+            background-position: calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px) !important;
+            background-size: ${BG_DESKTOP_ZOOM * 100}% !important;
+          }
+          .treatment-header { margin-bottom: ${HEADER_TO_CARDS_GAP_DESKTOP}px !important; }
+          .bunga-desktop { display: block !important; }
+          .bunga-mobile  { display: none !important; }
         }
       `}</style>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        
+        {/* ── Bunga (flower) layer – Desktop */}
+        <div className="bunga-desktop" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: 0 }}>
+          <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_POS_X}px) calc(50% + ${BUNGA_POS_Y}px)`, backgroundSize: `${BUNGA_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_OPACITY }} />
+        </div>
+
+        {/* ── Bunga (flower) layer – Mobile */}
+        <div className="bunga-mobile" style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, zIndex: 0, pointerEvents: "none", borderRadius: 0 }}>
+          <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/bunga.webp')`, backgroundPosition: `calc(50% + ${BUNGA_MOBILE_POS_X}px) calc(50% + ${BUNGA_MOBILE_POS_Y}px)`, backgroundSize: `${BUNGA_MOBILE_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", opacity: BUNGA_MOBILE_OPACITY }} />
+        </div>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
 
         {/* Header — matches client's existing flourish style */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 4 }}>
+        <div className="treatment-header" style={{ textAlign: "center", marginBottom: HEADER_TO_CARDS_GAP_DESKTOP }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: SIGNATURE_TO_TITLE_GAP }}>
             <div style={{ height: 1, flex: 1, maxWidth: 120, background: "linear-gradient(to right, transparent, #8B6340)", position: "relative" }}>
               <span style={{ position: "absolute", top: "50%", right: -4, transform: "translateY(-50%)", color: "#8B6340", fontSize: 13 }}>❧</span>
             </div>
@@ -50,6 +144,11 @@ export default function SignatureTreatment() {
         <div className="treat-desktop" style={{ display: "flex", gap: 14, height: 460 }}>
           {treatments.slice(0, 2).map((t, i) => {
             const isActive = active === i;
+            const posX = i === 0 ? CARD1_POS_X : CARD2_POS_X;
+            const posY = i === 0 ? CARD1_POS_Y : CARD2_POS_Y;
+            const imgZoom = i === 0 ? (isActive ? CARD1_ZOOM_EXPANDED : CARD1_ZOOM_SHRUNK) : (isActive ? CARD2_ZOOM_EXPANDED : CARD2_ZOOM_SHRUNK);
+            const blur = isActive ? CARD_BLUR_EXPANDED : CARD_BLUR_SHRUNK;
+            
             return (
               <div
                 key={t.id}
@@ -62,17 +161,27 @@ export default function SignatureTreatment() {
                   position: "relative",
                   cursor: isActive ? "default" : "pointer",
                   border: "0.5px solid rgba(139,99,64,0.2)",
-                  // ↓ Replace with: background: `url('${t.imagePath}') center/cover no-repeat`
-                  background: cardGradients[i],
                 }}
               >
-                <div style={{ position: "absolute", inset: 0, background: isActive ? "linear-gradient(to top, rgba(20,8,2,0.95) 0%, rgba(20,8,2,0.45) 55%, rgba(20,8,2,0.08) 100%)" : "linear-gradient(to top, rgba(20,8,2,0.88) 0%, rgba(20,8,2,0.2) 100%)", transition: "background 0.4s" }} />
+                {/* Blurred background image layer */}
+                <div style={{ position: "absolute", inset: 0, backgroundImage: `url('${cardImages[i]}')`, backgroundPosition: `calc(50% + ${posX}px) calc(50% + ${posY}px)`, backgroundSize: `${imgZoom * 100}%`, backgroundRepeat: "no-repeat", filter: `blur(${blur}px)`, zIndex: 0 }} />
+                
+                <div style={{ position: "absolute", inset: 0, background: isActive ? "linear-gradient(to top, rgba(20,8,2,0.95) 0%, rgba(20,8,2,0.45) 55%, rgba(20,8,2,0.08) 100%)" : "linear-gradient(to top, rgba(20,8,2,0.88) 0%, rgba(20,8,2,0.2) 100%)", transition: "background 0.4s", zIndex: 1 }} />
 
-                {/* Collapsed hint */}
+                {/* Collapsed hint with pulse animation */}
                 {!isActive && (
-                  <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center", pointerEvents: "none", zIndex: 3 }}>
-                    <div style={{ width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 8px", color: "rgba(255,255,255,0.45)", fontSize: 14 }}>+</div>
-                    <p style={{ fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>Expand</p>
+                  <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", textAlign: "center", pointerEvents: "none", zIndex: 3 }}>
+                    <div style={{ position: "relative", width: 32, height: 32, margin: "0 auto 8px" }}>
+                      <Image
+                        src="/icons/taptoexpandicon.webp"
+                        alt="Expand"
+                        width={28}
+                        height={28}
+                        style={{ objectFit: "contain", opacity: 0.8 }}
+                      />
+                      <div className="hint-pulse" style={{ border: `1.5px solid rgba(255,255,255,0.5)` }} />
+                    </div>
+                    <p style={{ fontSize: 10, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.45)" }}>Expand</p>
                   </div>
                 )}
 
@@ -101,20 +210,38 @@ export default function SignatureTreatment() {
 
         {/* Mobile: vertical stack */}
         <div className="treat-mobile" style={{ display: "none", flexDirection: "column", gap: 16 }}>
-          {treatments.slice(0, 2).map((t, i) => (
-            <div key={t.id} style={{ borderRadius: 20, overflow: "hidden", position: "relative", minHeight: 260, background: cardGradients[i], border: "0.5px solid rgba(139,99,64,0.2)" }}>
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)" }} />
-              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>
-                <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 8, width: "fit-content" }}>{t.tag}</div>
-                <h3 style={{ color: "#FFF5E4", fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{t.title}</h3>
-                <p style={{ color: "rgba(250,250,250,0.4)", fontSize: 11, marginBottom: 10 }}>{t.hours}</p>
-                <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 13, lineHeight: 1.75, marginBottom: 16 }}>{t.desc}</p>
-                <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>{t.cta}</button>
+          {treatments.slice(0, 2).map((t, i) => {
+            const posX = i === 0 ? CARD1_MOBILE_POS_X : CARD2_POS_X;
+            const posY = i === 0 ? CARD1_MOBILE_POS_Y : CARD2_POS_Y;
+            const imgZoom = i === 0 ? CARD1_MOBILE_ZOOM : CARD2_ZOOM_EXPANDED;
+            
+            return (
+              <div 
+                key={t.id} 
+                style={{ 
+                  borderRadius: 20, 
+                  overflow: "hidden", 
+                  position: "relative", 
+                  minHeight: 260, 
+                  border: "0.5px solid rgba(139,99,64,0.2)" 
+                }}>
+                {/* Blurred background image layer */}
+                <div style={{ position: "absolute", inset: 0, backgroundImage: `url('${cardImages[i]}')`, backgroundPosition: `calc(50% + ${posX}px) calc(50% + ${posY}px)`, backgroundSize: `${imgZoom * 100}%`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
+                
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(20,8,2,0.92) 0%, rgba(20,8,2,0.15) 70%, transparent 100%)", zIndex: 1 }} />
+                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "24px 20px", zIndex: 2 }}>
+                  <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.1)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.7)", marginBottom: 8, width: "fit-content" }}>{t.tag}</div>
+                  <h3 style={{ color: "#FFF5E4", fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{t.title}</h3>
+                  <p style={{ color: "rgba(250,250,250,0.4)", fontSize: 11, marginBottom: 10 }}>{t.hours}</p>
+                  <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 13, lineHeight: 1.75, marginBottom: 16 }}>{t.desc}</p>
+                  <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>{t.cta}</button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
+        </div>
       </div>
     </section>
   );

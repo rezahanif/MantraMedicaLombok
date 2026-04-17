@@ -3,6 +3,7 @@ import Image from "next/image";
 import Navbar           from "@/components/shared/Navbar";
 import ServiceHero      from "@/components/sections/services/Servicehero";
 import ServiceGroups    from "@/components/sections/services/Servicegroups";
+import ClinicStatsBar from "@/components/sections/services/Clinicstatbar";
 
 export default function ServicesPage() {
   return (
@@ -20,6 +21,7 @@ export default function ServicesPage() {
         }
       />
       <ServiceGroups />
+      <ClinicStatsBar />
     </main>
   );
 }

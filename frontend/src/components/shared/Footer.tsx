@@ -1,11 +1,36 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { C } from "@/lib/constants";
 import { navLinks } from "@/data/shared";
+import { useState, useEffect, useRef } from "react";
 
 export default function Footer() {
+  const [inView, setInView] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    if (footerRef.current) observer.observe(footerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <footer>
+    <footer ref={footerRef}>
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+        @media (max-width: 860px) {
+          .footer-desktop { display: none !important; }
+          .footer-mobile { display: block !important; }
+        }
+      `}</style>
       {/* Desktop Footer */}
       <div className="footer-desktop">
         {/* Top Section - Light background */}
@@ -20,8 +45,11 @@ export default function Footer() {
               }}
             >
               {/* Logo */}
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <div style={{
+                animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 100ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, marginTop: -30 }}>
                   <Image
                     src="/images/logovertical.webp"
                     alt="Mantra Medica"
@@ -33,7 +61,10 @@ export default function Footer() {
               </div>
 
               {/* Quick Links */}
-              <div>
+              <div style={{
+                animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 150ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
                 <p style={{ color: C.teal, fontWeight: 600, fontSize: 13, marginBottom: 14 }}>Quick Link</p>
                 {navLinks.map((item) => (
                   <p key={item.label} style={{ color: C.teal, fontSize: 13, marginBottom: 8, opacity: 0.7 }}>
@@ -43,7 +74,10 @@ export default function Footer() {
               </div>
 
               {/* Departments */}
-              <div>
+              <div style={{
+                animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 200ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
                 <p style={{ color: C.teal, fontWeight: 600, fontSize: 13, marginBottom: 14 }}>Departments</p>
                 {["General Clinic", "Dental Clinic", "Pharmacy", "Radiology & Imaging", "Emergency", "Laboratory"].map((l) => (
                   <p key={l} style={{ color: C.teal, fontSize: 13, marginBottom: 8, opacity: 0.7 }}>
@@ -53,7 +87,10 @@ export default function Footer() {
               </div>
 
               {/* Contact */}
-              <div>
+              <div style={{
+                animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 250ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
                 <p style={{ color: C.teal, fontWeight: 600, fontSize: 13, marginBottom: 14 }}>
                   Contact & Newsletter
                 </p>
@@ -108,7 +145,10 @@ export default function Footer() {
         <div style={{ background: C.light, padding: "32px 16px 24px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
             {/* Logo */}
-            <div>
+            <div style={{
+              animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 100ms both" : "none",
+              opacity: inView ? undefined : 0,
+            }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <Image
                   src="/images/logonavbar.webp"
@@ -121,7 +161,10 @@ export default function Footer() {
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div style={{
+              animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 150ms both" : "none",
+              opacity: inView ? undefined : 0,
+            }}>
               <p style={{ color: C.teal, fontWeight: 600, fontSize: 12, marginBottom: 10 }}>Quick Links</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 {navLinks.map((item) => (
@@ -133,7 +176,10 @@ export default function Footer() {
             </div>
 
             {/* Contact */}
-            <div>
+            <div style={{
+              animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 200ms both" : "none",
+              opacity: inView ? undefined : 0,
+            }}>
               <p style={{ color: C.teal, fontWeight: 600, fontSize: 12, marginBottom: 10 }}>Contact</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 {[
@@ -169,13 +215,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 860px) {
-          .footer-desktop { display: none !important; }
-          .footer-mobile { display: block !important; }
-        }
-      `}</style>
     </footer>
   );
 }

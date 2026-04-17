@@ -8,6 +8,7 @@ export interface ServiceCard {
   desc: string;
   cta: string;
   imagePath: string; // → /public/images/
+  iconPath: string;  // → /public/images/ (icon for card)
 }
 
 export interface ServiceGroup {
@@ -35,7 +36,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "Comprehensive pre-climb safety orientation covering altitude risks, emergency protocols, and physical preparation requirements for Mount Rinjani.",
         cta: "Book Now",
-        imagePath: "/images/safety-briefing.jpg",
+        imagePath: "/images/pertama1.webp",
+        iconPath: "/icons/safety.webp",
       },
       {
         id: 12,
@@ -44,7 +46,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "Official health certification required by Rinjani National Park authorities. Includes physical exam, fitness assessment, and documentation.",
         cta: "Book Now",
-        imagePath: "/images/health-cert.jpg",
+        imagePath: "/images/pertama2.webp",
+        iconPath: "/icons/certified.webp",
       },
       {
         id: 13,
@@ -53,7 +56,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "Expert guidance on preventing and managing high-altitude conditions, including Altitude Sickness (AMS), Hypothermia, and physical exhaustion.",
         cta: "Book Now",
-        imagePath: "/images/mountain-consult.jpg",
+        imagePath: "/images/pertama3.webp",
+        iconPath: "/icons/pill.webp",
       },
     ],
   },
@@ -71,7 +75,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "Professional treatment for Bali Belly (digestive distress), nausea, vomiting, fever, flu, and stomach pain.",
         cta: "Book Now",
-        imagePath: "/images/traveler-ailments.jpg",
+        imagePath: "/images/kedua1.webp",
+        iconPath: "/icons/sick.webp",
       },
       {
         id: 22,
@@ -80,7 +85,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "IV drip therapy and recovery treatments to restore hydration, vitamins, and energy after a long night or strenuous activity.",
         cta: "Book Now",
-        imagePath: "/images/hangover-therapy.jpg",
+        imagePath: "/images/kedua2.webp",
+        iconPath: "/icons/vitdrop.webp",
       },
       {
         id: 23,
@@ -89,7 +95,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "On-site diagnostic lab for rapid blood tests, urinalysis, and pathogen screening — results within hours, not days.",
         cta: "Book Now",
-        imagePath: "/images/laboratory.jpg",
+        imagePath: "/images/kedua3.webp",
+        iconPath: "/icons/lab.webp",
       },
     ],
   },
@@ -107,7 +114,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "24 Hours",
         desc: "Rapid emergency response and medical evacuation for accidents on Rinjani trails, waterfalls, and surrounding areas.",
         cta: "Call Now",
-        imagePath: "/images/mountain-rescue.jpg",
+        imagePath: "/images/ketiga2.webp",
+        iconPath: "/icons/whitesirene.webp",
       },
       {
         id: 32,
@@ -116,7 +124,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "24 Hours",
         desc: "Seamless coordination with hospitals in Mataram and Bali for cases requiring specialist care or surgical intervention.",
         cta: "Learn More",
-        imagePath: "/images/referral.jpg",
+        imagePath: "/images/ketiga3.webp",
+        iconPath: "/icons/relation.webp",
       },
       {
         id: 33,
@@ -125,7 +134,8 @@ export const serviceGroups: ServiceGroup[] = [
         hours: "08.00 - 17.00",
         desc: "We aim to make your recovery stress-free. Mantra Medica accepts international travel insurance from all countries, subject to the terms and conditions of your specific policy.",
         cta: "Book Now",
-        imagePath: "/images/insurance.jpg",
+        imagePath: "/images/ketiga1.webp",
+        iconPath: "/icons/worldshadow.webp",
       },
     ],
   },

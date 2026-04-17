@@ -33,6 +33,8 @@ export const serviceCards = [
     cta: "Call Now",
     ctaColor: "#E05A4E",
     bg: "linear-gradient(150deg, #1C3A2E 0%, #2A5240 100%)",
+    icon: "/icons/medical.svg",
+    ctaIcon: "/icons/phone.svg",
   },
   {
     tag: "Layanan Spa dan Refleksi",
@@ -42,6 +44,8 @@ export const serviceCards = [
     cta: "Book Now",
     ctaColor: "#FAFAFA",
     bg: "linear-gradient(150deg, #3D2208 0%, #6B4425 100%)",
+    icon: "/icons/spa.svg",
+    ctaIcon: "/icons/calendar.svg",
   },
 ];
 

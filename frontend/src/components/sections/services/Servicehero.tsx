@@ -67,8 +67,25 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
         }
       `}</style>
 
-      {/* Hero image — z:3, sits above stats card */}
+      {/* Hero image — Desktop — z:3, sits above stats card */}
       <Image
+        className="service-hero-desktop"
+        src="/images/MedPage.webp"
+        alt=""
+        fill
+        priority
+        style={{
+          objectFit: "cover",
+          objectPosition: "center -85px",
+          zIndex: 3,
+          animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+          display: "none",
+        }}
+      />
+
+      {/* Hero image — Mobile — z:3, sits above stats card */}
+      <Image
+        className="service-hero-mobile"
         src="/images/MedPage.webp"
         alt=""
         fill
@@ -78,6 +95,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           objectPosition: "center -37px",
           zIndex: 3,
           animation: mounted ? "scaleOverlay 1.2s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
+          display: "none",
         }}
       />
 
@@ -410,14 +428,14 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           style={{
             position: "absolute",
             bottom: "40%",
-            left: 120,
+            left: 220,
             color: "rgba(250,250,250,0.85)",
             fontSize: 10,
             padding: "6px 12px",
             borderRadius: 100,
-            background: `rgba(250,250,250,0.15)`,
+            background: `${C.tealLight}20`,
             backdropFilter: "blur(10px)",
-            border: `1px solid rgba(250,250,250,0.3)`,
+            border: `1px solid ${C.tealLight}40`,
             display: "inline-block",
             animation: mounted ? "fadeIn 0.6s ease both" : "none",
             animationDelay: "600ms",

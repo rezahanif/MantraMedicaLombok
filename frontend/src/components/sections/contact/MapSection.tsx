@@ -1,43 +1,116 @@
 // src/components/contact/MapSection.tsx
-// Map on left, service cards on right
-// ↓ Replace the map placeholder div with a real Google Maps embed:
-//   <iframe src="https://www.google.com/maps/embed?pb=..." width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" />
+// Layout: [Map ~50%] [Card 1] [Card 2]  — all one row, same height
+// Padding mirrors hero section: outer 0 40px, inner maxWidth 1400 centered
 
 import { C } from "@/lib/constants";
 import { serviceCards } from "@/data/contactData";
 
 export default function MapSection() {
   return (
-    <section style={{ background: C.light, padding: "0 32px 48px" }}>
+    <section
+      style={{
+        background: C.light,
+        // Match hero outer padding
+        padding: "0 40px 56px",
+      }}
+    >
       <style>{`
-        @media (max-width: 499px) {
-          .map-desktop { display: none !important; }
-          .map-mobile  { display: flex !important; }
+        .ms-row {
+          display: flex;
+          gap: 20px;
+          align-items: stretch;
+          max-width: 1400px;
+          margin: 0 auto;
+          /* Left padding nudges content to match hero h1 position */
+          padding: 0 40px;
         }
-        @media (min-width: 500px) {
-          .map-desktop { display: flex !important; }
-          .map-mobile  { display: none !important; }
+
+        /* Location pill floats above the map */
+        .ms-location-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          background: #fff;
+          border: 1px solid ${C.border};
+          border-radius: 100px;
+          padding: 7px 16px;
+          font-size: 13px;
+          font-weight: 500;
+          color: ${C.dark};
+          margin-bottom: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+          width: fit-content;
+        }
+
+        /* Map column — wider */
+        .ms-map-col {
+          flex: 2;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .ms-map-frame {
+          flex: 1;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid ${C.border};
+          min-height: 260px;
+          background: #E8EFF5;
+        }
+
+        /* Each service card — equal flex */
+        .ms-card {
+          flex: 1;
+          min-width: 0;
+          border-radius: 20px;
+          overflow: hidden;
+          position: relative;
+          min-height: 260px;
+          border: 1px solid ${C.border};
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* ── Mobile: stack everything ── */
+        @media (max-width: 700px) {
+          .ms-row {
+            flex-direction: column;
+            padding: 0;
+            gap: 16px;
+          }
+          .ms-map-frame { min-height: 200px; }
+          .ms-card { min-height: 200px; }
+        }
+
+        /* ── Tablet: map full width, cards side by side below ── */
+        @media (min-width: 701px) and (max-width: 960px) {
+          .ms-row { flex-wrap: wrap; }
+          .ms-map-col { flex: 1 1 100%; }
+          .ms-card { flex: 1 1 calc(50% - 10px); min-height: 220px; }
         }
       `}</style>
 
-      {/* Desktop: Side-by-side (≥500px) */}
-      <div className="map-desktop" style={{ maxWidth: 960, margin: "0 auto", display: "flex", gap: 24, alignItems: "flex-start" }}>
+      <div className="ms-row">
 
-        {/* Map */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        {/* ── Map column ── */}
+        <div className="ms-map-col">
           {/* Location pill */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.light, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 14px", fontSize: 12, color: C.dark, fontWeight: 500, marginBottom: 12, marginTop: -18, position: "relative", zIndex: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
-            📍 Rinjani, Lombok Utara
+          <div className="ms-location-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Rinjani, Lombok Utara
           </div>
 
-          {/* Map embed placeholder — replace with real iframe */}
-          <div style={{ borderRadius: 16, overflow: "hidden", height: 240, background: "#E8EFF5", display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${C.border}`, fontSize: 13, color: "#888" }}>
-            {/* ↓ Replace this div with your Google Maps iframe */}
+          {/* Map embed */}
+          <div className="ms-map-frame">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.5!2d116.47!3d-8.32!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOCozMCcwMC4wIlMgMTE2uzI4JzEyLjAiRQ!5e0!3m2!1sen!2sid!4v1234567890"
               width="100%"
               height="100%"
-              style={{ border: 0 }}
+              style={{ border: 0, display: "block" }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -45,77 +118,147 @@ export default function MapSection() {
           </div>
         </div>
 
-        {/* Service cards */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 14, paddingTop: 8 }}>
-          {serviceCards.map((svc: typeof serviceCards[number]) => (
+        {/* ── Service cards — inline, one per card ── */}
+        {serviceCards.map((svc: typeof serviceCards[number]) => (
+          <div
+            key={svc.title}
+            className="ms-card"
+            style={{ background: svc.bg }}
+          >
+            {/* Photo gradient overlay */}
             <div
-              key={svc.title}
-              style={{ borderRadius: 18, overflow: "hidden", position: "relative", minHeight: 160, background: svc.bg, border: `1px solid ${C.border}` }}
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.15) 40%, rgba(10,10,10,0.80) 100%)",
+                zIndex: 1,
+              }}
+            />
+
+            {/* Content */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                padding: "20px 20px 22px",
+              }}
             >
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.3) 60%, transparent 100%)" }} />
-              <div style={{ position: "absolute", inset: 0, padding: "18px 20px", display: "flex", flexDirection: "column", justifyContent: "flex-end", zIndex: 2 }}>
-                <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.12)", borderRadius: 100, padding: "3px 10px", fontSize: 10, letterSpacing: "1px", textTransform: "uppercase", color: "rgba(250,250,250,0.75)", marginBottom: 6, width: "fit-content" }}>
+              {/* Top: icon + title */}
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 10,
+                  }}
+                >
+                  {/* Service icon */}
+                  {svc.icon && (
+                    <img
+                      src={svc.icon}
+                      alt=""
+                      style={{ width: 24, height: 24, objectFit: "contain", opacity: 0.9 }}
+                    />
+                  )}
+                  <h4
+                    style={{
+                      color: "#FAFAFA",
+                      fontSize: 18,
+                      fontWeight: 800,
+                      margin: 0,
+                      lineHeight: 1.2,
+                      textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    {svc.title}
+                  </h4>
+                </div>
+
+                {/* Tag pill */}
+                <div
+                  style={{
+                    display: "inline-flex",
+                    background: "rgba(101,163,150,0.75)",
+                    backdropFilter: "blur(6px)",
+                    borderRadius: 100,
+                    padding: "4px 12px",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: "#fff",
+                    letterSpacing: "0.02em",
+                  }}
+                >
                   {svc.tag}
                 </div>
-                <h4 style={{ color: "#FAFAFA", fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{svc.title}</h4>
-                <p style={{ color: "#87B2A8", fontSize: 13, fontWeight: 500, marginBottom: 6 }}>⏰ {svc.hours}</p>
-                <p style={{ color: "rgba(250,250,250,0.55)", fontSize: 11.5, lineHeight: 1.6, marginBottom: 12 }}>{svc.note}</p>
-                <button
-                  style={{ background: svc.ctaColor, color: svc.ctaColor === "#FAFAFA" ? "#212121" : "#FAFAFA", border: "none", borderRadius: 100, padding: "8px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}
+              </div>
+
+              {/* Middle: hours + note */}
+              <div>
+                <p
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "#FAFAFA",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    margin: "0 0 6px",
+                    lineHeight: 1.3,
+                  }}
                 >
-                  📞 {svc.cta}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.8 }}>
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {svc.hours}
+                </p>
+                <p
+                  style={{
+                    color: "rgba(250,250,250,0.65)",
+                    fontSize: 12,
+                    lineHeight: 1.55,
+                    margin: 0,
+                  }}
+                >
+                  {svc.note}
+                </p>
+              </div>
+
+              {/* Bottom: CTA */}
+              <div>
+                <button
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: svc.ctaColor,
+                    color: svc.ctaColor === "#FAFAFA" || svc.ctaColor === "#fff" ? "#212121" : "#FAFAFA",
+                    border: "none",
+                    borderRadius: 100,
+                    padding: "10px 22px",
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    boxShadow: `0 4px 14px rgba(0,0,0,0.25)`,
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  {svc.ctaIcon && (
+                    <img src={svc.ctaIcon} alt="" style={{ width: 18, height: 18, objectFit: "contain" }} />
+                  )}
+                  {svc.cta}
                 </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
-      </div>
-
-      {/* Mobile: Stacked (<500px) */}
-      <div className="map-mobile" style={{ maxWidth: 960, margin: "0 auto", display: "flex", flexDirection: "column", gap: 20 }}>
-        {/* Location pill */}
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.light, border: `1px solid ${C.border}`, borderRadius: 100, padding: "6px 12px", fontSize: 11, color: C.dark, fontWeight: 500 }}>
-          📍 Rinjani, Lombok Utara
-        </div>
-
-        {/* Map */}
-        <div style={{ borderRadius: 16, overflow: "hidden", height: 200, background: "#E8EFF5", display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${C.border}`, fontSize: 13, color: "#888" }}>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.5!2d116.47!3d-8.32!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOCozMCcwMC4wIlMgMTE2uzI4JzEyLjAiRQ!5e0!3m2!1sen!2sid!4v1234567890"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
-
-        {/* Service cards */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {serviceCards.map((svc: typeof serviceCards[number]) => (
-            <div
-              key={svc.title}
-              style={{ borderRadius: 16, overflow: "hidden", position: "relative", minHeight: 140, background: svc.bg, border: `1px solid ${C.border}` }}
-            >
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.3) 60%, transparent 100%)" }} />
-              <div style={{ position: "absolute", inset: 0, padding: "16px 18px", display: "flex", flexDirection: "column", justifyContent: "flex-end", zIndex: 2 }}>
-                <div style={{ display: "inline-flex", background: "rgba(255,255,255,0.12)", borderRadius: 100, padding: "2px 8px", fontSize: 9, letterSpacing: "0.5px", textTransform: "uppercase", color: "rgba(250,250,250,0.75)", marginBottom: 4, width: "fit-content" }}>
-                  {svc.tag}
-                </div>
-                <h4 style={{ color: "#FAFAFA", fontSize: 15, fontWeight: 700, marginBottom: 3 }}>{svc.title}</h4>
-                <p style={{ color: "#87B2A8", fontSize: 12, fontWeight: 500, marginBottom: 4 }}>⏰ {svc.hours}</p>
-                <p style={{ color: "rgba(250,250,250,0.55)", fontSize: 11, lineHeight: 1.5, marginBottom: 10 }}>{svc.note}</p>
-                <button
-                  style={{ background: svc.ctaColor, color: svc.ctaColor === "#FAFAFA" ? "#212121" : "#FAFAFA", border: "none", borderRadius: 100, padding: "7px 16px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}
-                >
-                  📞 {svc.cta}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );

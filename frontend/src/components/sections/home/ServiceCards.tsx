@@ -22,13 +22,84 @@ const getCardImage = (serviceId: number) => {
   return "/images/medcuphome.webp";
 };
 
+const getBulletDot = (serviceId: number) => {
+  if (serviceId === 1) return "/icons/greenmountaindot.webp";
+  if (serviceId === 2) return "/icons/brownbamboodot.webp";
+  if (serviceId === 3) return "/icons/redsirenedot.webp";
+  return "/icons/greenmountaindot.webp";
+};
+
+const getBulletSize = (serviceId: number) => {
+  if (serviceId === 1) return { width: 24, height: 24 };
+  if (serviceId === 2) return { width: 17, height: 17 };
+  if (serviceId === 3) return { width: 17, height: 17 };
+  return { width: 24, height: 24 };
+};
+
+const getServiceIconSizeCollapsed = (serviceId: number) => {
+  if (serviceId === 1) return { width: 21, height: 21 };
+  if (serviceId === 2) return { width: 22, height: 22 };
+  if (serviceId === 3) return { width: 36, height: 36 };
+  return { width: 21, height: 21 };
+};
+
+const getServiceIconSizeExpanded = (serviceId: number) => {
+  if (serviceId === 1) return { width: 14, height: 14 };
+  if (serviceId === 2) return { width: 15, height: 15 };
+  if (serviceId === 3) return { width: 17, height: 17 };
+  return { width: 14, height: 14 };
+};
+const getCollapseCardInfo = (serviceId: number) => {
+  if (serviceId === 1)
+    return {
+      hours: "08.00 - 17.00",
+      icon: "/icons/gunungwhite.webp",
+      label: "Certified for Rinjani Trek",
+    };
+  if (serviceId === 2)
+    return {
+      hours: "08.00 - 17.00",
+      icon: "/icons/housewhite.webp",
+      label: "Available Home Service",
+    };
+  if (serviceId === 3)
+    return {
+      hours: "",
+      icon: "/icons/timefullicon.webp",
+      label: "Available 24 Hours",
+    };
+  return { hours: "", icon: "", label: "" };
+};
+
+const getCollapseCardInfoIconSize = (serviceId: number) => {
+  if (serviceId === 1) return { width: 18, height: 18 };
+  if (serviceId === 2) return { width: 15, height: 15 };
+  if (serviceId === 3) return { width: 14, height: 14 };
+  return { width: 16, height: 16 };
+};
+
+const getCollapseCardInfoTop = (serviceId: number) => {
+  if (serviceId === 1) return 50;
+  if (serviceId === 2) return 50;
+  if (serviceId === 3) return 60;
+  return 50;
+};
+const getBulletGap = (serviceId: number) => {
+  if (serviceId === 1) return 12;
+  if (serviceId === 2) return 12;
+  if (serviceId === 3) return 6;
+  return 12;
+};
 // Render "Bold Title — description" bullets
-function BulletItem({ text, color }: { text: string; color: string }) {
+function BulletItem({ text, dotImage, serviceId, bulletGap }: { text: string; dotImage: string; serviceId: number; bulletGap: number }) {
+  const size = getBulletSize(serviceId);
   const sep = text.indexOf(" — ");
   if (sep === -1) {
     return (
-      <li style={{ display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start" }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0, marginTop: 6 }} />
+      <li style={{ display: "flex", gap: 10, marginBottom: bulletGap, alignItems: "flex-start" }}>
+        <div style={{ flexShrink: 0, marginTop: 6, marginBottom: 3, position: "relative", width: size.width, height: size.height }}>
+          <Image src={dotImage} alt="bullet dot" width={size.width} height={size.height} style={{ objectFit: "contain" }} />
+        </div>
         <span style={{ color: "#111", fontSize: 13, lineHeight: 1.65 }}>{text}</span>
       </li>
     );
@@ -36,8 +107,10 @@ function BulletItem({ text, color }: { text: string; color: string }) {
   const title = text.slice(0, sep);
   const body  = text.slice(sep + 3);
   return (
-    <li style={{ display: "flex", gap: 10, marginBottom: 12, alignItems: "flex-start" }}>
-      <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0, marginTop: 6 }} />
+    <li style={{ display: "flex", gap: 10, marginBottom: bulletGap, alignItems: "flex-start" }}>
+      <div style={{ flexShrink: 0, marginTop: -2, marginBottom: 3, position: "relative", width: size.width, height: size.height }}>
+        <Image src={dotImage} alt="bullet dot" width={size.width} height={size.height} style={{ objectFit: "contain" }} />
+      </div>
       <span style={{ fontSize: 13, lineHeight: 1.65 }}>
         <strong style={{ color: "#111", fontWeight: 600 }}>{title}</strong>
         <span style={{ color: "#444" }}> — {body}</span>
@@ -139,7 +212,7 @@ export default function ServiceCards() {
                     ? `rgba(${style.rgb}, 0.40)`
                     : undefined,
                   backgroundImage: isActive ? undefined : `url('${getCardImage(svc.id)}')`,
-                  backgroundSize: isActive ? undefined : "cover",
+                  backgroundSize: isActive ? undefined : "120%",
                   backgroundPosition: isActive ? undefined : "center",
                   // Glassy inset shadow when expanded
                   boxShadow: isActive
@@ -165,7 +238,7 @@ export default function ServiceCards() {
                 {/* Collapsed: tag top-left + CTA bottom-center */}
                 {!isActive && (
                   <>
-                    <div style={{ position: "absolute", top: 12, left: 12, zIndex: 4 }}>
+                    <div style={{ position: "absolute", top: 12, left: 12, zIndex: 5 }}>
                       <div
                         style={{
                           display: "inline-flex", alignItems: "center", gap: 6,
@@ -174,12 +247,12 @@ export default function ServiceCards() {
                           color: "rgba(250,250,250,0.9)",
                         }}
                       >
-                        <Image src={style.icon} alt={svc.tag} width={21} height={21} style={{ objectFit: "contain" }} />
+                        <Image src={style.icon} alt={svc.tag} width={getServiceIconSizeCollapsed(svc.id).width} height={getServiceIconSizeCollapsed(svc.id).height} style={{ objectFit: "contain" }} />
                         {svc.tag}
                       </div>
                     </div>
 
-                    <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 4 }}>
+                    <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 5 }}>
                       <button
                         style={{
                           background: "rgba(255,255,255,0.06)",
@@ -195,6 +268,65 @@ export default function ServiceCards() {
                         {svc.cta}
                       </button>
                     </div>
+
+                    {/* Card info: hours + icon + label */}
+                    {(() => {
+                      const info = getCollapseCardInfo(svc.id);
+                      const iconSize = getCollapseCardInfoIconSize(svc.id);
+                      const topPosition = getCollapseCardInfoTop(svc.id);
+                      return (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: topPosition,
+                            left: 24,
+                            textAlign: "left",
+                            pointerEvents: "none",
+                            zIndex: 3,
+                          }}
+                        >
+                          {info.hours && (
+                            <p
+                              style={{
+                                margin: "0 0 8px",
+                                fontSize: 12,
+                                fontWeight: 300,
+                                color: "rgba(250,250,250,0.65)",
+                                letterSpacing: "0.3px",
+                              }}
+                            >
+                              {info.hours}
+                            </p>
+                          )}
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 4,
+                            }}
+                          >
+                            <Image
+                              src={info.icon}
+                              alt={info.label}
+                              width={iconSize.width}
+                              height={iconSize.height}
+                              style={{ objectFit: "contain" }}
+                            />
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: 12,
+                                fontWeight: 350,
+                                color: "#FAFAFA",
+                                letterSpacing: "0.2px",
+                              }}
+                            >
+                              {info.label}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </>
                 )}
 
@@ -276,7 +408,7 @@ export default function ServiceCards() {
                           animationDelay: "120ms",
                         }}
                       >
-                        <Image src={style.icon} alt={svc.tag} width={14} height={14} style={{ objectFit: "contain" }} />
+                        <Image src={style.icon} alt={svc.tag} width={getServiceIconSizeExpanded(svc.id).width} height={getServiceIconSizeExpanded(svc.id).height} style={{ objectFit: "contain" }} />
                         {svc.tag}
                       </div>
 
@@ -315,29 +447,16 @@ export default function ServiceCards() {
                         {svc.desc}
                       </p>
 
-                      {/* Divider */}
-                      <div
-                        style={{
-                          width: "100%", height: 1.5,
-                          background: `${style.color}60`,
-                          margin: "0px 0",
-                          marginBottom: 0,
-                          marginTop: -4,
-                          animation: "contentReveal 0.4s ease both",
-                          animationDelay: "210ms",
-                        }}
-                      />
-
                       {/* Bullets */}
                       <ul
                         style={{
-                          listStyle: "none", padding: 0, margin: "0 0 10px", marginTop: 3,
+                          listStyle: "none", padding: 0, margin: "0 0 -5px", marginTop: 3,
                           animation: "contentReveal 0.45s ease both",
                           animationDelay: "330ms",
                         }}
                       >
                         {svc.bullets.map((b, bi) => (
-                          <BulletItem key={bi} text={b} color={style.color} />
+                          <BulletItem key={bi} text={b} dotImage={getBulletDot(svc.id)} serviceId={svc.id} bulletGap={getBulletGap(svc.id)} />
                         ))}
                       </ul>
 
@@ -348,7 +467,7 @@ export default function ServiceCards() {
                           animation: "contentReveal 0.45s ease both",
                           animationDelay: "380ms",
                           marginTop: "auto",
-                          marginBottom: 16,
+                          marginBottom: 20,
                         }}
                       >
                         <button
@@ -404,7 +523,7 @@ export default function ServiceCards() {
                 key={svc.id}
                 style={{
                   borderRadius: 24, overflow: "hidden", position: "relative", minHeight: 294,
-                  background: `url('${getCardImage(svc.id)}') center/110% no-repeat`,
+                  background: i === 0 ? `url('${getCardImage(svc.id)}') center 20%/110% no-repeat` : `url('${getCardImage(svc.id)}') center/110% no-repeat`,
                   animation: inView ? "cardSlideUp 0.7s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                   animationDelay: `${100 + i * 120}ms`,
                   opacity: inView ? undefined : 0,
@@ -428,22 +547,38 @@ export default function ServiceCards() {
                       marginBottom: 10, width: "fit-content",
                     }}
                   >
-                    <Image src={style.icon} alt={svc.tag} width={14} height={14} style={{ objectFit: "contain" }} />
+                    <Image src={style.icon} alt={svc.tag} width={getServiceIconSizeExpanded(svc.id).width} height={getServiceIconSizeExpanded(svc.id).height} style={{ objectFit: "contain" }} />
                     {svc.tag}
                   </div>
                   <h3 style={{ color: C.light, fontSize: 22, fontWeight: 700, lineHeight: 1.2, marginBottom: 6 }}>{svc.title}</h3>
                   <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 12, fontWeight: 500, marginBottom: 8, fontStyle: "italic" }}>{svc.subtitle}</p>
                   <p style={{ color: "rgba(250,250,250,0.6)", fontSize: 13, lineHeight: 1.7, marginBottom: 20 }}>{svc.desc}</p>
-                  <button
-                    style={{
-                      background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)",
-                      color: C.light, border: "1px solid rgba(255,255,255,0.2)",
-                      borderRadius: 9999, padding: "12px 28px",
-                      fontSize: 13, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start",
-                    }}
-                  >
-                    {svc.cta}
-                  </button>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      style={{
+                        background: style.color,
+                        color: C.light, border: "none",
+                        borderRadius: 9999, padding: "12px 28px",
+                        fontSize: 13, fontWeight: 600, cursor: "pointer",
+                      }}
+                    >
+                      {svc.cta}
+                    </button>
+                    {(svc.id === 1 || svc.id === 2) && (
+                      <Link href={svc.id === 1 ? "/services" : "/recovery"} style={{ textDecoration: "none" }}>
+                        <button
+                          style={{
+                            background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)",
+                            color: C.light, border: "1px solid rgba(255,255,255,0.2)",
+                            borderRadius: 9999, padding: "12px 28px",
+                            fontSize: 13, fontWeight: 600, cursor: "pointer",
+                          }}
+                        >
+                          See More Services
+                        </button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             );

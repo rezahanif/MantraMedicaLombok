@@ -2,6 +2,7 @@
 
 // src/components/home/WorldClassAndRecovery.tsx
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/constants";
 
@@ -48,12 +49,35 @@ const CARD_LAYOUT = [
 const MOB_HALF_H    = 260;
 const MOB_CARD_H    = 130;
 const MOB_CARD_GAP  = 10;
-const MOB_CARDS_TOP = MOB_HALF_H - Math.round((MOB_CARD_H * 2 + MOB_CARD_GAP) / 2);
+const MOB_CARD_TOP_OFFSET = 40;
+const MOB_CARDS_TOP = MOB_HALF_H - Math.round((MOB_CARD_H * 2 + MOB_CARD_GAP) / 2) + MOB_CARD_TOP_OFFSET;
+const getMobCardBgImage = (index: number): string => {
+  if (index === 0) return "/images/ataskiri.webp";      // Top left
+  if (index === 1) return "/images/ataskanan.webp";     // Top right
+  if (index === 2) return "/images/bawahkiri.webp";     // Bottom left
+  if (index === 3) return "/images/bawahkanan.webp";    // Bottom right
+  return "/images/ataskiri.webp";
+};
 
+const getDesktopCardBgImage = (serviceId: string): string => {
+  if (serviceId === "pre-trekking") return "/images/ataskiri.webp";
+  if (serviceId === "deep-tissue") return "/images/ataskanan.webp";
+  if (serviceId === "altitude") return "/images/bawahkiri.webp";
+  if (serviceId === "reflexology") return "/images/bawahkanan.webp";
+  return "/images/ataskiri.webp";
+};
+
+const getCardIcon = (serviceId: string): string => {
+  if (serviceId === "pre-trekking") return "/icons/firstaidwhite.webp";
+  if (serviceId === "deep-tissue") return "/icons/firstaidwhite.webp";
+  if (serviceId === "altitude") return "/icons/bamboowhite.webp";
+  if (serviceId === "reflexology") return "/icons/bamboowhite.webp";
+  return "/icons/firstaidwhite.webp";
+};
 /* ─────────────────── Shared card text style (Figma spec) ─────────────────── */
 const CARD_TXT: React.CSSProperties = {
-  color: "#65A396",
-  fontFamily: "Inter, sans-serif",
+  color: C.light,
+  fontFamily: "Lato, sans-serif",
   fontSize: vw(32),
   fontWeight: 500,
   lineHeight: "150%",
@@ -91,7 +115,27 @@ export default function WorldClassAndRecovery() {
         @keyframes cardPop   { from { opacity:0; transform:translateY(28px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
         @keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
         @keyframes quoteReveal { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-
+        @keyframes arrowUnderlineLoop {
+          0% { transform: scaleX(0); transform-origin: left; }
+          20% { transform: scaleX(1); transform-origin: left; }
+          80% { transform: scaleX(1); transform-origin: left; }
+          100% { transform: scaleX(0); transform-origin: right; }
+        }
+        .arrow-interactive {
+          position: relative;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .arrow-interactive::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: rgba(255, 255, 255, 0.4);
+          animation: arrowUnderlineLoop 1.5s ease-in-out infinite;
+        }
         @media (max-width: 499px) {
           .wcr-desktop { display: none !important; }
           .wcr-mobile  { display: block !important; }
@@ -141,19 +185,21 @@ export default function WorldClassAndRecovery() {
               loved ones
             </h2>
 
-            <button style={{
-              width: vw(257.3), height: vw(75), flexShrink: 0,
-              background: C.light, color: C.dark,
-              border: "none", borderRadius: vw(100),
-              fontFamily: "Inter, sans-serif",
-              fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
-              cursor: "pointer", display: "inline-flex",
-              alignItems: "center", justifyContent: "center", gap: vw(8),
-              animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
-              opacity: inView ? undefined : 0,
-            }}>
-              More Services &nbsp; &nbsp; &nbsp; <span style={{ fontSize: vw(30), fontWeight: 900 }}>→</span>
-            </button>
+            <Link href="/services" style={{ textDecoration: "none" }}>
+              <button style={{
+                width: vw(257.3), height: vw(75), flexShrink: 0,
+                background: C.light, color: C.dark,
+                border: "none", borderRadius: vw(100),
+                fontFamily: "Lato, sans-serif",
+                fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
+                cursor: "pointer", display: "inline-flex",
+                alignItems: "center", justifyContent: "center", gap: vw(8),
+                animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
+                More Services &nbsp; &nbsp; &nbsp; <span style={{ fontSize: vw(30), fontWeight: 900, marginTop: vw(-4), display: "inline-flex", alignItems: "center" }}>→</span>
+              </button>
+            </Link>
           </div>
 
           {/* ── Four cards — Figma-exact absolute positions ── */}
@@ -171,7 +217,7 @@ export default function WorldClassAndRecovery() {
                   cursor: "pointer",
                   border: "1px solid rgba(255,255,255,0.14)",
                   boxShadow: `0 ${vw(8)} ${vw(32)} rgba(0,0,0,0.35)`,
-                  background: `linear-gradient(150deg, ${C.cardMid} 0%, ${C.cardDark} 100%)`,
+                  background: `linear-gradient(150deg, rgba(200, 200, 200, 0.3) 0%, rgba(180, 180, 180, 0.25) 100%)`,
                   transition: "transform 0.22s ease",
                   animation: inView ? `cardPop 0.65s cubic-bezier(0.22,0.61,0.36,1) ${200 + i * 100}ms both` : "none",
                   opacity: inView ? undefined : 0,
@@ -183,22 +229,22 @@ export default function WorldClassAndRecovery() {
               >
                 {/* Photo background */}
                 <Image
-                  src={svc.imagePath} alt={svc.title} fill
-                  style={{ objectFit: "cover", opacity: on ? 0.18 : 0.82, transition: "opacity 0.4s ease" }}
+                  src={getDesktopCardBgImage(svc.id)} alt={svc.title} fill
+                  style={{ objectFit: "cover", opacity: on ? 1 : 1, transition: "opacity 0.4s ease", transform: "scale(1.1)" }}
                 />
 
-                {/* Gradient vignette — inactive only */}
+                {/* Gradient vignette with opacity based on state */}
                 <div style={{
                   position: "absolute", inset: 0, pointerEvents: "none",
-                  background: "linear-gradient(to top, rgba(6,6,6,0.72) 0%, rgba(6,6,6,0.06) 55%, transparent 100%)",
-                  opacity: on ? 0 : 1, transition: "opacity 0.35s ease",
+                  background: "linear-gradient(to top, rgba(63, 63, 63, 0.5) 0%, rgba(63, 63, 63, 0.25) 50%, transparent 100%)",
+                  opacity: on ? 0.5 : 0.3, transition: "opacity 0.35s ease",
                 }} />
 
                 {/* Dark overlay — active only */}
                 <div style={{
                   position: "absolute", inset: 0, pointerEvents: "none",
-                  background: "rgba(8,14,10,0.85)",
-                  opacity: on ? 1 : 0, transition: "opacity 0.35s ease",
+                  background: "rgba(255,255,255,0.08)",
+                  opacity: on ? 0.15 : 0, transition: "opacity 0.35s ease",
                 }} />
 
                 {/* Icon: Figma top 14, right 55, size 62×62 */}
@@ -206,10 +252,9 @@ export default function WorldClassAndRecovery() {
                   position: "absolute", top: vw(14), right: vw(55), zIndex: 4,
                   width: vw(62), height: vw(62),
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "rgba(255,255,255,0.15)", borderRadius: vw(12),
-                  backdropFilter: "blur(4px)", fontSize: vw(26),
+                  opacity: on ? 0 : 1, transition: "opacity 0.35s ease",
                 }}>
-                  {svc.icon}
+                  <Image src={getCardIcon(svc.id)} alt={svc.title} width={40} height={40} style={{ objectFit: "contain" }} />
                 </div>
 
                 {/* ── INACTIVE layer: title centered, marginBottom 77 ── */}
@@ -228,16 +273,16 @@ export default function WorldClassAndRecovery() {
                   animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                   animationDelay: `${280 + i * 100}ms`,
                 }}>
-                  <p style={{ ...CARD_TXT }}>{svc.title}</p>
+                  <p style={{ ...CARD_TXT, color: C.light }}>{svc.title}</p>
                 </div>
 
                 {/* ── ACTIVE layer: title left-aligned, marginBottom 243, marginLeft 21 ── */}
                 <div style={{
-                  position: "absolute", inset: 0, zIndex: 6,
+                  position: "absolute", inset: 0, zIndex: 6, marginLeft: vw(21),
                   display: on ? "flex" : "none",
                   flexDirection: "column",
                   justifyContent: "flex-end", alignItems: "flex-start",
-                  paddingBottom: vw(243),
+                  paddingBottom: vw(170),
                   paddingLeft: vw(21), paddingRight: vw(20),
                   opacity: on ? 1 : 0, 
                   visibility: on ? "visible" : "hidden",
@@ -247,20 +292,38 @@ export default function WorldClassAndRecovery() {
                   animation: on ? "fadeUp 0.5s cubic-bezier(0.22,0.61,0.36,1) both" : "none",
                 }}>
                   <p style={{ ...CARD_TXT, textAlign: "left", marginBottom: "0.4em" }}>{svc.title}</p>
-                  <p style={{ color: "rgba(255,255,255,0.82)", fontFamily: "Inter, sans-serif", fontSize: vw(13), lineHeight: 1.55, margin: 0 }}>
+                  <p style={{ color: C.light, fontFamily: "Lato, sans-serif", fontSize: vw(13), lineHeight: 1.55, margin: 0 }}>
                     {svc.desc}
                   </p>
                 </div>
 
-                {/* White arrow — active only, bottom-right */}
-                <span style={{
-                  position: "absolute", bottom: vw(18), right: vw(18), zIndex: 7,
-                  color: "#ffffff", fontSize: vw(22), lineHeight: 1,
-                  opacity: on ? 1 : 0,
-                  transform: on ? "translateX(0)" : "translateX(-8px)",
-                  transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s",
-                  pointerEvents: "none",
-                }}>→</span>
+                {/* White arrow — active only, bottom-right, clickable with hover effect */}
+                <Link href={svc.id === "pre-trekking" || svc.id === "altitude" ? "/services" : "/recovery"} style={{ textDecoration: "none" }}>
+                  <span 
+                    style={{
+                      position: "absolute", bottom: vw(48), right: vw(48), zIndex: 7,
+                      color: "#ffffff", fontSize: vw(33), lineHeight: 1,
+                      opacity: on ? 1 : 0,
+                      transform: on ? "translateX(0)" : "translateX(-8px)",
+                      transition: "opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s, all 0.3s ease",
+                      padding: "12px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                      e.currentTarget.style.backdropFilter = "blur(10px)";
+                      e.currentTarget.style.color = "#ffffff";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.backdropFilter = "none";
+                      e.currentTarget.style.color = "#ffffff";
+                    }}
+                  >
+                    →
+                  </span>
+                </Link>
               </div>
             );
           })}
@@ -278,21 +341,23 @@ export default function WorldClassAndRecovery() {
             opacity: inView ? undefined : 0,
             zIndex: 2,
           }}>
-            <button style={{
-              width: vw(257.3), height: vw(75), flexShrink: 0,
-              background: "rgba(255,255,255,0.15)", color: C.light,
-              border: "none", borderRadius: vw(100),
-              fontFamily: "Inter, sans-serif",
-              fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
-              cursor: "pointer", display: "inline-flex",
-              alignItems: "center", justifyContent: "center", gap: vw(8),
-              backdropFilter: "blur(10px)",
-              boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)",
-              animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
-              opacity: inView ? undefined : 0,
-            }}>
-              <span style={{ fontSize: vw(30), fontWeight: 900 }}>←</span> &nbsp; &nbsp; &nbsp; More Services
-            </button>
+            <Link href="/recovery" style={{ textDecoration: "none" }}>
+              <button style={{
+                width: vw(257.3), height: vw(75), flexShrink: 0,
+                background: "rgba(255,255,255,0.15)", color: C.light,
+                border: "none", borderRadius: vw(100),
+                fontFamily: "Lato, sans-serif",
+                fontSize: vw(20), fontWeight: 600, letterSpacing: "0.45px",
+                cursor: "pointer", display: "inline-flex",
+                alignItems: "center", justifyContent: "center", gap: vw(8),
+                backdropFilter: "blur(10px)",
+                boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)",
+                animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
+                opacity: inView ? undefined : 0,
+              }}>
+                <span style={{ fontSize: vw(30), fontWeight: 900, marginTop: vw(-4), display: "inline-flex", alignItems: "center" }}>←</span> &nbsp; &nbsp; &nbsp; More Services
+              </button>
+            </Link>
 
             {/* Figma: w 465, h 174, fontSize 40, weight 800, Lato, right-aligned */}
             <h2 style={{
@@ -311,17 +376,65 @@ export default function WorldClassAndRecovery() {
           </div>
         </section>
 
+        <section className="wcr-desktop" style={{
+          position: "relative",
+          overflow: "hidden",
+          background: C.light,
+          paddingTop: `calc(${vw(CARD_OVERFLOW)} + 56px)`,
+          paddingBottom: vw(56),
+          paddingLeft: "40px",
+          paddingRight: "40px",
+          textAlign: "center",
+          borderTop: `1px solid ${C.border}`,
+          zIndex: 0,
+        }}>
+          {/* gradienthero decorative motif — shifted -48px up, opacity 0.75 */}
+          <div style={{ position: "absolute", top: `calc(-${vw(30)})`, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
+            <Image src="/images/gradienthero.webp" alt="" fill style={{ objectFit: "cover", objectPosition: "top center", opacity: 0.75 }} />
+          </div>
+
+          {/* Opening petik icon: Figma marginRight 144 from page */}
+          <div style={{ position: "absolute", top: vw(250), right: vw(144), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40), transform: "rotate(180deg)"}}>
+            <Image src="/icons/petik.webp" alt="" fill style={{ objectFit: "contain", opacity: 0.7 }} />
+          </div>
+
+          {/* Closing petik icon: Figma marginLeft 187 from page, rotated 180° */}
+          <div style={{ position: "absolute", bottom: vw(0), left: vw(187), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40)}}>
+            <Image src="/icons/petik.webp" alt="" fill style={{ objectFit: "contain", opacity: 0.7 }} />
+          </div>
+
+          {/* Quote text — Figma spec: width 1519, Inter 32 weight 500, C.teal */}
+          <p style={{
+            position: "relative", zIndex: 1,
+            color: C.teal,
+            maxWidth: vw(1519),
+            width: "100%",
+            margin: "0 auto",
+            fontFamily: "Lato, sans-serif",
+            fontSize: vw(30), fontWeight: 500,
+            lineHeight: "150%", letterSpacing: "-0.352px",
+            textShadow: "0 4px 4px rgba(0,0,0,0.25)",
+            animation: inView ? "quoteReveal 0.8s cubic-bezier(0.22,0.61,0.36,1) 700ms both" : "none",
+            opacity: inView ? undefined : 0,
+          }}>
+            Mantra Medica is more than just a clinic; we are your dedicated health partner in Lombok. Trust your <br /> 
+            recovery to the medical experts who care.
+          </p>
+        </section>
+
         {/* ════════════════════════ MOBILE ════════════════════════ */}
         <div className="wcr-mobile" style={{ position: "relative" }}>
 
           {/* Top band — solid teal, World-Class */}
-          <div style={{ height: MOB_HALF_H, background: "#2b7a6b", display: "flex", flexDirection: "column", alignItems: "flex-start", padding: "28px 20px 0" }}>
+          <div style={{ height: MOB_HALF_H, background: C.teal, display: "flex", flexDirection: "column", alignItems: "flex-start", padding: "28px 20px 0" }}>
             <h2 style={{ color: C.light, fontSize: 20, fontWeight: 700, lineHeight: 1.37, margin: "0 0 14px", animation: anim("fadeUp", 100), opacity: inView ? undefined : 0 }}>
               World-Class Healthcare<br />Services for you and your<br />loved ones
             </h2>
-            <button style={{ background: C.light, color: C.dark, border: "none", borderRadius: 100, padding: "9px 18px", fontSize: 12, fontWeight: 500, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, animation: inView ? "fadeIn 0.5s ease 400ms both" : "none", opacity: inView ? undefined : 0 }}>
-              More Services →
-            </button>
+            <Link href="/services" style={{ textDecoration: "none" }}>
+              <button style={{ background: C.light, color: C.dark, border: "none", borderRadius: 100, padding: "9px 18px", fontSize: 12, fontWeight: 500, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, animation: inView ? "fadeIn 0.5s ease 400ms both" : "none", opacity: inView ? undefined : 0 }}>
+                More Services <span style={{ marginTop: "-2px", display: "inline-flex", alignItems: "center" }}>→</span>
+              </button>
+            </Link>
           </div>
 
           {/* Bottom band — photo bg, Recharge */}
@@ -329,9 +442,11 @@ export default function WorldClassAndRecovery() {
             <Image src="/images/recovery.webp" alt="Recovery" fill style={{ objectFit: "cover", objectPosition: "center" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)" }} />
             <div style={{ position: "relative", zIndex: 1, textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10, animation: anim("fadeUp", 600), opacity: inView ? undefined : 0 }}>
-              <button style={{ background: "rgba(255,255,255,0.15)", color: C.light, border: "none", borderRadius: 100, padding: "9px 18px", fontSize: 12, fontWeight: 500, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, backdropFilter: "blur(10px)", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)" }}>
-                ← More Services
-              </button>
+              <Link href="/recovery" style={{ textDecoration: "none" }}>
+                <button style={{ background: "rgba(255,255,255,0.15)", color: C.light, border: "none", borderRadius: 100, padding: "9px 18px", fontSize: 12, fontWeight: 500, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, backdropFilter: "blur(10px)", boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)" }}>
+                  <span style={{ marginTop: "-2px", display: "inline-flex", alignItems: "center" }}>←</span> More Services
+                </button>
+              </Link>
               <h2 style={{ color: C.light, fontSize: 20, fontWeight: 700, lineHeight: 1.37, margin: 0 }}>
                 Recharge After Every Journey with Expert Recovery Care
               </h2>
@@ -339,28 +454,31 @@ export default function WorldClassAndRecovery() {
           </div>
 
           {/* Cards 2×2 centred on seam */}
-          <div style={{ position: "absolute", top: MOB_CARDS_TOP, left: 16, right: 16, zIndex: 2, display: "grid", gridTemplateColumns: "1fr 1fr", gap: MOB_CARD_GAP }}>
+          <div style={{ position: "absolute", top: MOB_CARDS_TOP, left: 24, right: 24, zIndex: 2, display: "grid", gridTemplateColumns: "1fr 1fr", gap: MOB_CARD_GAP }}>
             {miniServices.map((svc, i) => {
               const on = activeCard === svc.id;
               return (
-                <div key={svc.id} style={{ borderRadius: 28, overflow: "hidden", position: "relative", height: MOB_CARD_H, cursor: "pointer", border: "1px solid rgba(255,255,255,0.12)", background: `linear-gradient(150deg, ${C.cardMid} 0%, ${C.cardDark} 100%)`, transition: "transform 0.2s ease", animation: inView ? `cardPop 0.65s cubic-bezier(0.22,0.61,0.36,1) ${200 + i * 80}ms both` : "none", opacity: inView ? undefined : 0 }} onClick={() => toggleCard(svc.id)}>
-                  <Image src={svc.imagePath} alt={svc.title} fill style={{ objectFit: "cover", opacity: on ? 0.18 : 0.82, transition: "opacity 0.4s ease" }} />
-                  <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(to top, rgba(6,6,6,0.72) 0%, transparent 60%)", opacity: on ? 0 : 1, transition: "opacity 0.35s ease" }} />
-                  <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "rgba(8,14,10,0.85)", opacity: on ? 1 : 0, transition: "opacity 0.35s ease" }} />
-                  <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(107, 18, 18, 0.15)", borderRadius: 8, padding: "4px 6px", fontSize: 12, backdropFilter: "blur(4px)", zIndex: 3 }}>{svc.icon}</div>
-                  <div style={{ position: "absolute", inset: 0, zIndex: 4, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", padding: "0 8px 12px", textAlign: "center", opacity: on ? 0 : 1, transition: "opacity 0.22s ease", pointerEvents: "none" }}>
-                    <p style={{ color: "#65A396", fontSize: 10, fontWeight: 600, lineHeight: 1.3, margin: 0 }}>{svc.title}</p>
+                <div key={svc.id} style={{ borderRadius: 28, overflow: "hidden", position: "relative", height: MOB_CARD_H, cursor: "pointer", border: "1px solid rgba(255,255,255,0.12)", background: `linear-gradient(150deg, rgba(200, 200, 200, 0.3) 0%, rgba(180, 180, 180, 0.25) 100%)`, transition: "transform 0.2s ease", animation: inView ? `cardPop 0.65s cubic-bezier(0.22,0.61,0.36,1) ${200 + i * 80}ms both` : "none", opacity: inView ? undefined : 0 }} onClick={() => toggleCard(svc.id)}>
+                  <Image src={getMobCardBgImage(i)} alt={svc.title} fill style={{ objectFit: "fill", opacity: on ? 1 : 1, transition: "opacity 0.4s ease", transform: "scale(1.1)" }} />
+                  <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(to top, rgba(63, 63, 63, 0.5) 0%, rgba(63, 63, 63, 0.25) 50%, transparent 100%)", opacity: on ? 0.5 : 0.3, transition: "opacity 0.35s ease" }} />
+                  <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "rgba(255,255,255,0.08)", opacity: on ? 0.15 : 0, transition: "opacity 0.35s ease" }} />
+                  <div style={{ position: "absolute", top: 8, right: 8, zIndex: 3, opacity: on ? 0 : 1, transition: "opacity 0.35s ease", display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32 }}>
+                    <Image src={getCardIcon(svc.id)} alt={svc.title} width={20} height={20} style={{ objectFit: "contain" }} />
+                  </div>
+                  <div style={{ position: "absolute", marginBottom: 12,  inset: 0, zIndex: 4, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", padding: "0 8px 12px", textAlign: "center", opacity: on ? 0 : 1, transition: "opacity 0.22s ease", pointerEvents: "none" }}>
+                    <p style={{ color: C.light, fontSize: 10, fontWeight: 600, lineHeight: 1.3, margin: 0 }}>{svc.title}</p>
                   </div>
                   <div style={{ position: "absolute", inset: 0, zIndex: 5, padding: "10px 8px", opacity: on ? 1 : 0, transition: "opacity 0.3s ease 0.05s", pointerEvents: "none" }}>
-                    <p style={{ color: "#65A396", fontSize: 10, fontWeight: 600, lineHeight: 1.3, margin: "0 0 4px" }}>{svc.title}</p>
-                    <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 9, lineHeight: 1.4, margin: 0 }}>{svc.desc}</p>
+                    <p style={{ color: C.light, fontSize: 10, fontWeight: 600, lineHeight: 1.3, margin: "4px 0 4px 8px" }}>{svc.title}</p>
+                    <p style={{ color: C.light, fontSize: 9, lineHeight: 1.4, margin: "4px 0 0 8px" }}>{svc.desc}</p>
                   </div>
-                  <span style={{ position: "absolute", bottom: 8, right: 8, zIndex: 6, color: "#fff", fontSize: 12, opacity: on ? 1 : 0, transition: "opacity 0.3s ease 0.1s", pointerEvents: "none" }}>→</span>
+                  <Link href={svc.id === "pre-trekking" || svc.id === "altitude" ? "/services" : "/recovery"} style={{ textDecoration: "none" }}>
+                    <span className="arrow-interactive" style={{ position: "absolute", bottom: 16, right: 16, zIndex: 6, color: "#fff", fontSize: 16, opacity: on ? 1 : 0, transition: "opacity 0.3s ease 0.1s", cursor: "pointer" }}>→</span>
+                  </Link>
                 </div>
               );
             })}
           </div>
-        </div>
 
         {/* ════════════════════════ QUOTE BAND ════════════════════════
             paddingTop = CARD_OVERFLOW + 56px  so the floating cards sit
@@ -379,17 +497,17 @@ export default function WorldClassAndRecovery() {
           zIndex: 0,
         }}>
           {/* gradienthero decorative motif — shifted -48px up, opacity 0.75 */}
-          <div style={{ position: "absolute", top: `calc(-${vw(48)})`, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none" }}>
-            <Image src="/images/gradienthero.webp" alt="" fill style={{ objectFit: "cover", objectPosition: "top center", opacity: 0.75 }} />
+          <div style={{ position: "absolute", top: `calc(-${vw(-50)})`, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: "none", transform: "scale(1.5)" }}>
+            <Image src="/images/gradienthero.webp" alt="" fill style={{ objectFit: "cover", objectPosition: "top center", opacity: 0.75, transform: "scale (4)" }} />
           </div>
 
           {/* Opening petik icon: Figma marginRight 144 from page */}
-          <div style={{ position: "absolute", top: vw(32), right: vw(144), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40) }}>
+          <div style={{ position: "absolute", top: vw(450), right: vw(144), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40), transform: "rotate(180deg)"}}>
             <Image src="/icons/petik.webp" alt="" fill style={{ objectFit: "contain", opacity: 0.7 }} />
           </div>
 
           {/* Closing petik icon: Figma marginLeft 187 from page, rotated 180° */}
-          <div style={{ position: "absolute", bottom: vw(32), left: vw(187), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40), transform: "rotate(180deg)" }}>
+          <div style={{ position: "absolute", bottom: vw(0), left: vw(187), zIndex: 1, pointerEvents: "none", width: vw(56), height: vw(40)}}>
             <Image src="/icons/petik.webp" alt="" fill style={{ objectFit: "contain", opacity: 0.7 }} />
           </div>
 
@@ -400,8 +518,8 @@ export default function WorldClassAndRecovery() {
             maxWidth: vw(1519),
             width: "100%",
             margin: "0 auto",
-            fontFamily: "Inter, sans-serif",
-            fontSize: vw(32), fontWeight: 500,
+            fontFamily: "Lato, sans-serif",
+            fontSize: vw(50), fontWeight: 500,
             lineHeight: "150%", letterSpacing: "-0.352px",
             textShadow: "0 4px 4px rgba(0,0,0,0.25)",
             animation: inView ? "quoteReveal 0.8s cubic-bezier(0.22,0.61,0.36,1) 700ms both" : "none",
@@ -411,7 +529,7 @@ export default function WorldClassAndRecovery() {
             dedicated health partner in Lombok. Trust your recovery to the medical experts who care.
           </p>
         </section>
-
+       </div>
       </div>
     </>
   );
