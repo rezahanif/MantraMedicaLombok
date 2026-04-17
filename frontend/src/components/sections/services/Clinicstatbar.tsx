@@ -58,7 +58,7 @@ export default function ClinicStatsBar() {
 
         {/* Desktop — single pill with dividers */}
         <div
-          className="hidden min-[600px]:flex"
+          className="stats-desktop-pill hidden min-[600px]:flex"
           style={{
             maxWidth: 860, margin: "0 auto",
             border: `1.5px solid ${COLORS.teal}`,
@@ -102,8 +102,9 @@ export default function ClinicStatsBar() {
       </div>
 
       {/* EMERGENCY BANNER */}
-      <div style={{ padding: "20px 32px 28px" }}>
+      <div className="emergency-banner-container" style={{ padding: "20px 32px 28px" }}>
         <div
+          className="emergency-banner"
           style={{
             maxWidth: 860, margin: "0 auto",
             background: COLORS.teal, borderRadius: 100,
@@ -136,15 +137,61 @@ export default function ClinicStatsBar() {
 
       {/* Mobile: stack banner vertically on very small screens */}
       <style>{`
-        @media (max-width: 460px) {
-          .emergency-banner {
-            flex-direction: column !important;
+        @media (max-width: 744px) and (min-width: 600px) {
+          .stats-desktop-pill {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px !important;
             border-radius: 20px !important;
-            text-align: center;
-            padding: 20px !important;
+            padding: 12px 14px !important;
+            max-width: 480px !important;
+            border: none !important;
           }
-          .emergency-banner p { white-space: normal !important; }
-          .emergency-banner button { width: 100%; justify-content: center; }
+          .stats-desktop-pill > div {
+            border: 1.5px solid #65A396 !important;
+            border-radius: 16px !important;
+            padding: 10px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            background: #FAFAFA !important;
+          }
+          .stats-desktop-pill > div > div:first-child {
+            display: none !important;
+          }
+        }
+        @media (max-width: 599px) {
+          .emergency-banner-container {
+            padding: 16px 16px 24px !important;
+          }
+          .emergency-banner {
+            padding: 12px 16px !important;
+            gap: 8px !important;
+          }
+          .emergency-banner p { 
+            font-size: 14px !important;
+            white-space: normal !important; 
+          }
+        }
+        @media (max-width: 460px) {
+          .emergency-banner-container {
+            padding: 12px 16px 16px !important;
+            display: flex;
+            justify-content: center;
+          }
+          .emergency-banner {
+            maxWidth: 480 !important;
+            width: 100% !important;
+            padding: 12px 14px !important;
+            gap: 0 !important;
+            border-radius: 20px !important;
+          }
+          .emergency-banner p { 
+            font-size: 11px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0;
+            margin: 0 !important;
+          }
         }
         @media (max-width: 599px) {
           .emergency-call-btn {

@@ -95,7 +95,7 @@ export default function Hero({
           .hero-desktop { display: block !important; }
           .hero-mobile  { display: none !important; }
         }
-        @media (max-width: 499px) and (min-height: 800px) {
+        @media (max-width: 499px) and (min-height: 731px) {
           .hero-photo-mobile { top: 80px !important; }
           .hero-text-mobile { top: 10% !important; }
           .hero-mobile-breadcrumb { margin-bottom: 4px !important; }
@@ -323,7 +323,11 @@ export default function Hero({
             borderRadius: "0 0 0 16px",
           }}
         >
-          {photoSlot ?? (
+          {photoSlot ? (
+            <div style={{ width: "100%", height: "100%", transform: "scale(0.9)", transformOrigin: "right center" }}>
+              {photoSlot}
+            </div>
+          ) : (
             <div style={{ width: "100%", height: "100%", background: C.teal }} />
           )}
         </div>

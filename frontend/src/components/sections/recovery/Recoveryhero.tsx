@@ -220,7 +220,11 @@ export default function RecoveryHero({ photoSlot }: RecoveryHeroProps) {
             borderRadius: "0 0 0 16px",
           }}
         >
-          {photoSlot ?? (
+          {photoSlot ? (
+            <div style={{ width: "100%", height: "100%", transform: "scale(0.8)", transformOrigin: "right center" }}>
+              {photoSlot}
+            </div>
+          ) : (
             <div style={{ width: "100%", height: "100%", background: C.teal }} />
           )}
         </div>

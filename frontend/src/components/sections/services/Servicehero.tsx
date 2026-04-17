@@ -65,7 +65,7 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
           .service-hero-desktop { display: block !important; }
           .service-hero-mobile  { display: none !important; }
         }
-        @media (max-width: 499px) and (min-height: 800px) {
+        @media (max-width: 499px) and (min-height: 887px) {
           .service-photo-mobile { top: 80px !important; }
           .service-text-mobile { top: 10% !important; }
           .service-mobile-breadcrumb { margin-bottom: 4px !important; }
@@ -326,7 +326,11 @@ export default function ServiceHero({ photoSlot }: ServiceHeroProps) {
             borderRadius: "0 0 0 16px",
           }}
         >
-          {photoSlot ?? (
+          {photoSlot ? (
+            <div style={{ width: "100%", height: "100%", transform: "scale(0.8)", transformOrigin: "right center" }}>
+              {photoSlot}
+            </div>
+          ) : (
             <div style={{ width: "100%", height: "100%", background: C.teal }} />
           )}
         </div>

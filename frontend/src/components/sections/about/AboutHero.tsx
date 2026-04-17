@@ -60,7 +60,7 @@ export default function AboutHero({ photoSlot }: AboutHeroProps) {
           .about-hero-desktop { display: block !important; }
           .about-hero-mobile  { display: none !important; }
         }
-        @media (max-width: 499px) and (min-height: 800px) {
+        @media (max-width: 499px) and (min-height: 731px) {
           .about-text-mobile { top: 10% !important; }
           .about-mobile-breadcrumb { margin-bottom: 4px !important; }
           .about-mobile-title { margin-bottom: 6px !important; }

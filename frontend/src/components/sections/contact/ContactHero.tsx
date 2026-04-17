@@ -57,7 +57,7 @@ export default function ContactHero({ photoSlot }: ContactHeroProps) {
           .contact-hero-desktop { display: block !important; }
           .contact-hero-mobile  { display: none !important; }
         }
-        @media (max-width: 499px) and (min-height: 800px) {
+        @media (max-width: 499px) and (min-height: 731px) {
           .contact-text-mobile { top: 10% !important; }
           .contact-mobile-breadcrumb { margin-bottom: 4px !important; }
           .contact-mobile-title { margin-bottom: 6px !important; }
