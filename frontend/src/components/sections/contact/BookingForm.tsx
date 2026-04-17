@@ -289,7 +289,7 @@ export default function BookingForm() {
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)", fontSize: 12 }}>Gallery Photo {slide + 1}</div>
             <button onClick={prev} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
             <button onClick={next} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-            <div style={{ position: "absolute", bottom: -8, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 20, padding: "12px 14px", backdropFilter: "blur(4px)" }}>
+            <div style={{ position: "absolute", bottom: -12, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 20, padding: "12px 14px", backdropFilter: "blur(4px)" }}>
               <div style={{ display: "flex", gap: 2, marginBottom: 4 }}>
                 {"★★★★★".split("").map((s, i) => <span key={i} style={{ color: i < testimonials[slide].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 11 }}>{s}</span>)}
               </div>
