@@ -7,8 +7,10 @@ export default function MeetTeam() {
     <section
       style={{
         position: "relative",
-        overflow: "hidden",
-        backgroundColor: "#3a2a1e",
+        backgroundImage: "url('/images/aboutkayu.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
       {/* Wood panel texture background */}
@@ -52,6 +54,7 @@ export default function MeetTeam() {
         {/* Left — text */}
         <div>
           <h2
+            className="meet-heading"
             style={{
               color: C.light,
               fontSize: "clamp(28px, 3vw, 44px)",
@@ -65,6 +68,7 @@ export default function MeetTeam() {
           </h2>
 
           <p
+            className="meet-text"
             style={{
               color: `${C.light}cc`,
               fontSize: 17,
@@ -134,6 +138,7 @@ export default function MeetTeam() {
           {teamMembers.map((member, idx) => (
             <div
               key={member.id}
+              className="meet-card"
               style={{
                 flex: 1,
                 maxWidth: 200,
@@ -207,23 +212,13 @@ export default function MeetTeam() {
                 <p
                   style={{
                     color: C.light,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: 700,
                     lineHeight: 1.3,
                     margin: 0,
                   }}
                 >
                   {member.name}
-                </p>
-                <p
-                  style={{
-                    color: C.tealLight ?? C.teal,
-                    fontSize: 11,
-                    marginTop: 2,
-                    margin: "2px 0 0",
-                  }}
-                >
-                  {member.role}
                 </p>
               </div>
             </div>
@@ -232,6 +227,19 @@ export default function MeetTeam() {
       </div>
 
       <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        .meet-heading { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .meet-text { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+        .meet-card { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .meet-card:nth-child(1) { animation-delay: 0.25s; }
+        .meet-card:nth-child(2) { animation-delay: 0.35s; }
         @media (max-width: 768px) {
           .meet-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
         }

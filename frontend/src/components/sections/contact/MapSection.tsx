@@ -2,6 +2,8 @@
 // Layout: [Map ~50%] [Card 1] [Card 2]  — all one row, same height
 // Padding mirrors hero section: outer 0 40px, inner maxWidth 1400 centered
 
+"use client";
+
 import { C } from "@/lib/constants";
 import { serviceCards } from "@/data/contactData";
 
@@ -24,6 +26,22 @@ export default function MapSection() {
           /* Left padding nudges content to match hero h1 position */
           padding: 0 40px;
         }
+
+        /* Animation keyframes */
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .ms-pill { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .ms-map { animation: slideInLeft 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+        .ms-card { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .ms-card:nth-of-type(1) { animation-delay: 0.3s; }
+        .ms-card:nth-of-type(2) { animation-delay: 0.45s; }
 
         /* Location pill floats above the map */
         .ms-location-pill {
@@ -61,6 +79,7 @@ export default function MapSection() {
 
         /* Each service card — equal flex */
         .ms-card {
+          margin-top: 48px;
           flex: 1;
           min-width: 0;
           border-radius: 20px;
@@ -96,7 +115,7 @@ export default function MapSection() {
         {/* ── Map column ── */}
         <div className="ms-map-col">
           {/* Location pill */}
-          <div className="ms-location-pill">
+          <div className="ms-location-pill ms-pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.teal} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
               <circle cx="12" cy="10" r="3"/>
@@ -105,7 +124,7 @@ export default function MapSection() {
           </div>
 
           {/* Map embed */}
-          <div className="ms-map-frame">
+          <div className="ms-map-frame ms-map">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.5!2d116.47!3d-8.32!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOCozMCcwMC4wIlMgMTE2uzI4JzEyLjAiRQ!5e0!3m2!1sen!2sid!4v1234567890"
               width="100%"
@@ -123,7 +142,11 @@ export default function MapSection() {
           <div
             key={svc.title}
             className="ms-card"
-            style={{ background: svc.bg }}
+            style={{ 
+              background: svc.bg,
+              backgroundSize: "120%",
+              backgroundPosition: "center",
+            }}
           >
             {/* Photo gradient overlay */}
             <div
@@ -237,16 +260,26 @@ export default function MapSection() {
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 8,
-                    background: svc.ctaColor,
-                    color: svc.ctaColor === "#FAFAFA" || svc.ctaColor === "#fff" ? "#212121" : "#FAFAFA",
-                    border: "none",
+                    background: svc.cta === "Book Now" ? "rgba(255, 255, 255, 0.12)" : svc.ctaColor,
+                    color: svc.cta === "Book Now" ? C.light : (svc.ctaColor === "#FAFAFA" || svc.ctaColor === "#fff" ? "#212121" : "#FAFAFA"),
+                    border: svc.cta === "Book Now" ? `1px solid rgba(255, 255, 255, 0.2)` : "none",
                     borderRadius: 100,
                     padding: "10px 22px",
                     fontSize: 14,
                     fontWeight: 700,
                     cursor: "pointer",
-                    boxShadow: `0 4px 14px rgba(0,0,0,0.25)`,
+                    boxShadow: svc.cta === "Book Now" ? "0 4px 20px rgba(0,0,0,0.15)" : `0 4px 14px rgba(0,0,0,0.25)`,
                     letterSpacing: "0.01em",
+                    backdropFilter: svc.cta === "Book Now" ? "blur(10px)" : "none",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = svc.cta === "Book Now" ? "0 8px 32px rgba(0,0,0,0.25)" : "0 8px 24px rgba(0,0,0,0.35)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = svc.cta === "Book Now" ? "0 4px 20px rgba(0,0,0,0.15)" : `0 4px 14px rgba(0,0,0,0.25)`;
                   }}
                 >
                   {svc.ctaIcon && (

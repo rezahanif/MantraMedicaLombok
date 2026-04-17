@@ -243,7 +243,17 @@ export default function SignatureTreatment() {
                   <div style={{ maxHeight: isActive ? 240 : 0, overflow: "hidden", opacity: isActive ? 1 : 0, transition: "max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.35s" }}>
                     <div style={{ width: 28, height: 1, background: "rgba(200,169,106,0.5)", marginBottom: 12 }} />
                     <p style={{ fontSize: 13, color: "rgba(250,250,250,0.62)", lineHeight: 1.78, marginBottom: 20 }}>{t.desc}</p>
-                    <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer" }}>
+                    <button 
+                      style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = "scale(1.02)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
+                      }}
+                    >
                       {t.cta}
                     </button>
                   </div>
@@ -290,7 +300,19 @@ export default function SignatureTreatment() {
                   </div>
                   <p style={{ color: "rgba(250,250,250,0.4)", fontSize: 11, marginBottom: 10 }}>{t.hours}</p>
                   <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 12, lineHeight: 1.6, marginBottom: 16 }}>{t.desc}</p>
-                  <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>{t.cta}</button>
+                  <button 
+                    style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
+                    }}
+                  >
+                    {t.cta}
+                  </button>
                 </div>
               </div>
             );

@@ -14,6 +14,20 @@ export default function Vision() {
         overflow: "hidden",
       }}
     >
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        .vision-heading { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .vision-text { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+        .vision-quote { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.3s; }
+        .vision-buttons { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.45s; }
+      `}</style>
       {/* Floating mountain silhouette decorations */}
       <div
         style={{
@@ -79,6 +93,7 @@ export default function Vision() {
         }}
       >
         <h2
+          className="vision-heading"
           style={{
             color: C.light,
             fontSize: "clamp(40px, 5vw, 64px)",
@@ -92,6 +107,7 @@ export default function Vision() {
         </h2>
 
         <p
+          className="vision-text"
           style={{
             color: "rgba(255,255,255,0.82)",
             fontSize: "clamp(15px, 1.6vw, 20px)",
@@ -109,6 +125,7 @@ export default function Vision() {
 
         {/* Mission quote block */}
         <div
+          className="vision-quote"
           style={{
             position: "relative",
             marginBottom: 52,
@@ -146,6 +163,7 @@ export default function Vision() {
 
         {/* CTA Buttons */}
         <div
+          className="vision-buttons"
           style={{
             display: "flex",
             gap: 16,

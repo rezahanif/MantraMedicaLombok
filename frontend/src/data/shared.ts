@@ -15,8 +15,8 @@ export const footerLinks = {
   quick: ["Services", "About Us", "Blog", "Contact Us"],
   departments: ["General Clinic", "Dental Clinic", "Pharmacy", "Radiology & Imaging", "Emergency", "Laboratory"],
   contact: [
-    { icon: "📍", text: "Lombok, NTB" },
-    { icon: "📞", text: "+62-888-888-8888" },
-    { icon: "✉️", text: "mantramedica@gmail.com" },
+    { icon: "icons/locgreen.webp", text: "Lombok, NTB" },
+    { icon: "icons/callgreen.webp", text: "+62-888-888-8888" },
+    { icon: "icons/emailgreen.webp", text: "mantramedica@gmail.com" },
   ],
 };

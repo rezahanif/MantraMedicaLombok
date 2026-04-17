@@ -2,21 +2,21 @@
 
 export const contactInfo = [
   {
-    icon: "📞",
+    icon: "icons/call.webp",
     primary: "+62 888 8888 8888",
     secondary: "Available 24/7 for emergencies",
     cta: "Call Now",
     ctaColor: "#E05A4E",
   },
   {
-    icon: "✉️",
+    icon: "icons/email.webp",
     primary: "Mantramedicare@gmail.com",
     secondary: "Response within 2 hours",
     cta: "Send Email",
-    ctaColor: "#65A396",
+    ctaColor: "#438BA9",
   },
   {
-    icon: "📍",
+    icon: "icons/loc.webp",
     primary: "JL. Rinjani No.1 Senaru Bayan",
     secondary: "Near the main trekking gate",
     cta: "Open in Maps",
@@ -32,9 +32,9 @@ export const serviceCards = [
     note: "Emergency services always available. Walk-ins welcome.",
     cta: "Call Now",
     ctaColor: "#E05A4E",
-    bg: "linear-gradient(150deg, #1C3A2E 0%, #2A5240 100%)",
-    icon: "/icons/medical.svg",
-    ctaIcon: "/icons/phone.svg",
+    bg: "url('/images/ataskiri.webp')",
+    icon: "/icons/firstaidwhite.webp",
+    ctaIcon: "/icons/whatsappwhite.webp",
   },
   {
     tag: "Layanan Spa dan Refleksi",
@@ -43,9 +43,9 @@ export const serviceCards = [
     note: "Last Booking accepted at 20.00. Appointment recommended.",
     cta: "Book Now",
     ctaColor: "#FAFAFA",
-    bg: "linear-gradient(150deg, #3D2208 0%, #6B4425 100%)",
-    icon: "/icons/spa.svg",
-    ctaIcon: "/icons/calendar.svg",
+    bg: "url('/images/bawahkanan.webp')",
+    icon: "/icons/spa.webp",
+    ctaIcon: "/icons/calendarwhite.webp",
   },
 ];
 

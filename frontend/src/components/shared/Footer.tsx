@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { C } from "@/lib/constants";
-import { navLinks } from "@/data/shared";
+import { navLinks, footerLinks } from "@/data/shared";
 import { useState, useEffect, useRef } from "react";
 
 export default function Footer() {
@@ -94,13 +94,15 @@ export default function Footer() {
                 <p style={{ color: C.teal, fontWeight: 600, fontSize: 13, marginBottom: 14 }}>
                   Contact & Newsletter
                 </p>
-                {[
-                  { icon: "📍", text: "Lombok, NTB" },
-                  { icon: "📞", text: "+62-888-888-8888" },
-                  { icon: "✉️", text: "mantramedica@gmail.com" },
-                ].map((c) => (
+                {footerLinks.contact.map((c) => (
                   <div key={c.text} style={{ display: "flex", gap: 8, marginBottom: 10, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 13 }}>{c.icon}</span>
+                    <Image
+                      src={`/${c.icon}`}
+                      alt=""
+                      width={16}
+                      height={16}
+                      style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
+                    />
                     <span style={{ color: C.teal, fontSize: 13, opacity: 0.7 }}>{c.text}</span>
                   </div>
                 ))}
@@ -182,13 +184,15 @@ export default function Footer() {
             }}>
               <p style={{ color: C.teal, fontWeight: 600, fontSize: 12, marginBottom: 10 }}>Contact</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {[
-                  { icon: "📍", text: "Lombok, NTB" },
-                  { icon: "📞", text: "+62-888-888-8888" },
-                  { icon: "✉️", text: "mantramedica@gmail.com" },
-                ].map((c) => (
+                {footerLinks.contact.map((c) => (
                   <div key={c.text} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ fontSize: 12 }}>{c.icon}</span>
+                    <Image
+                      src={`/${c.icon}`}
+                      alt=""
+                      width={14}
+                      height={14}
+                      style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
+                    />
                     <span style={{ color: C.teal, fontSize: 12, opacity: 0.7 }}>{c.text}</span>
                   </div>
                 ))}

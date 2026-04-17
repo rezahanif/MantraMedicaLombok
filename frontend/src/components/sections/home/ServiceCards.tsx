@@ -301,8 +301,20 @@ export default function ServiceCards() {
                           borderRadius: 100,
                           padding: "8px 12px",
                           fontSize: 12, fontWeight: 600, cursor: "pointer",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)",
+                          transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
                         }}
                         onClick={(e) => e.stopPropagation()}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)";
+                          (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 16px rgba(0,0,0,0.25)";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                          (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+                          (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)";
+                        }}
                       >
                         {svc.cta}
                       </button>
@@ -517,6 +529,16 @@ export default function ServiceCards() {
                             borderRadius: 9999,
                             padding: "11px 26px",
                             fontSize: 12, fontWeight: 600, cursor: "pointer",
+                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
                           }}
                         >
                           {svc.cta}
@@ -534,6 +556,18 @@ export default function ServiceCards() {
                                 borderRadius: 9999,
                                 padding: "11px 22px",
                                 fontSize: 12, cursor: "pointer",
+                                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)",
+                                transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+                              }}
+                              onMouseEnter={(e) => {
+                                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                                (e.currentTarget as HTMLElement).style.background = `rgba(${style.rgb}/0.08)`;
+                                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.15)";
+                              }}
+                              onMouseLeave={(e) => {
+                                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                                (e.currentTarget as HTMLElement).style.background = "transparent";
+                                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1)";
                               }}
                             >
                               {svc.ctaSecondary}
@@ -602,6 +636,16 @@ export default function ServiceCards() {
                         color: C.light, border: "none",
                         borderRadius: 9999, padding: "12px 28px",
                         fontSize: 13, fontWeight: 600, cursor: "pointer",
+                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                        (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
                       }}
                     >
                       {svc.cta}
@@ -615,6 +659,18 @@ export default function ServiceCards() {
                             color: C.light, border: "1px solid rgba(255,255,255,0.2)",
                             borderRadius: 9999, padding: "12px 28px",
                             fontSize: 13, fontWeight: 600, cursor: "pointer",
+                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)",
+                            transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.25)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 16px rgba(0,0,0,0.25)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                            (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.15)";
+                            (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)";
                           }}
                         >
                           See More Services

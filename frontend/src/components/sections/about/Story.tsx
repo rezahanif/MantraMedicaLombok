@@ -18,6 +18,20 @@ export default function Story() {
         }}
         className="story-section"
       >
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+          }
+          @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-32px); }
+            to   { opacity: 1; transform: translateX(0); }
+          }
+          .story-photo { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+          .story-text { animation: slideInLeft 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+          .story-quote { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.3s; }
+          .story-logo { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.4s; }
+        `}</style>
         <div
           style={{
             maxWidth: 1200,
@@ -31,7 +45,7 @@ export default function Story() {
           className="story-grid"
         >
           {/* Left — Doctor portrait */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center", left: "clamp(40px, 6vw, 120px)", width: "clamp(270px, 27vw, 459px)", height: "clamp(351px, 36.45vw, 581px)" }}>
+          <div className="story-photo" style={{ position: "relative", display: "flex", justifyContent: "center", left: "clamp(40px, 6vw, 120px)", width: "clamp(270px, 27vw, 459px)", height: "clamp(351px, 36.45vw, 581px)" }}>
             {/* BlubDoctor background layer */}
             <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/blubdoctor.webp')`, backgroundPosition: `calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_X}px) calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_Y}px)`, backgroundSize: `${BLUB_DOCTOR_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
             
@@ -73,7 +87,7 @@ export default function Story() {
           </div>
 
           {/* Right — Story text */}
-          <div>
+          <div className="story-text">
             <p
               style={{
                 fontSize: 11,
@@ -165,7 +179,7 @@ export default function Story() {
           className="quote-grid"
         >
           {/* Quote */}
-          <div style={{ position: "relative" }}>
+          <div className="story-quote" style={{ position: "relative" }}>
             {/* Opening quote mark */}
             <span
               style={{
@@ -225,7 +239,7 @@ export default function Story() {
           </div>
 
           {/* Logo mark */}
-          <div
+          <div className="story-logo"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -261,6 +275,14 @@ export default function Story() {
       </section>
 
       <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
         @media (max-width: 499px) {
           .story-section { margin-top: 0 !important; }
           .story-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
@@ -269,6 +291,12 @@ export default function Story() {
             width: 100% !important; 
             height: auto !important;
             aspect-ratio: 16 / 20;
+          }
+          .story-grid > div:first-child img {
+            object-position: top !important;
+          }
+          .story-grid > div:last-child {
+            margin-top: 24px !important;
           }
           .quote-grid { grid-template-columns: 1fr !important; }
         }

@@ -97,7 +97,7 @@ export default function BookingForm() {
       {/* ── DESKTOP ≥500px ── */}
       <div
         className="booking-desktop"
-        style={{ maxWidth: 960, margin: "0 auto", gap: 40, alignItems: "flex-start", position: "relative", zIndex: 2 }}
+        style={{ maxWidth: 960, margin: "0 auto", gap: 40, alignItems: "center", position: "relative", zIndex: 2 }}
       >
         {/* Left — form */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -142,7 +142,29 @@ export default function BookingForm() {
           </div>
 
           <div>
-            <button style={{ background: C.teal, color: "#FAFAFA", border: "none", borderRadius: 100, padding: "12px 32px", fontSize: 13, fontWeight: 600, cursor: "pointer", letterSpacing: "0.5px" }}>
+            <button 
+              style={{ 
+                background: C.teal, 
+                color: "#FAFAFA", 
+                border: "none", 
+                borderRadius: 100, 
+                padding: "12px 32px", 
+                fontSize: 13, 
+                fontWeight: 600, 
+                cursor: "pointer", 
+                letterSpacing: "0.5px",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.25)",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 24px rgba(0,0,0,0.35)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.25)";
+              }}
+            >
               Submit Booking
             </button>
           </div>
@@ -229,7 +251,30 @@ export default function BookingForm() {
             <textarea value={form.additionalNotes} onChange={(e) => setForm({ ...form, additionalNotes: e.target.value })} rows={3} style={{ ...inputStyle, padding: "9px 12px", fontSize: 12, resize: "vertical" }} />
           </div>
 
-          <button style={{ background: C.teal, color: "#FAFAFA", border: "none", borderRadius: 100, padding: "11px 24px", fontSize: 12, fontWeight: 600, cursor: "pointer", letterSpacing: "0.5px", width: "100%" }}>
+          <button 
+            style={{ 
+              background: C.teal, 
+              color: "#FAFAFA", 
+              border: "none", 
+              borderRadius: 100, 
+              padding: "11px 24px", 
+              fontSize: 12, 
+              fontWeight: 600, 
+              cursor: "pointer", 
+              letterSpacing: "0.5px",
+              width: "100%",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.25)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 24px rgba(0,0,0,0.35)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.25)";
+            }}
+          >
             Submit Booking
           </button>
         </div>
@@ -239,12 +284,12 @@ export default function BookingForm() {
           <div
             className="carousel-slide"
             {...swipe}
-            style={{ borderRadius: 16, overflow: "hidden", position: "relative", aspectRatio: "4/3", background: "linear-gradient(135deg, #1A2E2B, #2C4A3A)", marginBottom: 14, cursor: "grab" }}
+            style={{ borderRadius: 20, overflow: "hidden", position: "relative", aspectRatio: "4/3", background: "linear-gradient(135deg, #1A2E2B, #2C4A3A)", marginBottom: 14, cursor: "grab" }}
           >
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)", fontSize: 12 }}>Gallery Photo {slide + 1}</div>
             <button onClick={prev} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
             <button onClick={next} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-            <div style={{ position: "absolute", bottom: 12, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 10, padding: "10px 12px", backdropFilter: "blur(4px)" }}>
+            <div style={{ position: "absolute", bottom: 0, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 20, padding: "12px 14px", backdropFilter: "blur(4px)" }}>
               <div style={{ display: "flex", gap: 2, marginBottom: 4 }}>
                 {"★★★★★".split("").map((s, i) => <span key={i} style={{ color: i < testimonials[slide].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 11 }}>{s}</span>)}
               </div>

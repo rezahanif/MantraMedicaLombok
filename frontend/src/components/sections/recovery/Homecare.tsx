@@ -1,3 +1,4 @@
+"use client";
 // src/components/recovery/HomeCare.tsx
 import Image from "next/image";
 import { C } from "@/lib/constants";
@@ -55,19 +56,24 @@ export default function HomeCare() {
           to   { opacity: 1; transform: translateX(0); }
         }
         .homecare-card {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation: slideInLeft 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         }
         .homecare-content {
-          animation: slideInRight 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-          animation-delay: 0.2s;
+          animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation-delay: 0.15s;
         }
         .homecare-quote {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-          animation-delay: 0.4s;
+          animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation-delay: 0.35s;
         }
         .homecare-buttons {
-          animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-          animation-delay: 0.5s;
+          animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+          animation-delay: 0.45s;
+        }
+        .kembang3-desktop,
+        .kembang3-mobile,
+        .bg3-mobile {
+          animation: fadeIn 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         }
         @media (max-width: 499px) {
           .homecare-desktop { display: none !important; }
@@ -161,10 +167,32 @@ export default function HomeCare() {
           </div>
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }} className="homecare-buttons">
-            <button style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "11px 24px", fontSize: 12, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer" }}>
+            <button 
+              style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "11px 24px", fontSize: 12, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
+              }}
+            >
               Book Your Session
             </button>
-            <button style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "11px 20px", fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer" }}>
+            <button 
+              style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "11px 20px", fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)", transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(139,99,64,0.08)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1)";
+              }}
+            >
               Request Home Care
             </button>
           </div>
@@ -217,10 +245,34 @@ export default function HomeCare() {
 
         {/* Buttons stacked */}
         <div className="homecare-buttons-mobile" style={{ display: "flex", flexDirection: "row", gap: "clamp(8px, 2vw, 12px)" }}>
-          <button className="homecare-btn-mobile" style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1 }}>
+          <button 
+            className="homecare-btn-mobile" 
+            style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)";
+            }}
+          >
             Book Your Session
           </button>
-          <button className="homecare-btn-mobile" style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1 }}>
+          <button 
+            className="homecare-btn-mobile" 
+            style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)", transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease" }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+              (e.currentTarget as HTMLElement).style.background = "rgba(139,99,64,0.08)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.15)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+              (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1)";
+            }}
+          >
             Request Home Care
           </button>
         </div>

@@ -5,6 +5,14 @@ export default function EmergencyBanner() {
   return (
     <section style={{ background: C.light, padding: "32px 32px" }}>
       <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+
+        .banner-desktop { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .banner-mobile  { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+
         @media (max-width: 860px) {
           .banner-desktop { display: none !important; }
           .banner-mobile  { display: flex !important; }
@@ -44,7 +52,8 @@ export default function EmergencyBanner() {
               flexShrink: 0,
             }}
           >
-            📞 Emergency Call Now
+            <img src="/icons/whatsappwhite.webp" alt="WhatsApp" style={{ width: 18, height: 18 }} />
+            Emergency Call Now
           </button>
         </div>
 
@@ -84,7 +93,8 @@ export default function EmergencyBanner() {
               width: "100%",
             }}
           >
-            📞 Emergency Call
+            <img src="/icons/whatsappwhite.webp" alt="WhatsApp" style={{ width: 16, height: 16 }} />
+            Emergency Call
           </button>
         </div>
       </div>

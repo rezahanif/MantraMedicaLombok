@@ -65,6 +65,19 @@ export default function WhatSetsUsApart() {
           padding-top: 120px;
           padding-bottom: 80px;
         }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .what-heading { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .what-card { animation: slideUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .what-card:nth-child(1) { animation-delay: 0.1s; }
+        .what-card:nth-child(2) { animation-delay: 0.2s; }
+        .what-card:nth-child(3) { animation-delay: 0.3s; }
         @media (max-width: 499px) {
           .what-sets-apart-section {
             padding-top: 80px;
@@ -73,7 +86,7 @@ export default function WhatSetsUsApart() {
         }
       `}</style>
       {/* Heading */}
-      <div style={{ textAlign: "center", marginBottom: 56 }}>
+      <div className="what-heading" style={{ textAlign: "center", marginBottom: 56 }}>
         <h2
           style={{
             fontSize: "clamp(32px, 4vw, 56px)",
@@ -101,6 +114,7 @@ export default function WhatSetsUsApart() {
       >
         {cards.map((card) => (
           <div
+            className="what-card"
             key={card.id}
             style={{
               position: "relative",

@@ -1,18 +1,27 @@
 "use client";
 
 // src/components/contact/BookingFormModal.tsx
-// Wired to BookingToast — wrap your page/layout with <BookingToastContainer />
+//
+// Usage:
+//   import BookingFormModal from "@/components/contact/BookingFormModal";
+//   const [open, setOpen] = useState(false);
+//   <button onClick={() => setOpen(true)}>Book Now</button>
+//   <BookingFormModal open={open} onClose={() => setOpen(false)} />
+//
+// Drop-in overlay — renders at the bottom of your layout via a portal-style
+// fixed container. Pass `open` and `onClose` props from the parent.
 
 import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/constants";
 import { serviceTypes } from "@/data/contactData";
-import { useBookingToast } from "@/components/shared/Bookingtoast";
 
+/* ─── Types ──────────────────────────────────────────────── */
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
+/* ─── Shared input tokens ────────────────────────────────── */
 const inp: React.CSSProperties = {
   width: "100%",
   boxSizing: "border-box",
@@ -34,39 +43,20 @@ const lbl: React.CSSProperties = {
   letterSpacing: "0.3px",
 };
 
-// Required fields for validation
-const REQUIRED: Array<keyof typeof EMPTY_FORM> = [
-  "fullName",
-  "whatsapp",
-  "serviceType",
-  "preferredDate",
-  "preferredTime",
-];
-
-const EMPTY_FORM = {
-  fullName: "",
-  whatsapp: "",
-  serviceType: "",
-  preferredDate: "",
-  preferredTime: "",
-  additionalNotes: "",
-};
-
+/* ─── Component ──────────────────────────────────────────── */
 export default function BookingFormModal({ open, onClose }: Props) {
-  const [visible,  setVisible]  = useState(false);
-  const [mounted,  setMounted]  = useState(false);
-  const [form,     setForm]     = useState(EMPTY_FORM);
-  const [errors,   setErrors]   = useState<Partial<Record<keyof typeof EMPTY_FORM, boolean>>>({});
+  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
-  const toast = useBookingToast();
 
-  const set = (key: keyof typeof EMPTY_FORM) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      setForm((f) => ({ ...f, [key]: e.target.value }));
-      // Clear error on change
-      if (errors[key]) setErrors((prev) => ({ ...prev, [key]: false }));
-    };
+  const [form, setForm] = useState({
+    fullName: "", whatsapp: "", serviceType: "",
+    preferredDate: "", preferredTime: "", additionalNotes: "",
+  });
+  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
 
+  /* Mount before animating in; unmount after animating out */
   useEffect(() => {
     if (open) {
       setMounted(true);
@@ -78,63 +68,28 @@ export default function BookingFormModal({ open, onClose }: Props) {
     }
   }, [open]);
 
+  /* Lock body scroll */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const handleSubmit = () => {
-    // Validate required fields
-    const newErrors: typeof errors = {};
-    let hasError = false;
-    REQUIRED.forEach((key) => {
-      if (!form[key].trim()) {
-        newErrors[key] = true;
-        hasError = true;
-      }
-    });
-
-    if (hasError) {
-      setErrors(newErrors);
-      toast.error("Please fill in all required fields before submitting.");
-      return;
-    }
-
-    // ── Success path ──────────────────────────────────────────
-    // Replace with your actual API call / WhatsApp redirect here
-    console.log("Booking submitted:", form);
-    toast.success("Booking confirmed! We'll reach out via WhatsApp soon.");
-    setForm(EMPTY_FORM);
-    setErrors({});
-    onClose();
-  };
 
   if (!mounted) return null;
-
-  // Field border — red tint when validation failed
-  const inpField = (key: keyof typeof EMPTY_FORM): React.CSSProperties => ({
-    ...inp,
-    border: errors[key]
-      ? "0.5px solid rgba(217,94,87,0.8)"
-      : inp.border,
-    background: errors[key]
-      ? "rgba(217,94,87,0.12)"
-      : inp.background,
-  });
 
   return (
     <>
       <style>{`
         @keyframes bfm-fade-in  { from { opacity: 0; } to { opacity: 1; } }
         @keyframes bfm-fade-out { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes bfm-pop-in   { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes bfm-pop-out  { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.94) translateY(12px); } }
         @keyframes bfm-slide-up   { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes bfm-slide-down { from { transform: translateY(0); } to { transform: translateY(100%); } }
+        @keyframes bfm-slide-down { from { transform: translateY(0); }    to { transform: translateY(100%); } }
+        @keyframes bfm-pop-in  { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes bfm-pop-out { from { opacity: 1; transform: scale(1) translateY(0); }       to { opacity: 0; transform: scale(0.94) translateY(12px); } }
 
         .bfm-backdrop {
           position: fixed; inset: 0; z-index: 9999;
-          background: rgba(15,8,2,0.68);
+          background: rgba(15, 8, 2, 0.68);
           backdrop-filter: blur(3px);
           display: flex; align-items: center; justify-content: center;
           padding: 24px 16px;
@@ -142,6 +97,7 @@ export default function BookingFormModal({ open, onClose }: Props) {
         }
         .bfm-backdrop.bfm-out { animation: bfm-fade-out 0.32s ease forwards; }
 
+        /* Desktop modal */
         .bfm-modal {
           position: relative;
           width: 100%; max-width: 480px;
@@ -154,41 +110,55 @@ export default function BookingFormModal({ open, onClose }: Props) {
         }
         .bfm-backdrop.bfm-out .bfm-modal { animation: bfm-pop-out 0.28s ease forwards; }
 
+        /* Mobile bottom sheet — overrides at ≤499px */
         @media (max-width: 499px) {
-          .bfm-backdrop { align-items: flex-end; padding: 0; }
+          .bfm-backdrop {
+            align-items: flex-end;
+            padding: 0;
+          }
           .bfm-modal {
-            max-width: 100%; border-radius: 20px 20px 0 0; max-height: 92vh;
+            max-width: 100%;
+            border-radius: 20px 20px 0 0;
+            max-height: 92vh;
             animation: bfm-slide-up 0.36s cubic-bezier(0.32,0.72,0,1) forwards;
           }
-          .bfm-backdrop.bfm-out .bfm-modal { animation: bfm-slide-down 0.3s ease forwards; }
-          .bfm-drag-pill { display: block !important; }
+          .bfm-backdrop.bfm-out .bfm-modal {
+            animation: bfm-slide-down 0.3s ease forwards;
+          }
         }
 
+        /* Scrollbar inside modal */
         .bfm-modal::-webkit-scrollbar { width: 4px; }
         .bfm-modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+        /* Calendar / time picker icon colour fix */
         .bfm-modal input[type="date"]::-webkit-calendar-picker-indicator,
         .bfm-modal input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.45; cursor: pointer; }
+
+        /* Select option bg */
         .bfm-modal select option { background: #3D2208; color: #FAFAFA; }
+
+        /* Close button hover */
         .bfm-close:hover { background: rgba(255,255,255,0.22) !important; }
 
-        /* Shake animation for error fields */
-        @keyframes field-shake {
-          0%,100% { transform: translateX(0); }
-          20%     { transform: translateX(-5px); }
-          60%     { transform: translateX(5px); }
+        /* Mobile drag pill */
+        @media (max-width: 499px) {
+          .bfm-drag-pill { display: block !important; }
         }
-        .field-error { animation: field-shake 0.35s ease; }
       `}</style>
 
+      {/* Backdrop — click outside closes */}
       <div
         ref={backdropRef}
         className={`bfm-backdrop${visible ? "" : " bfm-out"}`}
         onMouseDown={(e) => { if (e.target === backdropRef.current) onClose(); }}
       >
         <div className="bfm-modal">
-          <div style={{ position: "absolute", inset: 0, background: "rgba(28,14,4,0.38)", pointerEvents: "none", zIndex: 0 }} />
 
-          {/* Close */}
+          {/* Wood overlay tint */}
+          <div style={{ position: "absolute", inset: 0, background: "rgba(28, 14, 4, 0.38)", pointerEvents: "none", zIndex: 0 }} />
+
+          {/* Close button */}
           <button
             className="bfm-close"
             onClick={onClose}
@@ -202,7 +172,9 @@ export default function BookingFormModal({ open, onClose }: Props) {
               cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
               transition: "background 0.18s",
             }}
-          >✕</button>
+          >
+            ✕
+          </button>
 
           {/* Mobile drag pill */}
           <div
@@ -214,56 +186,52 @@ export default function BookingFormModal({ open, onClose }: Props) {
             }}
           />
 
-          <div style={{ position: "relative", zIndex: 1, padding: "40px" }}>
+          {/* ── INNER CONTENT ── */}
+          <div style={{ position: "relative", zIndex: 1, padding: "40px 40px 40px 40px" }}>
             <h2 style={{ color: "#FAFAFA", fontSize: 24, fontWeight: 700, margin: "0 0 24px", letterSpacing: "-0.3px" }}>
               Book Your Visit
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-              <div className={errors.fullName ? "field-error" : ""}>
-                <label style={lbl}>
-                  Full Name <span style={{ color: "#D95E57" }}>*</span>
-                </label>
-                <input type="text" value={form.fullName} onChange={set("fullName")} style={inpField("fullName")} placeholder="Your full name" />
+              {/* Full Name */}
+              <div>
+                <label style={lbl}>Full Name</label>
+                <input type="text" value={form.fullName} onChange={set("fullName")} style={inp} />
               </div>
 
-              <div className={errors.whatsapp ? "field-error" : ""}>
-                <label style={lbl}>
-                  WhatsApp Number <span style={{ color: "#D95E57" }}>*</span>
-                </label>
-                <input type="tel" value={form.whatsapp} onChange={set("whatsapp")} style={inpField("whatsapp")} placeholder="+62 8xx xxxx xxxx" />
+              {/* WhatsApp */}
+              <div>
+                <label style={lbl}>WhatsApp Number</label>
+                <input type="tel" value={form.whatsapp} onChange={set("whatsapp")} style={inp} />
               </div>
 
-              <div className={errors.serviceType ? "field-error" : ""}>
-                <label style={lbl}>
-                  Service Type <span style={{ color: "#D95E57" }}>*</span>
-                </label>
+              {/* Service Type */}
+              <div>
+                <label style={lbl}>Service Type</label>
                 <select
                   value={form.serviceType}
                   onChange={set("serviceType")}
-                  style={{
-                    ...inpField("serviceType"),
-                    color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.4)",
-                    cursor: "pointer",
-                  }}
+                  style={{ ...inp, color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.4)", cursor: "pointer" }}
                 >
                   <option value="" disabled>Select a service</option>
                   {serviceTypes.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
 
+              {/* Date + Time */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div className={errors.preferredDate ? "field-error" : ""}>
-                  <label style={lbl}>Preferred Date <span style={{ color: "#D95E57" }}>*</span></label>
-                  <input type="date" value={form.preferredDate} onChange={set("preferredDate")} style={inpField("preferredDate")} />
+                <div>
+                  <label style={lbl}>Preferred Date</label>
+                  <input type="date" value={form.preferredDate} onChange={set("preferredDate")} style={inp} />
                 </div>
-                <div className={errors.preferredTime ? "field-error" : ""}>
-                  <label style={lbl}>Preferred Time <span style={{ color: "#D95E57" }}>*</span></label>
-                  <input type="time" value={form.preferredTime} onChange={set("preferredTime")} style={inpField("preferredTime")} />
+                <div>
+                  <label style={lbl}>Preferred Time</label>
+                  <input type="time" value={form.preferredTime} onChange={set("preferredTime")} style={inp} />
                 </div>
               </div>
 
+              {/* Notes */}
               <div>
                 <label style={lbl}>Additional Notes</label>
                 <textarea
@@ -271,27 +239,25 @@ export default function BookingFormModal({ open, onClose }: Props) {
                   onChange={set("additionalNotes")}
                   rows={3}
                   style={{ ...inp, resize: "vertical" }}
-                  placeholder="Any specific concerns or requests…"
                 />
               </div>
 
+              {/* Submit */}
               <button
-                onClick={handleSubmit}
                 style={{
                   background: C.teal, color: "#FAFAFA", border: "none",
                   borderRadius: 100, padding: "12px 32px",
                   fontSize: 13, fontWeight: 600, cursor: "pointer",
                   letterSpacing: "0.5px", alignSelf: "flex-start",
-                  marginTop: 4, transition: "opacity 0.15s",
+                  marginTop: 4,
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
               >
                 Submit Booking
               </button>
 
             </div>
           </div>
+
         </div>
       </div>
     </>

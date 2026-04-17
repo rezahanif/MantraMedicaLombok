@@ -75,9 +75,13 @@ export default function WhyChoose() {
           from { opacity: 0; transform: translateX(32px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        .whychoose-header  { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-        .whychoose-content { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.2s; }
-        .whychoose-buttons { animation: fadeUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.3s; }
+        .whychoose-header  { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+        .whychoose-content { animation: fadeIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.15s; }
+        .carousel-slide { animation: slideInRight 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: 0.25s; }
+        .bg3-desktop,
+        .bg3-mobile {
+          animation: fadeIn 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
         @keyframes pulseRing {
           0%   { transform: translate(calc(-50%), calc(-50% - 2px)) scale(1);   opacity: 0.7; }
           70%  { transform: translate(calc(-50%), calc(-50% - 2px)) scale(1.9); opacity: 0;   }
