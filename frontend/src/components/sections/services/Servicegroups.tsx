@@ -6,6 +6,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { C } from "@/lib/constants";
 import { serviceGroups, ServiceCard } from "@/data/serviceData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 const cardBgs = [
   `linear-gradient(150deg, #1C3A2E 0%, #2A5240 100%)`,
@@ -24,7 +25,7 @@ const WHITESIRENE_POS_SMALL = 8;      // Desktop small card bottom position
 const WHITESIRENE_POS_MOBILE = 7.5;      // Mobile card marginBottom
 
 // ── Expanded card
-function ExpandedCard({ card, groupIdx }: { card: ServiceCard; groupIdx: number }) {
+function ExpandedCard({ card, groupIdx, onBook }: { card: ServiceCard; groupIdx: number; onBook: () => void }) {
   return (
     <div
       style={{
@@ -58,7 +59,7 @@ function ExpandedCard({ card, groupIdx }: { card: ServiceCard; groupIdx: number 
         <p style={{ color: C.tealLight, fontSize: 11, marginBottom: 12, letterSpacing: "0.5px" }}>{card.hours}</p>
         <div style={{ width: 24, height: 1, background: `${C.teal}70`, marginBottom: 12 }} />
         <p style={{ color: "rgba(250,250,250,0.6)", fontSize: 12.5, lineHeight: 1.75, marginBottom: 18 }}>{card.desc}</p>
-        <button style={{ background: C.teal, color: C.light, border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 12, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>
+        <button onClick={onBook} style={{ background: C.teal, color: C.light, border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 12, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start" }}>
           {card.cta}
         </button>
       </div>
@@ -138,7 +139,7 @@ const EXPANDED_H   = 300;
 const SMALL_GAP    = 16;
 const SMALL_CARD_H = (SMALL_COL_H - SMALL_GAP) / 2;
 
-function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; groupIdx: number }) {
+function ServiceGroupRow({ group, groupIdx, onBook }: { group: typeof serviceGroups[0]; groupIdx: number; onBook: () => void }) {
   const [activeIdx, setActiveIdx] = useState(group.cards.length - 1);
   const activeCard = group.cards[activeIdx];
   const smallCards = group.cards.filter((_, i) => i !== activeIdx);
@@ -153,7 +154,7 @@ function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; 
         ))}
       </div>
       <div style={{ flex: 1.4, height: EXPANDED_H, alignSelf: "center", flexShrink: 0 }}>
-        <ExpandedCard card={activeCard} groupIdx={groupIdx} />
+        <ExpandedCard card={activeCard} groupIdx={groupIdx} onBook={onBook} />
       </div>
     </div>
   );
@@ -181,9 +182,11 @@ function ServiceGroupRow({ group, groupIdx }: { group: typeof serviceGroups[0]; 
 function MobileGroupCarousel({
   group,
   groupIdx,
+  onBook,
 }: {
   group: typeof serviceGroups[0];
   groupIdx: number;
+  onBook: () => void;
 }) {
   const [activeDot, setActiveDot] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -374,6 +377,7 @@ function MobileGroupCarousel({
               </p>
 
               <button
+                onClick={onBook}
                 style={{
                   background: C.teal,
                   color: C.light,
@@ -426,11 +430,11 @@ function MobileGroupCarousel({
   );
 }
 
-function MobileServiceGroups() {
+function MobileServiceGroups({ onBook }: { onBook: () => void }) {
   return (
     <div>
       {serviceGroups.map((group: typeof serviceGroups[number], gi: number) => (
-        <MobileGroupCarousel key={group.id} group={group} groupIdx={gi} />
+        <MobileGroupCarousel key={group.id} group={group} groupIdx={gi} onBook={onBook} />
       ))}
     </div>
   );
@@ -438,7 +442,10 @@ function MobileServiceGroups() {
 
 // ── Main export ────────────────────────────────────────────────────────────────
 export default function ServiceGroups() {
+  const [bookingOpen, setBookingOpen] = useState(false);
+
   return (
+    <>
     <section style={{ background: C.light, padding: "64px 32px" }}>
       <style>{`
         @keyframes pulseRing {
@@ -481,17 +488,19 @@ export default function ServiceGroups() {
         <div className="sg-desktop">
           {serviceGroups.map((group, gi) => (
             <div key={group.id} style={{ marginBottom: gi < serviceGroups.length - 1 ? 56 : 0 }}>
-              <ServiceGroupRow group={group} groupIdx={gi} />
+              <ServiceGroupRow group={group} groupIdx={gi} onBook={() => setBookingOpen(true)} />
             </div>
           ))}
         </div>
 
         {/* Mobile */}
         <div className="sg-mobile" style={{ display: "none" }}>
-          <MobileServiceGroups />
+          <MobileServiceGroups onBook={() => setBookingOpen(true)} />
         </div>
 
       </div>
     </section>
+    <BookingFormModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+    </>
   );
 }

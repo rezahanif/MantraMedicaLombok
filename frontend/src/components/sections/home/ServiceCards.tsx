@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { C } from "@/lib/constants";
 import { services } from "@/data/homeData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 // Per-service accent color
 const getServiceStyle = (serviceId: number) => {
@@ -122,6 +123,7 @@ function BulletItem({ text, dotImage, serviceId, bulletGap }: { text: string; do
 export default function ServiceCards() {
   const [active, setActive]   = useState(0);
   const [inView, setInView]   = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const sectionRef            = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -134,6 +136,7 @@ export default function ServiceCards() {
   }, []);
 
   return (
+    <>
     <section ref={sectionRef} style={{ background: C.light }} className="px-6 md:px-12 py-24">
       <style>{`
         @keyframes fadeUp {
@@ -304,7 +307,10 @@ export default function ServiceCards() {
                           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)",
                           transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
                         }}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBookingOpen(true);
+                        }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                           (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)";
@@ -532,6 +538,7 @@ export default function ServiceCards() {
                             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
                             transition: "transform 0.2s ease, box-shadow 0.2s ease",
                           }}
+                          onClick={() => setBookingOpen(true)}
                           onMouseEnter={(e) => {
                             (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                             (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
@@ -639,6 +646,7 @@ export default function ServiceCards() {
                         boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
                         transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       }}
+                      onClick={() => setBookingOpen(true)}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                         (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
@@ -686,5 +694,7 @@ export default function ServiceCards() {
 
       </div>
     </section>
+    <BookingFormModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+    </>
   );
 }

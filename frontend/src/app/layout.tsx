@@ -4,6 +4,7 @@ import "./globals.css";
 import { C } from "@/lib/constants";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import { BookingToastContainer } from "@/components/shared/Bookingtoast";
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,9 +25,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           position: "relative",
         }}
       >
-        {!isAdminPage && <Navbar />}
-        {children}
-        {!isAdminPage && <Footer />}
+        {/*
+          ✅ BookingToastContainer now WRAPS everything as children.
+          This means Navbar, page content, Footer, and all modals
+          are inside the ToastCtx.Provider — so useBookingToast()
+          works anywhere in the tree.
+        */}
+        <BookingToastContainer>
+          {!isAdminPage && <Navbar />}
+          {children}
+          {!isAdminPage && <Footer />}
+        </BookingToastContainer>
       </body>
     </html>
   );

@@ -8,20 +8,18 @@
 //   <button onClick={() => setOpen(true)}>Book Now</button>
 //   <BookingFormModal open={open} onClose={() => setOpen(false)} />
 //
-// Drop-in overlay — renders at the bottom of your layout via a portal-style
-// fixed container. Pass `open` and `onClose` props from the parent.
+// Requires <BookingToastContainer /> mounted in layout.tsx (already done).
 
 import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/constants";
 import { serviceTypes } from "@/data/contactData";
+import { useBookingToast } from "@/components/shared/Bookingtoast";
 
-/* ─── Types ──────────────────────────────────────────────── */
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
-/* ─── Shared input tokens ────────────────────────────────── */
 const inp: React.CSSProperties = {
   width: "100%",
   boxSizing: "border-box",
@@ -43,11 +41,13 @@ const lbl: React.CSSProperties = {
   letterSpacing: "0.3px",
 };
 
-/* ─── Component ──────────────────────────────────────────── */
 export default function BookingFormModal({ open, onClose }: Props) {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
+
+  // ✅ Real toast — works because BookingToastContainer is in layout.tsx
+  const toast = useBookingToast();
 
   const [form, setForm] = useState({
     fullName: "", whatsapp: "", serviceType: "",
@@ -56,7 +56,6 @@ export default function BookingFormModal({ open, onClose }: Props) {
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  /* Mount before animating in; unmount after animating out */
   useEffect(() => {
     if (open) {
       setMounted(true);
@@ -68,12 +67,28 @@ export default function BookingFormModal({ open, onClose }: Props) {
     }
   }, [open]);
 
-  /* Lock body scroll */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  const handleSubmit = () => {
+    if (!form.fullName.trim())   { toast.error("Please enter your full name.");       return; }
+    if (!form.whatsapp.trim())   { toast.error("Please enter your WhatsApp number."); return; }
+    if (!form.serviceType)       { toast.error("Please select a service type.");      return; }
+    if (!form.preferredDate)     { toast.error("Please select a preferred date.");    return; }
+    if (!form.preferredTime)     { toast.error("Please select a preferred time.");    return; }
+    if (!/^\d+$/.test(form.whatsapp.trim())) {
+      toast.warning("WhatsApp number should contain only digits.");
+      return;
+    }
+
+    toast.success("Booking confirmed! We'll contact you via WhatsApp.");
+    setTimeout(() => {
+      setForm({ fullName: "", whatsapp: "", serviceType: "", preferredDate: "", preferredTime: "", additionalNotes: "" });
+      onClose();
+    }, 500);
+  };
 
   if (!mounted) return null;
 
@@ -97,57 +112,38 @@ export default function BookingFormModal({ open, onClose }: Props) {
         }
         .bfm-backdrop.bfm-out { animation: bfm-fade-out 0.32s ease forwards; }
 
-        /* Desktop modal */
+        /* Desktop — no scroll, fits viewport */
         .bfm-modal {
           position: relative;
           width: 100%; max-width: 480px;
-          max-height: calc(100vh - 48px);
-          border-radius: 20px; overflow: hidden; overflow-y: auto;
-          background-image: url('/images/panelkayuform.webp');
-          background-size: cover; background-position: center;
-          display: flex; flex-direction: column;
+          border-radius: 20px;
+          overflow: hidden;
           animation: bfm-pop-in 0.32s cubic-bezier(0.34,1.3,0.64,1) forwards;
         }
         .bfm-backdrop.bfm-out .bfm-modal { animation: bfm-pop-out 0.28s ease forwards; }
 
-        /* Mobile bottom sheet — overrides at ≤499px */
+        /* Mobile bottom sheet — can scroll */
         @media (max-width: 499px) {
-          .bfm-backdrop {
-            align-items: flex-end;
-            padding: 0;
-          }
+          .bfm-backdrop { align-items: flex-end; padding: 0; }
           .bfm-modal {
             max-width: 100%;
             border-radius: 20px 20px 0 0;
             max-height: 92vh;
+            overflow-y: auto;
             animation: bfm-slide-up 0.36s cubic-bezier(0.32,0.72,0,1) forwards;
           }
-          .bfm-backdrop.bfm-out .bfm-modal {
-            animation: bfm-slide-down 0.3s ease forwards;
-          }
+          .bfm-backdrop.bfm-out .bfm-modal { animation: bfm-slide-down 0.3s ease forwards; }
         }
 
-        /* Scrollbar inside modal */
         .bfm-modal::-webkit-scrollbar { width: 4px; }
         .bfm-modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-        /* Calendar / time picker icon colour fix */
         .bfm-modal input[type="date"]::-webkit-calendar-picker-indicator,
         .bfm-modal input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.45; cursor: pointer; }
-
-        /* Select option bg */
         .bfm-modal select option { background: #3D2208; color: #FAFAFA; }
-
-        /* Close button hover */
         .bfm-close:hover { background: rgba(255,255,255,0.22) !important; }
-
-        /* Mobile drag pill */
-        @media (max-width: 499px) {
-          .bfm-drag-pill { display: block !important; }
-        }
+        @media (max-width: 499px) { .bfm-drag-pill { display: block !important; } }
       `}</style>
 
-      {/* Backdrop — click outside closes */}
       <div
         ref={backdropRef}
         className={`bfm-backdrop${visible ? "" : " bfm-out"}`}
@@ -155,16 +151,25 @@ export default function BookingFormModal({ open, onClose }: Props) {
       >
         <div className="bfm-modal">
 
-          {/* Wood overlay tint */}
-          <div style={{ position: "absolute", inset: 0, background: "rgba(28, 14, 4, 0.38)", pointerEvents: "none", zIndex: 0 }} />
+          {/* ✅ Background as real divs — covers 100% reliably on both desktop & mobile,
+              no pseudo-element, no background-attachment:fixed */}
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
+            backgroundImage: "url('/images/panelkayuform.webp')",
+            backgroundSize: "cover", backgroundPosition: "center",
+          }} />
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none",
+            background: "rgba(28, 14, 4, 0.42)",
+          }} />
 
-          {/* Close button */}
+          {/* Close */}
           <button
             className="bfm-close"
             onClick={onClose}
             aria-label="Close"
             style={{
-              position: "absolute", top: 16, right: 16, zIndex: 10,
+              position: "absolute", top: 16, right: 16, zIndex: 11,
               width: 34, height: 34, borderRadius: "50%",
               background: "rgba(255,255,255,0.14)",
               border: "0.5px solid rgba(255,255,255,0.26)",
@@ -186,27 +191,24 @@ export default function BookingFormModal({ open, onClose }: Props) {
             }}
           />
 
-          {/* ── INNER CONTENT ── */}
-          <div style={{ position: "relative", zIndex: 1, padding: "40px 40px 40px 40px" }}>
+          {/* Form */}
+          <div style={{ position: "relative", zIndex: 1, padding: "40px" }}>
             <h2 style={{ color: "#FAFAFA", fontSize: 24, fontWeight: 700, margin: "0 0 24px", letterSpacing: "-0.3px" }}>
               Book Your Visit
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-              {/* Full Name */}
               <div>
                 <label style={lbl}>Full Name</label>
                 <input type="text" value={form.fullName} onChange={set("fullName")} style={inp} />
               </div>
 
-              {/* WhatsApp */}
               <div>
                 <label style={lbl}>WhatsApp Number</label>
                 <input type="tel" value={form.whatsapp} onChange={set("whatsapp")} style={inp} />
               </div>
 
-              {/* Service Type */}
               <div>
                 <label style={lbl}>Service Type</label>
                 <select
@@ -219,7 +221,6 @@ export default function BookingFormModal({ open, onClose }: Props) {
                 </select>
               </div>
 
-              {/* Date + Time */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
                   <label style={lbl}>Preferred Date</label>
@@ -231,7 +232,6 @@ export default function BookingFormModal({ open, onClose }: Props) {
                 </div>
               </div>
 
-              {/* Notes */}
               <div>
                 <label style={lbl}>Additional Notes</label>
                 <textarea
@@ -242,14 +242,13 @@ export default function BookingFormModal({ open, onClose }: Props) {
                 />
               </div>
 
-              {/* Submit */}
               <button
+                onClick={handleSubmit}
                 style={{
                   background: C.teal, color: "#FAFAFA", border: "none",
                   borderRadius: 100, padding: "12px 32px",
                   fontSize: 13, fontWeight: 600, cursor: "pointer",
-                  letterSpacing: "0.5px", alignSelf: "flex-start",
-                  marginTop: 4,
+                  letterSpacing: "0.5px", alignSelf: "flex-start", marginTop: 4,
                 }}
               >
                 Submit Booking

@@ -7,6 +7,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { treatments } from "@/data/recoveryData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 // ── Card background images
 const cardImages = [
@@ -69,8 +70,10 @@ const ICON_MARGIN_BOTTOM_MOBILE = -15;            // Icon margin bottom on mobil
 
 export default function SignatureTreatment() {
   const [active, setActive] = useState(0);
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   return (
+    <>
     <section className="sig-treatment-section" style={{ backgroundImage: `url('/images/bgcoffee1.webp')`, backgroundPosition: `calc(50% + ${BG_DESKTOP_POS_X}px) calc(50% + ${BG_DESKTOP_POS_Y}px)`, backgroundSize: `${BG_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", backgroundAttachment: "scroll", padding: "60px 40px", position: "relative", margin: 0 }}>
       <style>{`
         @keyframes fadeUp {
@@ -245,8 +248,9 @@ export default function SignatureTreatment() {
                     <p style={{ fontSize: 13, color: "rgba(250,250,250,0.62)", lineHeight: 1.78, marginBottom: 20 }}>{t.desc}</p>
                     <button 
                       style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+                      onClick={() => setBookingOpen(true)}
                       onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.transform = "scale(1.02)";
+                        (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                         (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
                       }}
                       onMouseLeave={(e) => {
@@ -302,6 +306,7 @@ export default function SignatureTreatment() {
                   <p style={{ color: "rgba(250,250,250,0.62)", fontSize: 12, lineHeight: 1.6, marginBottom: 16 }}>{t.desc}</p>
                   <button 
                     style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "10px 22px", fontSize: 11, fontWeight: 600, cursor: "pointer", alignSelf: "flex-start", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
+                    onClick={() => setBookingOpen(true)}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                       (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
@@ -322,5 +327,7 @@ export default function SignatureTreatment() {
         </div>
       </div>
     </section>
+    <BookingFormModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+    </>
   );
 }

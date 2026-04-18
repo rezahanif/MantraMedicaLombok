@@ -4,11 +4,15 @@
 
 "use client";
 
+import { useState } from "react";
 import { C } from "@/lib/constants";
 import { serviceCards } from "@/data/contactData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 export default function MapSection() {
+  const [bookingOpen, setBookingOpen] = useState(false);
   return (
+    <>
     <section
       style={{
         background: C.light,
@@ -281,6 +285,7 @@ export default function MapSection() {
                     (e.currentTarget as HTMLElement).style.transform = "scale(1)";
                     (e.currentTarget as HTMLElement).style.boxShadow = svc.cta === "Book Now" ? "0 4px 20px rgba(0,0,0,0.15)" : `0 4px 14px rgba(0,0,0,0.25)`;
                   }}
+                  onClick={() => svc.cta === "Book Now" && setBookingOpen(true)}
                 >
                   {svc.ctaIcon && (
                     <img src={svc.ctaIcon} alt="" style={{ width: 18, height: 18, objectFit: "contain" }} />
@@ -294,5 +299,7 @@ export default function MapSection() {
 
       </div>
     </section>
+    <BookingFormModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
+    </>
   );
 }

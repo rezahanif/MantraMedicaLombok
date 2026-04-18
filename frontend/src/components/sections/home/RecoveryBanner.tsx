@@ -196,7 +196,18 @@ export default function WorldClassAndRecovery() {
                 alignItems: "center", justifyContent: "center", gap: vw(8),
                 animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
                 opacity: inView ? undefined : 0,
-              }}>
+                boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.2)";
+              }}
+              >
                 More Services &nbsp; &nbsp; &nbsp; <span style={{ fontSize: vw(30), fontWeight: 900, marginTop: vw(-4), display: "inline-flex", alignItems: "center" }}>→</span>
               </button>
             </Link>
@@ -354,7 +365,19 @@ export default function WorldClassAndRecovery() {
                 boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)",
                 animation: inView ? "fadeIn 0.5s ease 500ms both" : "none",
                 opacity: inView ? undefined : 0,
-              }}>
+                transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.25)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 2px rgba(255,255,255,0.4), 0 12px 32px rgba(0,0,0,0.4)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.15)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 2px rgba(255,255,255,0.3), 0 8px 24px rgba(0,0,0,0.3)";
+              }}
+              >
                 <span style={{ fontSize: vw(30), fontWeight: 900, marginTop: vw(-4), display: "inline-flex", alignItems: "center" }}>←</span> &nbsp; &nbsp; &nbsp; More Services
               </button>
             </Link>
