@@ -1,5 +1,8 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // src/app/reset-password/page.tsx
 // ─────────────────────────────────────────────────────────────
 // Usage: linked from the password-reset email as
