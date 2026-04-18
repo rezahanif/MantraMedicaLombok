@@ -77,7 +77,7 @@ export default function LoginPage() {
     const targetEmail = profile?.email || email;
 
     // LANGKAH 2: Login ke Supabase pakai email
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
+    const { error: authError } = await supabase.auth.signInWithPassword({
       email: targetEmail, 
       password: password,
     });
@@ -87,7 +87,43 @@ export default function LoginPage() {
       setLoading(false);
       console.error("Auth error:", authError);
     } else {
-      router.push("/admin");
+      // Tunggu session ter-persist dengan retry
+      let sessionValid = false;
+      for (let i = 0; i < 10; i++) {
+        await new Promise(resolve => setTimeout(resolve, 200)); // Wait 200ms
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log(`Session check attempt ${i+1}:`, session?.user?.email || "no session");
+        if (session) {
+          sessionValid = true;
+          console.log("✓ Session found, redirecting...");
+          break;
+        }
+      }
+      
+      if (sessionValid) {
+        try {
+          console.log("About to sync session via API");
+          // PENTING: Call API dulu untuk sync cookies di server
+          const apiResp = await fetch('/api/auth/session');
+          console.log("API response:", apiResp.status);
+          
+          await new Promise(resolve => setTimeout(resolve, 500)); // Wait for cookies
+          
+          setLoading(false);
+          console.log("About to redirect to /admin");
+          router.push("/admin");
+          console.log("✓ Redirect called");
+        } catch (err) {
+          console.error("Redirect error:", err);
+          setError("Redirect failed. Try again.");
+          setLoading(false);
+        }
+      } else {
+        const errMsg = "Session gagal persist. Coba login lagi atau clear cookies & reload.";
+        setError(errMsg);
+        console.error(errMsg);
+        setLoading(false);
+      }
     }
   };
 

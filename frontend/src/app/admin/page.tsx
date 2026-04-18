@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, createContext, useContext, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 // ── Theme tokens ──────────────────────────────────────────────
@@ -916,6 +917,7 @@ function SidebarContent({ page, setPage, onNavClick }:{ page:string; setPage:(p:
 
 // ── Main App ──────────────────────────────────────────────────
 export default function MantraMedicaDashboard() {
+  const router = useRouter();
   const [dark, setDark] = useState(false);
   const T = dark ? darkT : lightT;
   const [page, setPage] = useState("Dashboard");
@@ -924,6 +926,16 @@ export default function MantraMedicaDashboard() {
   const [showAvatar, setShowAvatar] = useState(false);
   const isMobile = useIsMobile();
   const unreadNotifs = NOTIFS.filter(n=>!n.read).length;
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // Clear localStorage juga
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('sb-auth-token');
+      localStorage.clear();
+    }
+    router.push("/login");
+  };
 
   useEffect(()=>{ if(!isMobile) setDrawerOpen(false); },[isMobile]);
 
@@ -1033,7 +1045,7 @@ export default function MantraMedicaDashboard() {
                   {showAvatar && (
                     <AvatarDropdown
                       onClose={()=>setShowAvatar(false)}
-                      onLogout={()=>{ setShowAvatar(false); setPage("Dashboard"); alert("Logged out (connect to auth action to complete)"); }}
+                      onLogout={handleLogout}
                     />
                   )}
                 </div>
