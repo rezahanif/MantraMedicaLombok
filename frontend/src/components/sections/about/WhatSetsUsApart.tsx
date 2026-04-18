@@ -15,6 +15,7 @@ const cards = [
     iconWidth: 40,
     iconHeight: 40,
     iconMarginLeft: 290,
+    iconLeft: "1px",
     pills: [
       { text: "Advance Tech", icon: "/icons/advanceicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
       { text: "Licensed MDs", icon: "/icons/licenseicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
@@ -32,6 +33,7 @@ const cards = [
     iconWidth: 42,
     iconHeight: 42,
     iconMarginLeft: 290,
+    iconLeft: "1px",
     pills: [
       { text: "Physio Alignment", icon: "/icons/physioicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
       { text: "Valleyside Setting", icon: "/icons/gunungputihicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
@@ -49,6 +51,7 @@ const cards = [
     iconHeight: 60,
     iconMarginTop: -15,
     iconMarginLeft: 290,
+    iconLeft: "-5px",
     pills: [
       { text: "Global Standards", icon: "/icons/globalicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
       { text: "24/7 Support", icon: "/icons/timefullicon.webp", iconWidth: 16, iconHeight: 16, marginTop: 0, marginLeft: 0 },
@@ -163,7 +166,12 @@ export default function WhatSetsUsApart() {
                   alt={card.title}
                   width={card.iconWidth}
                   height={card.iconHeight}
-                  style={{ position: "absolute", objectFit: "contain", top: card.iconMarginTop, right: card.iconMarginLeft }}
+                  style={{ 
+                    position: "absolute", 
+                    objectFit: "contain", 
+                    top: card.iconMarginTop, 
+                    left: card.iconLeft
+                  }}
                 />
                 <h3
                   style={{

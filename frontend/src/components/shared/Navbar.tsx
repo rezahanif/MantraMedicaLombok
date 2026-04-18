@@ -6,13 +6,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { C } from "@/lib/constants";
 import { navLinks } from "@/data/shared";
+import { supabase } from "@/lib/supabase";
 
 export default function Navbar({ activePage }: { activePage?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
   const pathname = usePathname();
   const currentPage = activePage ?? navLinks.find((link) => link.href === pathname)?.label;
+
+  // Fetch WhatsApp number from clinic_info
+  useEffect(() => {
+    const fetchWhatsApp = async () => {
+      try {
+        const { data } = await supabase.from('clinic_info').select('whatsapp_number').single();
+        if (data?.whatsapp_number) setWhatsappNumber(data.whatsapp_number);
+      } catch (err) {
+        console.error('Error fetching WhatsApp:', err);
+      }
+    };
+    fetchWhatsApp();
+  }, []);
 
 
   useEffect(() => {
@@ -120,8 +135,12 @@ export default function Navbar({ activePage }: { activePage?: string }) {
             <span style={{ display: "block", width: "60%", height: 2, background: C.teal, borderRadius: 2 }} />
           </button>
 
-          <Link
-            href="/contact"
+          <button
+            onClick={() => {
+              if (whatsappNumber) {
+                window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+              }
+            }}
             className="emergency-btn"
             style={{
               background: "#E05A4E",
@@ -130,6 +149,8 @@ export default function Navbar({ activePage }: { activePage?: string }) {
               padding: "8px 16px",
               fontSize: 12,
               fontWeight: 600,
+              border: "none",
+              cursor: "pointer",
               textDecoration: "none",
               whiteSpace: "nowrap",
               display: "flex",
@@ -145,7 +166,7 @@ export default function Navbar({ activePage }: { activePage?: string }) {
               style={{ objectFit: "contain" }}
             />
             <span>Emergency Call</span>
-          </Link>
+          </button>
         </div>
       </nav>
 
