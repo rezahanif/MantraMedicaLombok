@@ -492,19 +492,22 @@ function PageServices() {
   const emptyForm = { name:"", tag:"", hours:"", desc:"", color:"#65A396", active:true };
   const [form, setForm] = useState(emptyForm);
 
+  // Map color by index: cycle through COLORS array
+  const getColorByIndex = (index: number) => COLORS[index % COLORS.length];
+
   // Fetch services from Supabase on mount
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const { data } = await supabase.from('services').select('*').order('id', { ascending: false });
-        if (data) setServices(data.map((d:any) => ({
+        const { data } = await supabase.from('services').select('*').order('id', { ascending: true });
+        if (data) setServices(data.map((d:any, idx:number) => ({
           id: d.id,
           name: d.name,
           tag: d.tag || '',
           hours: d.hours || '',
           desc: d.description || '',
-          color: d.color || '#65A396',
-          active: d.is_active || true
+          color: getColorByIndex(idx),
+          active: d.is_active === true
         })));
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
@@ -518,29 +521,55 @@ function PageServices() {
   const save = async () => {
     if(!form.name) return;
     try {
+      console.log("=== SAVE SERVICE START ===");
+      console.log("Edit mode?", !!editItem);
+      console.log("Form data:", form);
+      
       if(editItem) {
         // Update existing service
+        console.log("UPDATE - ID:", editItem.id);
         const { error } = await supabase
           .from('services')
-          .update({name: form.name, tag: form.tag, hours: form.hours, description: form.desc, color: form.color, is_active: form.active})
+          .update({name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active})
           .eq('id', editItem.id);
-        if (error) throw error;
+        if (error) {
+          console.error("❌ UPDATE ERROR:", error.message, error.code);
+          throw error;
+        }
+        console.log("✅ UPDATE SUKSES");
         setServices(p=>p.map(x=>x.id===editItem.id?{...x,...form}:x));
         toast.success('Service updated');
       } else {
-        // Insert new service
+        // Insert new service (without color - not in DB)
+        console.log("INSERT - Sending data:", {name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active});
         const { data, error } = await supabase
           .from('services')
-          .insert([{name: form.name, tag: form.tag, hours: form.hours, description: form.desc, color: form.color, is_active: form.active}])
+          .insert([{name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active}])
           .select();
-        if (error) throw error;
-        if (data) setServices(p=>[...p, {id: data[0].id, name: data[0].name, tag: data[0].tag || '', hours: data[0].hours || '', desc: data[0].description || '', color: data[0].color || '#65A396', active: data[0].is_active || true}]);
+        
+        console.log("INSERT Response - Error:", error?.message || "null");
+        console.log("INSERT Response - Error code:", error?.code || "null");
+        console.log("INSERT Response - Data:", data);
+        
+        if (error) {
+          console.error("❌ INSERT ERROR:", error);
+          throw error;
+        }
+        if (!data || data.length === 0) {
+          console.warn("⚠️ NO DATA RETURNED");
+          toast.error('Insert returned no data');
+          return;
+        }
+        console.log("✅ INSERT SUKSES - New service:", data[0]);
+        if (data) setServices(p=>[...p, {id: data[0].id, name: data[0].name, tag: data[0].tag || '', hours: data[0].hours || '', desc: data[0].description || '', color: getColorByIndex(p.length), active: data[0].is_active || true}]);
         toast.success('Service added');
       }
       setShowForm(false);
+      setForm(emptyForm);
     } catch (err) {
-      console.error(err);
-      toast.error('Failed to save service');
+      console.error("❌ CATCH ERROR:", err);
+      console.error("Error details:", JSON.stringify(err, null, 2));
+      toast.error('Failed to save service: ' + (err as any).message);
     }
   };
 
@@ -620,7 +649,9 @@ function PageServices() {
                 onClick={async()=>{
                   try {
                     console.log("=== TOGGLE SERVICE START ===");
-                    console.log("Mengubah ID:", svc.id, "dari:", svc.active, "ke:", !svc.active);
+                    console.log("Service ID type:", typeof svc.id, "Value:", svc.id);
+                    console.log("Mengubah dari:", svc.active, "ke:", !svc.active);
+                    console.log("Full svc object:", svc);
                     
                     const { data, error } = await supabase
                       .from('services')
@@ -628,27 +659,28 @@ function PageServices() {
                       .eq('id', svc.id)
                       .select();
 
-                    console.log("Response error:", error);
-                    console.log("Response data:", data);
+                    console.log("=== RESPONSE ===");
+                    console.log("Error:", error?.message || "null");
+                    console.log("Error code:", error?.code || "null");
+                    console.log("Data:", data);
                     console.log("Data length:", data?.length);
+                    console.log("Data array?:", Array.isArray(data));
 
                     if (error) {
-                      console.error("JIR ERROR LAGI:", error);
-                      console.error("Error code:", error.code);
-                      console.error("Error message:", error.message);
-                      throw error;
-                    }
-                    
-                    if (!data || data.length === 0) {
-                      console.error("NO DATA RETURNED - Update mungkin tidak tersimpan ke database");
-                      console.log("Cek RLS policy atau authentication");
-                      toast.error('Update returned no data - RLS policy issue?');
+                      console.error("JIR ERROR:", error);
+                      toast.error('Failed: ' + error.message);
                       return;
                     }
                     
-                    console.log("SUKSES BOS:", data);
+                    if (!data || data.length === 0) {
+                      console.error("⚠️ NO DATA RETURNED - Update mungkin GAGAL TERSIMPAN");
+                      console.log("Ini pertanda RLS policy issue atau row tidak ada");
+                      toast.error('Update failed - 0 rows affected');
+                      return;
+                    }
                     
-                    // Update state with actual database response
+                    console.log("✅ SUKSES - Data returned:", data);
+                    
                     const updated = data[0];
                     setServices(p=>p.map(x=>x.id===svc.id?{
                       id: x.id,
@@ -662,9 +694,8 @@ function PageServices() {
                     
                     toast.success(svc.active ? 'Service deactivated' : 'Service activated');
                   } catch(err) { 
-                    console.error("Toggle catch error:", err);
-                    console.error("Error details:", JSON.stringify(err, null, 2));
-                    toast.error('Failed to update service: ' + (err as any).message); 
+                    console.error("❌ CATCH ERROR:", err);
+                    toast.error('Error: ' + (err as any).message); 
                   }
                 }}
                 style={{ width:42, height:24, borderRadius:100, background:svc.active?svc.color:T.border, border:"none", cursor:"pointer", padding:2, transition:"background 0.25s", flexShrink:0, position:"relative" }}
@@ -1290,6 +1321,7 @@ function PageSettings() {
   const [mapPopup, setMapPopup] = useState<{id:string;label:string;current:string}|null>(null);
   const [popupInput, setPopupInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [clinicInfoId, setClinicInfoId] = useState<string>("");
 
   // Load clinic info from database on mount
   useEffect(() => {
@@ -1297,6 +1329,8 @@ function PageSettings() {
       try {
         const { data } = await supabase.from('clinic_info').select('*').single();
         if (data) {
+          console.log("Loaded clinic_info - ID (UUID):", data.id);
+          setClinicInfoId(data.id);
           setIntegrations(prev => prev.map(item => {
             const fieldMap: Record<string, keyof typeof data> = {
               'gmail': 'email_address',
@@ -1331,6 +1365,16 @@ function PageSettings() {
   const savePopup = async () => {
     if(!mapPopup) return;
     try {
+      console.log("=== SAVE CLINIC INFO START ===");
+      console.log("Field ID:", mapPopup.id);
+      console.log("New value:", popupInput);
+      console.log("Clinic Info UUID:", clinicInfoId);
+      
+      if (!clinicInfoId) {
+        console.error("ERROR: Clinic Info ID not loaded yet");
+        return;
+      }
+      
       const fieldMap: Record<string, string> = {
         'gmail': 'email_address',
         'wa': 'whatsapp_number',
@@ -1338,17 +1382,33 @@ function PageSettings() {
         'location': 'address_text',
       };
       const dbField = fieldMap[mapPopup.id];
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('Not authenticated');
-        return;
+      console.log("DB field:", dbField);
+      
+      const { data, error } = await supabase
+        .from('clinic_info')
+        .update({ [dbField]: popupInput })
+        .eq('id', clinicInfoId)
+        .select();
+      
+      console.log("Update response - data:", data);
+      console.log("Update response - error:", error);
+      
+      if (error) {
+        console.error("JIR UPDATE ERROR:", error.message, error.code);
+        throw error;
       }
-      const { error } = await supabase.from('clinic_info').update({ [dbField]: popupInput }).eq('id', 1);
-      if (error) throw error;
+      
+      if (!data || data.length === 0) {
+        console.warn("NO DATA RETURNED - clinic_info record might not have been updated");
+      } else {
+        console.log("SUKSES BOS Update clinic info:", data);
+      }
+      
       setIntegrations(p=>p.map(x=>x.id===mapPopup.id?{...x,connected:!!popupInput,value:popupInput,desc:popupInput?`Connected: ${popupInput}`:"Not connected"}:x));
       setMapPopup(null);
     } catch (err) {
       console.error('Error saving to database:', err);
+      console.error('Error details:', JSON.stringify(err, null, 2));
     }
   };
 

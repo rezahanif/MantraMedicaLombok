@@ -124,7 +124,18 @@ export default function Footer() {
                       height={16}
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
-                    <span style={{ color: C.teal, fontSize: 13, opacity: 0.7 }}>{c.text}</span>
+                    {c.icon === "icons/callgreen.webp" ? (
+                      <a 
+                        href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 13, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : (
+                      <span style={{ color: C.teal, fontSize: 13, opacity: 0.7 }}>{c.text}</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -214,7 +225,18 @@ export default function Footer() {
                       height={14}
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
-                    <span style={{ color: C.teal, fontSize: 12, opacity: 0.7 }}>{c.text}</span>
+                    {c.icon === "icons/callgreen.webp" ? (
+                      <a 
+                        href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 12, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : (
+                      <span style={{ color: C.teal, fontSize: 12, opacity: 0.7 }}>{c.text}</span>
+                    )}
                   </div>
                 ))}
               </div>

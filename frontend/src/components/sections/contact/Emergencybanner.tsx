@@ -1,7 +1,33 @@
 // src/components/contact/EmergencyBanner.tsx
+"use client";
+
 import { C } from "@/lib/constants";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function EmergencyBanner() {
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+
+  // Fetch WhatsApp number from clinic_info
+  useEffect(() => {
+    const fetchWhatsApp = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("clinic_info")
+          .select("whatsapp_number")
+          .single();
+        if (error) {
+          console.error("❌ Error fetching WhatsApp:", error);
+        } else {
+          setWhatsappNumber(data?.whatsapp_number || "");
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+      }
+    };
+    fetchWhatsApp();
+  }, []);
+
   return (
     <section style={{ background: C.light, padding: "32px 32px" }}>
       <style>{`
@@ -51,6 +77,11 @@ export default function EmergencyBanner() {
               whiteSpace: "nowrap",
               flexShrink: 0,
             }}
+            onClick={() => {
+              if (whatsappNumber) {
+                window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+              }
+            }}
           >
             <img src="/icons/whatsappwhite.webp" alt="WhatsApp" style={{ width: 18, height: 18 }} />
             Emergency Call Now
@@ -91,6 +122,11 @@ export default function EmergencyBanner() {
               gap: 6,
               whiteSpace: "nowrap",
               width: "100%",
+            }}
+            onClick={() => {
+              if (whatsappNumber) {
+                window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+              }
             }}
           >
             <img src="/icons/whatsappwhite.webp" alt="WhatsApp" style={{ width: 16, height: 16 }} />

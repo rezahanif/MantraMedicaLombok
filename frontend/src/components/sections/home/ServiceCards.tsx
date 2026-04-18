@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { C } from "@/lib/constants";
 import { services } from "@/data/homeData";
 import BookingFormModal from "@/components/shared/Bookingformmodal";
+import { supabase } from "@/lib/supabase";
 
 // Per-service accent color
 const getServiceStyle = (serviceId: number) => {
@@ -124,7 +125,28 @@ export default function ServiceCards() {
   const [active, setActive]   = useState(0);
   const [inView, setInView]   = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
   const sectionRef            = useRef<HTMLElement>(null);
+
+  // Fetch WhatsApp number from clinic_info
+  useEffect(() => {
+    const fetchWhatsApp = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("clinic_info")
+          .select("whatsapp_number")
+          .single();
+        if (error) {
+          console.error("❌ Error fetching WhatsApp:", error);
+        } else {
+          setWhatsappNumber(data?.whatsapp_number || "");
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+      }
+    };
+    fetchWhatsApp();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -538,7 +560,13 @@ export default function ServiceCards() {
                             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
                             transition: "transform 0.2s ease, box-shadow 0.2s ease",
                           }}
-                          onClick={() => setBookingOpen(true)}
+                          onClick={() => {
+                            if (svc.id === 3 && whatsappNumber) {
+                              window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+                            } else {
+                              setBookingOpen(true);
+                            }
+                          }}
                           onMouseEnter={(e) => {
                             (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                             (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";
@@ -646,7 +674,13 @@ export default function ServiceCards() {
                         boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)",
                         transition: "transform 0.2s ease, box-shadow 0.2s ease",
                       }}
-                      onClick={() => setBookingOpen(true)}
+                      onClick={() => {
+                        if (svc.id === 3 && whatsappNumber) {
+                          window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+                        } else {
+                          setBookingOpen(true);
+                        }
+                      }}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                         (e.currentTarget as HTMLElement).style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.3)";

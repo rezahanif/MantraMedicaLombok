@@ -2,10 +2,56 @@
 "use client";
 
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { C } from "@/lib/constants";
 import { contactInfo } from "@/data/contactData";
+import { supabase } from "@/lib/supabase";
 
 export default function ContactInfo() {
+  const [contactList, setContactList] = useState(contactInfo);
+
+  // Fetch contact info from clinic_info table
+  useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("clinic_info")
+          .select("whatsapp_number, address_text, email_address")
+          .single();
+        if (error) {
+          console.error("❌ Error fetching contact info:", error);
+        } else if (data) {
+          setContactList([
+            {
+              icon: "icons/call.webp",
+              primary: data.whatsapp_number || contactInfo[0].primary,
+              secondary: "Available 24/7 for emergencies",
+              cta: "Call Now",
+              ctaColor: "#E05A4E",
+            },
+            {
+              icon: "icons/email.webp",
+              primary: data.email_address || contactInfo[1].primary,
+              secondary: "Response within 2 hours",
+              cta: "Send Email",
+              ctaColor: "#438BA9",
+            },
+            {
+              icon: "icons/loc.webp",
+              primary: data.address_text || contactInfo[2].primary,
+              secondary: "Near the main trekking gate",
+              cta: "Open in Maps",
+              ctaColor: "#65A396",
+            },
+          ]);
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+      }
+    };
+    fetchContact();
+  }, []);
+
   return (
     <section style={{ background: C.teal, padding: "52px 32px", position: "relative", overflow: "hidden" }}>
       <style>{`
@@ -49,7 +95,7 @@ export default function ContactInfo() {
 
         {/* Desktop: 3-column grid (≥500px) */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }} className="contact-info-desktop">
-          {contactInfo.map((item) => (
+          {contactList.map((item) => (
             <div key={item.primary} className="contact-card" style={{ textAlign: "center" }}>
               <div style={{ marginBottom: 10 }}>
                 <img src={item.icon} alt="" style={{ width: 28, height: 28, objectFit: "contain", margin: "0 auto" }} />
@@ -69,6 +115,11 @@ export default function ContactInfo() {
                   boxShadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)`,
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
+                onClick={() => {
+                  if (item.cta === "Call Now" && item.primary) {
+                    window.open(`https://wa.me/${item.primary.replace(/\D/g, '')}`, "_blank");
+                  }
+                }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
                   (e.currentTarget as HTMLElement).style.boxShadow = `inset 0 1px 0 rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.25)`;
@@ -86,7 +137,7 @@ export default function ContactInfo() {
 
         {/* Mobile: 1-column stack (<500px) */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }} className="contact-info-mobile">
-          {contactInfo.map((item) => (
+          {contactList.map((item) => (
             <div key={item.primary} className="contact-card" style={{ textAlign: "center", background: "rgba(255,255,255,0.08)", padding: 16, borderRadius: 16 }}>
               <div style={{ marginBottom: 8 }}>
                 <img src={item.icon} alt="" style={{ width: 32, height: 32, objectFit: "contain", margin: "0 auto" }} />
@@ -106,6 +157,11 @@ export default function ContactInfo() {
                   width: "100%",
                   boxShadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)`,
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onClick={() => {
+                  if (item.cta === "Call Now" && item.primary) {
+                    window.open(`https://wa.me/${item.primary.replace(/\D/g, '')}`, "_blank");
+                  }
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";

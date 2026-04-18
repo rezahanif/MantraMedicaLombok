@@ -1,8 +1,10 @@
 "use client";
 // src/components/recovery/HomeCare.tsx
+import { useState } from "react";
 import Image from "next/image";
 import { C } from "@/lib/constants";
 import { homeCareFeatures } from "@/data/recoveryData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 // ── Kembang3 (flower) mirrored – positioned behind content
 // Desktop Kembang3 (mirrored)
@@ -36,8 +38,11 @@ const ICON_WIDTH_MOBILE = 32;                 // Icon width on mobile
 const ICON_HEIGHT_MOBILE = 32;                // Icon height on mobile
 
 export default function HomeCare() {
+  const [modalOpen, setModalOpen] = useState(false);
+  
   return (
     <section style={{ background: C.light, padding: "64px 40px", borderTop: "1px solid rgba(139,99,64,0)" }}>
+      <BookingFormModal open={modalOpen} onClose={() => setModalOpen(false)} />
       <style>{`
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(24px); }
@@ -168,6 +173,7 @@ export default function HomeCare() {
 
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }} className="homecare-buttons">
             <button 
+              onClick={() => setModalOpen(true)}
               style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "11px 24px", fontSize: 12, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
@@ -181,6 +187,7 @@ export default function HomeCare() {
               Book Your Session
             </button>
             <button 
+              onClick={() => setModalOpen(true)}
               style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "11px 20px", fontSize: 12, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)", transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease" }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
@@ -247,6 +254,7 @@ export default function HomeCare() {
         <div className="homecare-buttons-mobile" style={{ display: "flex", flexDirection: "row", gap: "clamp(8px, 2vw, 12px)" }}>
           <button 
             className="homecare-btn-mobile" 
+            onClick={() => setModalOpen(true)}
             style={{ background: "#C8A96A", color: "#1C0E04", border: "none", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.2)", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
@@ -261,6 +269,7 @@ export default function HomeCare() {
           </button>
           <button 
             className="homecare-btn-mobile" 
+            onClick={() => setModalOpen(true)}
             style={{ background: "transparent", color: "#6B4E2A", border: "0.5px solid #8B6340", borderRadius: 100, padding: "clamp(10px, 2.5vw, 12px) clamp(16px, 5vw, 24px)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", cursor: "pointer", flex: 1, boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)", transition: "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease" }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
