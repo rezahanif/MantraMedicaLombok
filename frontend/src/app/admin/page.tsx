@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, createContext, useContext, useCallback } from "react";
+import { supabase } from "@/lib/supabase";
 
 // ── Theme tokens ──────────────────────────────────────────────
 const lightT = {
@@ -590,9 +591,34 @@ function PagePhotos() {
   const [photos, setPhotos] = useState(PHOTOS_DATA);
   const [cat, setCat] = useState("All");
   const [confirm, setConfirm] = useState<{id:number;label:string}|null>(null);
+  const [uploading, setUploading] = useState(false);
   // ↓ Removed "Team" — only All / Facility / Spa
   const cats = ["All","Facility","Spa"];
   const filtered = cat==="All" ? photos : photos.filter(p=>p.category===cat);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    // Check jumlah foto di database dulu
+    const { count } = await supabase
+      .from('gallery')
+      .select('*', { count: 'exact', head: true });
+
+    if (count && count >= 5) {
+      alert("Galeri penuh! Maksimal cuma 5 foto.");
+      setUploading(false);
+      return;
+    }
+
+    // TODO: Upload ke Supabase Storage dan insert ke gallery table
+    // const uploadedUrl = await uploadToStorage(file);
+    // await insertToGallery(uploadedUrl);
+
+    setUploading(false);
+  };
 
   return (
     <div>
@@ -602,9 +628,10 @@ function PagePhotos() {
           <h1 style={{ fontSize:22, fontWeight:700, color:T.text, margin:0 }}>Photos</h1>
           <p style={{ fontSize:13, color:T.textMuted, margin:"4px 0 0" }}>Manage photos shown on the website</p>
         </div>
-        <button style={{ display:"flex", alignItems:"center", gap:7, background:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
-          <Icon d={icons.upload} color="#fff" size={14}/> Upload
+        <button onClick={() => document.getElementById("photo-input")?.click()} disabled={uploading} style={{ display:"flex", alignItems:"center", gap:7, background:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor: uploading ? "not-allowed" : "pointer", fontFamily:"inherit", opacity: uploading ? 0.6 : 1 }}>
+          <Icon d={icons.upload} color="#fff" size={14}/> {uploading ? "Uploading..." : "Upload"}
         </button>
+        <input type="file" accept="image/*" onChange={handleUpload} style={{ display: "none" }} id="photo-input" disabled={uploading} />
       </div>
       <div style={{ display:"flex", gap:7, marginBottom:16, flexWrap:"wrap" }}>
         {cats.map(c=>(
@@ -860,15 +887,9 @@ function SidebarContent({ page, setPage, onNavClick }:{ page:string; setPage:(p:
 
   return (
     <>
-      <div style={{ padding:"20px 18px 16px", borderBottom:`1px solid ${T.border}`, display:"flex", alignItems:"center" }}>
+      <div style={{ padding:"20px 9px 16px", borderBottom:`1px solid ${T.border}`, display:"flex", alignItems:"center" }}>
         <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-          <div style={{ width:34, height:34, borderRadius:9, background:T.teal, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.5 7.5H22l-6.5 4.7 2.5 7.5L12 17l-6 4.7 2.5-7.5L2 9.5h7.5z" fill="white"/></svg>
-          </div>
-          <div>
-            <p style={{ fontSize:12, fontWeight:800, color:T.text, margin:0, letterSpacing:"-0.2px" }}>Mantra</p>
-            <p style={{ fontSize:9, fontWeight:700, color:T.teal, margin:0, letterSpacing:"1.5px", textTransform:"uppercase" }}>Medica</p>
-          </div>
+          <img src="/images/logonavbar.webp" alt="Mantra Medica" style={{ width:120, height:27, borderRadius:9, objectFit:"contain" }} />
         </div>
       </div>
       <nav style={{ flex:1, padding:"12px 10px", overflowY:"auto" }}>

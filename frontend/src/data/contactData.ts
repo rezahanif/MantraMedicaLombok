@@ -46,6 +46,7 @@ export const serviceCards = [
     bg: "url('/images/bawahkanan.webp')",
     icon: "/icons/spa.webp",
     ctaIcon: "/icons/calendarwhite.webp",
+    tagBg: "url('/icons/kayubentuk.webp')",
   },
 ];
 

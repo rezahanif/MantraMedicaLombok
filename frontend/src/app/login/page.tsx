@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 // ── Brand tokens ──────────────────────────────────────────────
 const C = {
@@ -43,6 +45,7 @@ function TealOrb({ cx, cy, r, opacity = 0.18, delay = 0 }: {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email,       setEmail]       = useState("");
   const [password,    setPassword]    = useState("");
   const [showPass,    setShowPass]    = useState(false);
@@ -56,24 +59,56 @@ export default function LoginPage() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!email || !password) { setError("Please fill in all fields."); return; }
     setLoading(true);
-    setTimeout(() => {
+
+    // LANGKAH 1: Coba cari username dulu
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('username', email)
+      .maybeSingle(); // Gunakan maybeSingle() biar tidak hang
+
+    // Kalau ketemu username → gunakan email dari profile
+    // Kalau tidak ketemu → asumsikan input adalah email langsung
+    const targetEmail = profile?.email || email;
+
+    // LANGKAH 2: Login ke Supabase pakai email
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: targetEmail, 
+      password: password,
+    });
+
+    if (authError) {
+      setError("Login failed. Check your username/email & password.");
       setLoading(false);
-      if (email !== "admin@mantramedica.com") {
-        setError("Invalid credentials. Please try again.");
-      }
-      // On success: redirect or call your auth handler
-    }, 1400);
+      console.error("Auth error:", authError);
+    } else {
+      router.push("/admin");
+    }
   };
 
-  const handleForgot = (e: React.FormEvent) => {
+  const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!forgotEmail) return;
-    setForgotSent(true);
+    
+    setLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      // URL ini harus didaftarkan di Dashboard Supabase (Redirect URLs)
+      redirectTo: `${window.location.origin}/forgetpassword`,
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      setForgotSent(true);
+      setLoading(false);
+    }
   };
 
   return (

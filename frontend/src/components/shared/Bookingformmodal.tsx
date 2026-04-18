@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/constants";
 import { serviceTypes } from "@/data/contactData";
 import { useBookingToast } from "@/components/shared/Bookingtoast";
+import { supabase } from "@/lib/supabase";
 
 interface Props {
   open: boolean;
@@ -72,7 +73,7 @@ export default function BookingFormModal({ open, onClose }: Props) {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.fullName.trim())   { toast.error("Please enter your full name.");       return; }
     if (!form.whatsapp.trim())   { toast.error("Please enter your WhatsApp number."); return; }
     if (!form.serviceType)       { toast.error("Please select a service type.");      return; }
@@ -80,6 +81,26 @@ export default function BookingFormModal({ open, onClose }: Props) {
     if (!form.preferredTime)     { toast.error("Please select a preferred time.");    return; }
     if (!/^\d+$/.test(form.whatsapp.trim())) {
       toast.warning("WhatsApp number should contain only digits.");
+      return;
+    }
+
+    // Insert booking into Supabase
+    const { data, error } = await supabase
+      .from('leads')
+      .insert([
+        {
+          nama_lengkap: form.fullName,
+          whatsapp: form.whatsapp,
+          service_type: form.serviceType,
+          preferred_date: form.preferredDate,
+          preferred_time: form.preferredTime,
+          notes: form.additionalNotes,
+          status: 'pending'
+        }
+      ]);
+
+    if (error) {
+      toast.error("Booking failed: " + error.message);
       return;
     }
 
