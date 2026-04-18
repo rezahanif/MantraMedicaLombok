@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminPage = pathname?.startsWith("/admin") || pathname?.startsWith("/login");
+  const isAdminPage = pathname?.startsWith("/admin") || pathname?.startsWith("/login") || pathname?.startsWith("/forgetpassword");
 
   return (
     <html lang="en" style={{ overflowX: "hidden", width: "100%" }}>

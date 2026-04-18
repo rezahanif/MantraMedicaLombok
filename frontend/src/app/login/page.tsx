@@ -342,16 +342,7 @@ export default function LoginPage() {
             {/* Logo */}
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:36,
               animation: mounted?"fade-up 0.55s cubic-bezier(0.22,0.61,0.36,1) 0.05s both":"none" }}>
-              <div style={{ width:34, height:34, borderRadius:9, background:C.teal,
-                display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2l2.5 7.5H22l-6.5 4.7 2.5 7.5L12 17l-6 4.7 2.5-7.5L2 9.5h7.5z" fill="white"/>
-                </svg>
-              </div>
-              <div>
-                <p style={{ fontSize:12, fontWeight:800, color:C.dark, margin:0, letterSpacing:"-0.2px" }}>Mantra</p>
-                <p style={{ fontSize:9, fontWeight:700, color:C.teal, margin:0, letterSpacing:"1.8px", textTransform:"uppercase" }}>Medica</p>
-              </div>
+              <img src="/images/logonavbar.webp" alt="Mantra Medica" style={{ width:150, height:75, objectFit:"contain" }}/>
             </div>
 
             {/* Heading */}
