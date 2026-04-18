@@ -4,10 +4,13 @@
 
 "use client";
 
+import { useState } from "react";
 import { C } from "@/lib/constants";
 import { serviceCards } from "@/data/contactData";
+import BookingFormModal from "@/components/shared/Bookingformmodal";
 
 export default function MapSection() {
+  const [showBooking, setShowBooking] = useState(false);
   return (
     <section
       style={{
@@ -258,6 +261,7 @@ export default function MapSection() {
               {/* Bottom: CTA */}
               <div>
                 <button
+                  onClick={() => setShowBooking(true)}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -295,6 +299,9 @@ export default function MapSection() {
         ))}
 
       </div>
+
+      {/* Booking Modal */}
+      <BookingFormModal open={showBooking} onClose={() => setShowBooking(false)} />
     </section>
   );
 }

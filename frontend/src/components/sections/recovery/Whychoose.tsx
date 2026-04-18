@@ -1,9 +1,10 @@
 "use client";
 
 // src/components/recovery/WhyChoose.tsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { C } from "@/lib/constants";
 import { whyChooseSlides } from "@/data/recoveryData";
+import { supabase } from "@/lib/supabase";
 
 
 
@@ -49,9 +50,43 @@ function useSwipe(onSwipeLeft: () => void, onSwipeRight: () => void) {
 
 export default function WhyChoose() {
   const [slide, setSlide] = useState(0);
+  const [spaPhotos, setSpaPhotos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const prev = () => setSlide((s) => (s - 1 + whyChooseSlides.length) % whyChooseSlides.length);
-  const next = () => setSlide((s) => (s + 1) % whyChooseSlides.length);
+  // Fetch spa photos dari Supabase
+  useEffect(() => {
+    const fetchSpaPhotos = async () => {
+      try {
+        const { data } = await supabase
+          .from('gallery')
+          .select('*')
+          .eq('category', 'Spa')
+          .eq('is_visible', true)
+          .limit(5);
+        if (data && data.length > 0) {
+          setSpaPhotos(data.map((d:any) => ({
+            id: d.id,
+            url: d.photo_url,
+            caption: d.title
+          })));
+        } else {
+          // Fallback ke hardcoded slides jika tidak ada spa photos
+          setSpaPhotos(whyChooseSlides);
+        }
+      } catch (err) {
+        console.error(err);
+        setSpaPhotos(whyChooseSlides);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSpaPhotos();
+  }, []);
+
+  const slides = spaPhotos.length > 0 ? spaPhotos : whyChooseSlides;
+
+  const prev = () => setSlide((s) => (s - 1 + slides.length) % slides.length);
+  const next = () => setSlide((s) => (s + 1) % slides.length);
 
   // Swipe left → next, swipe right → prev
   const swipe = useSwipe(next, prev);
@@ -179,10 +214,20 @@ export default function WhyChoose() {
             <div
               className="carousel-slide"
               {...swipe}
-              style={{ borderRadius: 20, overflow: "hidden", aspectRatio: "4/3", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)`, cursor: "grab" }}
+              style={{ 
+                borderRadius: 20, 
+                overflow: "hidden", 
+                aspectRatio: "4/3", 
+                position: "relative", 
+                backgroundImage: slides[slide]?.url ? `url('${slides[slide].url}')` : "linear-gradient(135deg, #3D2208, #6B4425)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                cursor: "grab" 
+              }}
             >
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>
-                {whyChooseSlides[slide].caption}
+              <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)", fontSize: 13 }}>
+                {!slides[slide]?.url && "Spa Photo"}
               </div>
 
               {[{ fn: prev, side: "left",  arrow: "‹" }, { fn: next, side: "right", arrow: "›" }].map((btn, bi) => (
@@ -206,7 +251,7 @@ export default function WhyChoose() {
               ))}
 
               <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
-                {whyChooseSlides.map((_, i) => (
+                {slides.map((_, i) => (
                   <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }} />
                 ))}
               </div>
@@ -233,10 +278,20 @@ export default function WhyChoose() {
             <div
               className="carousel-slide"
               {...swipe}
-              style={{ borderRadius: 16, overflow: "hidden", aspectRatio: "3/2", position: "relative", background: `linear-gradient(135deg, #3D2208, #6B4425)`, cursor: "grab" }}
+              style={{ 
+                borderRadius: 16, 
+                overflow: "hidden", 
+                aspectRatio: "3/2", 
+                position: "relative", 
+                backgroundImage: slides[slide]?.url ? `url('${slides[slide].url}')` : "linear-gradient(135deg, #3D2208, #6B4425)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                cursor: "grab" 
+              }}
             >
-              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 12 }}>
-                {whyChooseSlides[slide].caption}
+              <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
+                {!slides[slide]?.url && "Spa Photo"}
               </div>
 
               {[{ fn: prev, side: "left",  arrow: "‹" }, { fn: next, side: "right", arrow: "›" }].map((btn, bi) => (
@@ -260,7 +315,7 @@ export default function WhyChoose() {
               ))}
 
               <div style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 5 }}>
-                {whyChooseSlides.map((_, i) => (
+                {slides.map((_, i) => (
                   <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 16 : 6, height: 6, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.4)", cursor: "pointer", transition: "all 0.3s" }} />
                 ))}
               </div>

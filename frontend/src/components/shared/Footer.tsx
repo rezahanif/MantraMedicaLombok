@@ -5,10 +5,12 @@ import Image from "next/image";
 import { C } from "@/lib/constants";
 import { navLinks, footerLinks } from "@/data/shared";
 import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function Footer() {
   const [inView, setInView] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
+  const [contact, setContact] = useState(footerLinks.contact);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -17,6 +19,25 @@ export default function Footer() {
     );
     if (footerRef.current) observer.observe(footerRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  // Load clinic info from database
+  useEffect(() => {
+    const loadClinicInfo = async () => {
+      try {
+        const { data } = await supabase.from('clinic_info').select('*').single();
+        if (data) {
+          setContact([
+            { icon: "icons/locgreen.webp", text: data.address_text || footerLinks.contact[0].text },
+            { icon: "icons/callgreen.webp", text: data.whatsapp_number || footerLinks.contact[1].text },
+            { icon: "icons/emailgreen.webp", text: data.email_address || footerLinks.contact[2].text },
+          ]);
+        }
+      } catch (err) {
+        console.error('Error loading clinic info:', err);
+      }
+    };
+    loadClinicInfo();
   }, []);
 
   return (
@@ -94,7 +115,7 @@ export default function Footer() {
                 <p style={{ color: C.teal, fontWeight: 600, fontSize: 13, marginBottom: 14 }}>
                   Contact & Newsletter
                 </p>
-                {footerLinks.contact.map((c) => (
+                {contact.map((c) => (
                   <div key={c.text} style={{ display: "flex", gap: 8, marginBottom: 10, alignItems: "flex-start" }}>
                     <Image
                       src={`/${c.icon}`}
@@ -184,7 +205,7 @@ export default function Footer() {
             }}>
               <p style={{ color: C.teal, fontWeight: 600, fontSize: 12, marginBottom: 10 }}>Contact</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {footerLinks.contact.map((c) => (
+                {contact.map((c) => (
                   <div key={c.text} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                     <Image
                       src={`/${c.icon}`}

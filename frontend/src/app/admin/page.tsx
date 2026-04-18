@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect, useRef, createContext, useContext, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useBookingToast } from "@/components/shared/Bookingtoast";
 
 // ── Theme tokens ──────────────────────────────────────────────
 const lightT = {
@@ -30,31 +31,9 @@ const useTheme = () => useContext(ThemeCtx);
 function useIsMobile(bp=768){ const [m,setM]=useState(false); useEffect(()=>{ const c=()=>setM(window.innerWidth<bp); c(); window.addEventListener('resize',c); return ()=>window.removeEventListener('resize',c); },[bp]); return m; }
 
 // ── Mock data ─────────────────────────────────────────────────
-const APPOINTMENTS_DATA = [
-  { id:1,  name:"Dian Rahayu",     wa:"081234567890", service:"Medical Checkup", date:"2025-04-16", time:"09:00", note:"Annual checkup",         status:"Confirmed" },
-  { id:2,  name:"Bagas Saputra",   wa:"082345678901", service:"Spa & Recovery",  date:"2025-04-16", time:"10:30", note:"Post-surgery recovery",   status:"Pending"   },
-  { id:3,  name:"Siti Nuraini",    wa:"083456789012", service:"Emergency Care",  date:"2025-04-17", time:"08:00", note:"Acute chest pain",        status:"Confirmed" },
-  { id:4,  name:"Rizki Pratama",   wa:"084567890123", service:"Medical Checkup", date:"2025-04-17", time:"14:00", note:"Pre-employment checkup",  status:"Pending"   },
-  { id:5,  name:"Maya Dewi",       wa:"085678901234", service:"Spa & Recovery",  date:"2025-04-18", time:"11:00", note:"Stress relief massage",   status:"Confirmed" },
-  { id:6,  name:"Andi Firmansyah", wa:"086789012345", service:"Emergency Care",  date:"2025-04-18", time:"07:30", note:"High fever – referred",   status:"Done"      },
-  { id:7,  name:"Rini Kartika",    wa:"087890123456", service:"Medical Checkup", date:"2025-04-19", time:"13:00", note:"Follow-up blood test",    status:"Done"      },
-  { id:8,  name:"Hendra Wijaya",   wa:"088901234567", service:"Spa & Recovery",  date:"2025-04-20", time:"15:00", note:"Muscle tension therapy",  status:"Cancelled" },
-];
-const REVIEWS_DATA = [
-  { id:1, name:"Dian R.",  rating:5, date:"Apr 14", text:"Excellent service! The doctors are very professional and the facility is clean.", service:"Medical Checkup", visible:true  },
-  { id:2, name:"Bagas S.", rating:4, date:"Apr 12", text:"Great spa experience. The recovery therapists are skilled. Felt much better after two sessions.", service:"Spa & Recovery", visible:true  },
-  { id:3, name:"Siti N.",  rating:5, date:"Apr 10", text:"Fast and efficient emergency care. The team was calm, reassuring, and very thorough.",    service:"Emergency Care",  visible:true  },
-  { id:4, name:"Maya D.",  rating:5, date:"Apr 08", text:"The spa at Mantra Medica is truly a hidden gem. Walked in stressed, left completely refreshed.", service:"Spa & Recovery", visible:false },
-  { id:5, name:"Rizki P.", rating:3, date:"Apr 05", text:"Overall decent experience. The wait time was a bit long but the staff made up for it.",  service:"Medical Checkup", visible:true  },
-];
-const PHOTOS_DATA = [
-  { id:1, url:"https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&q=80", label:"Clinic Exterior",  category:"Facility", visible:true  },
-  { id:2, url:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400&q=80", label:"Treatment Room",   category:"Facility", visible:true  },
-  { id:3, url:"https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80", label:"Spa Room",         category:"Spa",      visible:true  },
-  { id:4, url:"https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=400&q=80", label:"Recovery Lounge",  category:"Spa",      visible:false },
-  { id:5, url:"https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=400&q=80", label:"Emergency Unit",   category:"Facility", visible:true  },
-  { id:6, url:"https://images.unsplash.com/photo-1516549655169-df83a0774514?w=400&q=80", label:"Reception Area",   category:"Facility", visible:true  },
-];
+const APPOINTMENTS_DATA: any[] = []; // Data diambil dari Supabase table 'leads'
+const REVIEWS_DATA: any[] = []; // Data diambil dari Supabase table 'reviews'
+const PHOTOS_DATA: any[] = []; // Fotos diambil dari Supabase, bukan hardcoded
 
 // ── Services data ─────────────────────────────────────────────
 const INITIAL_SERVICES = [
@@ -236,10 +215,36 @@ function StatCard({ label, value, sub, subColor, iconD, iconBg }:{ label:string;
 function PageDashboard() {
   const {T, dark, setPage} = useTheme();
   const isMobile = useIsMobile();
-  const today    = APPOINTMENTS_DATA.filter(a=>a.date==="2025-04-16");
-  const pending  = APPOINTMENTS_DATA.filter(a=>a.status==="Pending").length;
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const { data } = await supabase
+          .from('leads')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (data) setAppointments(data.map((d:any) => ({
+          id: d.id,
+          name: d.nama_lengkap,
+          wa: d.whatsapp,
+          service: d.service_type,
+          date: d.preferred_date,
+          time: d.preferred_time,
+          note: d.notes,
+          status: d.status || 'Pending'
+        })));
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchAppointments();
+  }, []);
+
+  const today    = appointments.filter(a=>a.date===new Date().toISOString().split('T')[0]);
+  const pending  = appointments.filter(a=>a.status==="Pending").length;
   const pendingReviews = REVIEWS_DATA.filter(r=>!r.visible).length;
-  const recent   = [...APPOINTMENTS_DATA].reverse().slice(0,5);
+  const recent   = appointments.slice(0,5);
 
   return (
     <div>
@@ -266,7 +271,7 @@ function PageDashboard() {
             {APPOINTMENTS_DATA.slice(0,5).map(a=>(
               <div key={a.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 11px", background:T.surface2, borderRadius:10 }}>
                 <div style={{ width:34, height:34, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:700, fontSize:12, flexShrink:0 }}>
-                  {a.name.split(" ").map(w=>w[0]).join("").slice(0,2)}
+                  {a.name.split(" ").map((w:string)=>w[0]).join("").slice(0,2)}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <p style={{ fontSize:13, fontWeight:600, color:T.text, margin:0, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{a.name}</p>
@@ -304,11 +309,36 @@ function PageDashboard() {
 // ── Page: Appointments ────────────────────────────────────────
 function PageAppointments() {
   const {T, dark} = useTheme();
+  const toast = useBookingToast();
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [rows, setRows] = useState(APPOINTMENTS_DATA);
+  const [rows, setRows] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const { data } = await supabase
+          .from('leads')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (data) setRows(data.map((d:any) => ({
+          id: d.id,
+          name: d.nama_lengkap,
+          wa: d.whatsapp,
+          service: d.service_type,
+          date: d.preferred_date,
+          time: d.preferred_time,
+          note: d.notes,
+          status: d.status || 'Pending'
+        })));
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchAppointments();
+  }, []);
   const [confirm, setConfirm] = useState<{title:string;msg:string;action:()=>void;danger?:boolean}|null>(null);
   const [form, setForm] = useState({name:"",wa:"",service:"Medical Checkup",date:"",time:"",note:""});
   const statuses = ["All","Confirmed","Pending","Done","Cancelled"];
@@ -356,7 +386,7 @@ function PageAppointments() {
             </div>
           </div>
           <div style={{ display:"flex", gap:10, marginTop:12 }}>
-            <button onClick={()=>{ if(!form.name||!form.wa)return; setRows(p=>[...p,{id:Date.now(),...form,status:"Pending"}]); setForm({name:"",wa:"",service:"Medical Checkup",date:"",time:"",note:""}); setShowForm(false); }} style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 22px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Submit</button>
+            <button onClick={async()=>{ if(!form.name||!form.wa)return; try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { data, error } = await supabase.from('leads').insert([{ user_id: user.id, nama_lengkap: form.name, whatsapp: form.wa, service_type: form.service, preferred_date: form.date, preferred_time: form.time, notes: form.note, status: "Pending" }]).select(); if (error) throw error; if (data) { setRows(p=>[...p, { id: data[0].id, name: data[0].nama_lengkap, wa: data[0].whatsapp, service: data[0].service_type, date: data[0].preferred_date, time: data[0].preferred_time, note: data[0].notes, status: data[0].status }]); toast.success('Appointment berhasil ditambahkan'); } setForm({name:"",wa:"",service:"Medical Checkup",date:"",time:"",note:""}); setShowForm(false); } catch (err) { console.error(err); toast.error('Gagal tambah appointment'); } }} style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 22px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Submit</button>
             <button onClick={()=>setShowForm(false)} style={{ background:T.surface2, color:T.textMid, border:`1px solid ${T.border}`, borderRadius:9, padding:"10px 22px", fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
           </div>
         </div>
@@ -378,7 +408,7 @@ function PageAppointments() {
             <div key={r.id} style={{ background:T.surface, borderRadius:14, border:`1px solid ${T.border}`, padding:"14px 16px" }}>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:8 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-                  <div style={{ width:34, height:34, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:700, flexShrink:0 }}>{r.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</div>
+                  <div style={{ width:34, height:34, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:700, flexShrink:0 }}>{r.name.split(" ").map((w:string)=>w[0]).join("").slice(0,2)}</div>
                   <div><p style={{ fontSize:13, fontWeight:700, color:T.text, margin:0 }}>{r.name}</p><p style={{ fontSize:11, color:T.textMuted, margin:0 }}>{r.wa}</p></div>
                 </div>
                 <span style={{ ...getStatusColor(r.status,dark), fontSize:10, fontWeight:700, padding:"3px 8px", borderRadius:20 }}>{r.status}</span>
@@ -389,7 +419,7 @@ function PageAppointments() {
               </div>
               <div style={{ display:"flex", gap:8 }}>
                 {r.status==="Pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:()=>setRows(p=>p.map(x=>x.id===r.id?{...x,status:"Confirmed"}:x))})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:()=>setRows(p=>p.filter(x=>x.id!==r.id))})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id).eq('user_id', user.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
               </div>
             </div>
           ))}
@@ -409,7 +439,7 @@ function PageAppointments() {
               <tbody>
                 {filtered.map((r,i)=>(
                   <tr key={r.id} style={{ borderTop:`1px solid ${T.border}`, background:i%2===0?T.surface:T.surface2 }}>
-                    <td style={{ padding:"12px 14px" }}><div style={{ display:"flex", alignItems:"center", gap:9 }}><div style={{ width:30, height:30, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, flexShrink:0 }}>{r.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</div><span style={{ fontWeight:600, color:T.text }}>{r.name}</span></div></td>
+                    <td style={{ padding:"12px 14px" }}><div style={{ display:"flex", alignItems:"center", gap:9 }}><div style={{ width:30, height:30, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, flexShrink:0 }}>{r.name.split(" ").map((w:string)=>w[0]).join("").slice(0,2)}</div><span style={{ fontWeight:600, color:T.text }}>{r.name}</span></div></td>
                     <td style={{ padding:"12px 14px", color:T.textMid }}>{r.wa}</td>
                     <td style={{ padding:"12px 14px" }}><span style={{ fontSize:11, fontWeight:600, padding:"3px 9px", borderRadius:20, background:r.service==="Medical Checkup"?(dark?"#1B3530":"#E8F5F2"):r.service==="Spa & Recovery"?(dark?"#2A1E14":"#F5EDE8"):(dark?"#2A1110":"#FDECEA"), color:r.service==="Medical Checkup"?T.tealDk:r.service==="Spa & Recovery"?(dark?"#C9933A":"#7B4A2A"):"#D95E57" }}>{r.service}</span></td>
                     <td style={{ padding:"12px 14px", color:T.textMid, whiteSpace:"nowrap" }}>{r.date} · {r.time}</td>
@@ -418,7 +448,7 @@ function PageAppointments() {
                     <td style={{ padding:"12px 14px" }}>
                       <div style={{ display:"flex", gap:6 }}>
                         {r.status==="Pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:()=>setRows(p=>p.map(x=>x.id===r.id?{...x,status:"Confirmed"}:x))})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:()=>setRows(p=>p.filter(x=>x.id!==r.id))})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id).eq('user_id', user.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -558,28 +588,225 @@ function PageServices() {
 // ── Page: Reviews ─────────────────────────────────────────────
 function PageReviews() {
   const {T, dark} = useTheme();
-  const [reviews, setReviews] = useState(REVIEWS_DATA);
+  const toast = useBookingToast();
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState<{id:number;name:string}|null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    reviewer_name: "", service_tag: "Medical Checkup", rating: 5, comment: "", is_published: false,
+  });
+
+  const services = ["Medical Checkup","Spa & Recovery","Emergency Care"];
+  const inp:React.CSSProperties = {
+    width:"100%", padding:"10px 12px", borderRadius:9,
+    border:`1.5px solid ${T.border}`, fontSize:13, outline:"none",
+    boxSizing:"border-box", color:T.text, background:T.surface2, fontFamily:"inherit",
+  };
+
+  // Fetch reviews dari Supabase
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const { data } = await supabase
+          .from('reviews')
+          .select('*')
+          .order('review_date', { ascending: false });
+        if (data) setReviews(data);
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchReviews();
+  }, []);
+
+  const handlePublishToggle = async (review:any) => {
+    const publishedCount = reviews.filter(r => r.is_published).length;
+    const isCurrentlyPublished = review.is_published;
+
+    // Jika mau publish dan sudah ada 3 yang published
+    if (!isCurrentlyPublished && publishedCount >= 3) {
+      toast.warning("Max 3 published reviews. Unpublish satu review yang lain dulu.");
+      return;
+    }
+
+    // Update di Supabase
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Not authenticated");
+        return;
+      }
+      const { error } = await supabase
+        .from('reviews')
+        .update({ is_published: !isCurrentlyPublished })
+        .eq('id', review.id)
+        .eq('user_id', user.id);
+      if (error) throw error;
+      
+      // Update local state
+      setReviews(p => p.map(x => x.id === review.id ? { ...x, is_published: !x.is_published } : x));
+    } catch (err) {
+      console.error(err);
+      toast.error('Gagal update review');
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!form.reviewer_name.trim() || !form.comment.trim()) return;
+    
+    // Check kalau mau publish, apakah sudah max 3
+    if (form.is_published) {
+      const publishedCount = reviews.filter(r => r.is_published).length;
+      if (publishedCount >= 3) {
+        toast.warning("Max 3 published reviews. Simpan sebagai hidden dulu.");
+        return;
+      }
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Not authenticated");
+        return;
+      }
+      const today = new Date().toISOString().split('T')[0];
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert([{
+          user_id: user.id,
+          reviewer_name: form.reviewer_name,
+          service_tag: form.service_tag,
+          rating: form.rating,
+          comment: form.comment,
+          review_date: today,
+          is_published: form.is_published,
+        }])
+        .select();
+      if (error) throw error;
+      if (data) {
+        setReviews(p => [...p, data[0]]);
+        toast.success("Review berhasil ditambahkan");
+      }
+      setForm({ reviewer_name:"", service_tag:"Medical Checkup", rating:5, comment:"", is_published:false });
+      setShowForm(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Gagal tambah review');
+    }
+  };
+
   return (
     <div>
-      {confirm && <ConfirmModal title="Delete Review" message={`Delete review from ${confirm.name}?`} danger onConfirm={()=>{setReviews(p=>p.filter(x=>x.id!==confirm.id));setConfirm(null);}} onCancel={()=>setConfirm(null)}/>}
-      <div style={{ marginBottom:22 }}>
-        <h1 style={{ fontSize:22, fontWeight:700, color:T.text, margin:0 }}>Reviews</h1>
-        <p style={{ fontSize:13, color:T.textMuted, margin:"4px 0 0" }}>{reviews.filter(r=>r.visible).length} of {reviews.length} published</p>
+      {confirm && <ConfirmModal title="Delete Review" message={`Delete review from ${confirm.name}?`} danger
+        onConfirm={async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); setConfirm(null); return; } await supabase.from('reviews').delete().eq('id',confirm!.id).eq('user_id', user.id); setReviews(p=>p.filter(x=>x.id!==confirm!.id)); toast.success("Review berhasil dihapus"); } catch(err) { console.error(err); toast.error('Gagal hapus review'); } setConfirm(null); }}
+        onCancel={()=>setConfirm(null)}/>}
+
+      {/* Header */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22, flexWrap:"wrap", gap:12 }}>
+        <div>
+          <h1 style={{ fontSize:22, fontWeight:700, color:T.text, margin:0 }}>Reviews</h1>
+          <p style={{ fontSize:13, color:T.textMuted, margin:"4px 0 0" }}>
+            {reviews.filter(r=>r.is_published).length} of {reviews.length} published (max 3)
+          </p>
+        </div>
+        <button onClick={()=>{ setShowForm(true); setForm({reviewer_name:"",service_tag:"Medical Checkup",rating:5,comment:"",is_published:false}); }}
+          style={{ display:"flex", alignItems:"center", gap:7, background:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+          <Icon d={icons.plus} color="#fff" size={14}/> Add Review
+        </button>
       </div>
+
+      {/* Add Review form */}
+      {showForm && (
+        <div style={{ background:T.surface, borderRadius:16, border:`1.5px solid ${T.teal}`, padding:"20px 22px", marginBottom:20 }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+            <h3 style={{ fontSize:14, fontWeight:700, color:T.text, margin:0 }}>New Review</h3>
+            <button onClick={()=>setShowForm(false)} style={{ background:"none", border:"none", cursor:"pointer", padding:4 }}>
+              <Icon d={icons.x} color={T.textMuted} size={16}/>
+            </button>
+          </div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+            {/* Name */}
+            <div>
+              <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Patient Name *</label>
+              <input value={form.reviewer_name} onChange={e=>setForm(p=>({...p,reviewer_name:e.target.value}))} placeholder="e.g. Dian R." style={inp}/>
+            </div>
+
+            {/* Service */}
+            <div>
+              <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Service</label>
+              <select value={form.service_tag} onChange={e=>setForm(p=>({...p,service_tag:e.target.value}))} style={{...inp,appearance:"none" as const}}>
+                {services.map(s=><option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Star rating picker */}
+          <div style={{ marginBottom:12 }}>
+            <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:6, fontWeight:600, textTransform:"uppercase" }}>Rating *</label>
+            <div style={{ display:"flex", gap:6 }}>
+              {[1,2,3,4,5].map(n=>(
+                <button key={n} onClick={()=>setForm(p=>({...p,rating:n}))}
+                  style={{ background:"none", border:"none", cursor:"pointer", padding:2, fontSize:26, color:n<=form.rating?"#E8A444":"#CCC", lineHeight:1, transition:"transform 0.1s" }}
+                  onMouseEnter={e=>(e.currentTarget.style.transform="scale(1.2)")}
+                  onMouseLeave={e=>(e.currentTarget.style.transform="scale(1)")}>★</button>
+              ))}
+              <span style={{ fontSize:13, color:T.textMuted, alignSelf:"center", marginLeft:6 }}>{form.rating} star{form.rating>1?"s":""}</span>
+            </div>
+          </div>
+
+          {/* Review text */}
+          <div style={{ marginBottom:12 }}>
+            <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Review Text *</label>
+            <textarea value={form.comment} onChange={e=>setForm(p=>({...p,comment:e.target.value}))} rows={3}
+              placeholder="Write the review content here…"
+              style={{...inp, resize:"vertical"}}/>
+          </div>
+
+          {/* Publish toggle */}
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
+            <button onClick={()=>setForm(p=>({...p,is_published:!p.is_published}))}
+              style={{ width:42, height:24, borderRadius:100, background:form.is_published?T.teal:T.border, border:"none", cursor:"pointer", padding:2, position:"relative", transition:"background 0.25s" }}>
+              <div style={{ width:20, height:20, borderRadius:"50%", background:"#fff", transition:"transform 0.25s", transform:form.is_published?"translateX(18px)":"translateX(0)", boxShadow:"0 1px 4px rgba(0,0,0,0.25)" }}/>
+            </button>
+            <span style={{ fontSize:13, color:T.textMid, fontWeight:500 }}>
+              {form.is_published ? "Publish immediately (~max 3)" : "Save as hidden"}
+            </span>
+          </div>
+
+          <div style={{ display:"flex", gap:10 }}>
+            <button onClick={handleSubmit} disabled={!form.reviewer_name.trim()||!form.comment.trim()}
+              style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 24px", fontSize:13, fontWeight:600, cursor:(!form.reviewer_name.trim()||!form.comment.trim())?"not-allowed":"pointer", opacity:(!form.reviewer_name.trim()||!form.comment.trim())?0.55:1, fontFamily:"inherit" }}>
+              Add Review
+            </button>
+            <button onClick={()=>setShowForm(false)} style={{ background:T.surface2, color:T.textMid, border:`1px solid ${T.border}`, borderRadius:9, padding:"10px 20px", fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Review cards */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))", gap:14 }}>
         {reviews.map(r=>(
-          <div key={r.id} style={{ background:T.surface, borderRadius:16, border:`1.5px solid ${r.visible?T.teal:T.border}`, padding:"16px 18px", position:"relative", opacity:r.visible?1:0.65 }}>
-            {!r.visible && <span style={{ position:"absolute", top:11, right:12, fontSize:9, background:T.surface2, color:T.textMuted, padding:"2px 7px", borderRadius:20, fontWeight:700, letterSpacing:"0.5px" }}>HIDDEN</span>}
+          <div key={r.id} style={{ background:T.surface, borderRadius:16, border:`1.5px solid ${r.is_published?T.teal:T.border}`, padding:"16px 18px", position:"relative", opacity:r.is_published?1:0.65 }}>
+            {!r.is_published && <span style={{ position:"absolute", top:11, right:12, fontSize:9, background:T.surface2, color:T.textMuted, padding:"2px 7px", borderRadius:20, fontWeight:700, letterSpacing:"0.5px" }}>HIDDEN</span>}
             <div style={{ display:"flex", alignItems:"center", gap:9, marginBottom:9 }}>
-              <div style={{ width:36, height:36, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700, flexShrink:0 }}>{r.name.replace(".","").split(" ").map(w=>w[0]).join("").slice(0,2)}</div>
-              <div><p style={{ fontSize:13, fontWeight:700, color:T.text, margin:0 }}>{r.name}</p><p style={{ fontSize:11, color:T.textMuted, margin:0 }}>{r.service} · {r.date}</p></div>
+              <div style={{ width:36, height:36, borderRadius:"50%", background:T.teal, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700, flexShrink:0 }}>
+                {r.reviewer_name.replace(".","").split(" ").map((w:string)=>w[0]).join("").slice(0,2)}
+              </div>
+              <div>
+                <p style={{ fontSize:13, fontWeight:700, color:T.text, margin:0 }}>{r.reviewer_name}</p>
+                <p style={{ fontSize:11, color:T.textMuted, margin:0 }}>{r.service_tag} · {r.review_date}</p>
+              </div>
             </div>
             <div style={{ marginBottom:7 }}><Stars n={r.rating}/></div>
-            <p style={{ fontSize:12, color:T.textMid, lineHeight:1.6, margin:"0 0 12px" }}>{r.text}</p>
+            <p style={{ fontSize:12, color:T.textMid, lineHeight:1.6, margin:"0 0 12px" }}>{r.comment}</p>
             <div style={{ display:"flex", gap:7 }}>
-              <button onClick={()=>setReviews(p=>p.map(x=>x.id===r.id?{...x,visible:!x.visible}:x))} style={{ flex:1, padding:"8px", borderRadius:8, border:`1px solid ${r.visible?T.border:T.teal}`, background:r.visible?T.surface2:(dark?"#1B3530":"#E8F5F2"), color:r.visible?T.textMid:T.tealDk, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>{r.visible?"Hide":"Publish"}</button>
-              <button onClick={()=>setConfirm({id:r.id,name:r.name})} style={{ padding:"8px 12px", borderRadius:8, border:`1px solid ${dark?"#2A1110":"#FDECEA"}`, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+              <button onClick={()=>handlePublishToggle(r)}
+                style={{ flex:1, padding:"8px", borderRadius:8, border:`1px solid ${r.is_published?T.border:T.teal}`, background:r.is_published?T.surface2:(dark?"#1B3530":"#E8F5F2"), color:r.is_published?T.textMid:T.tealDk, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                {r.is_published?"Hide":"Publish"}
+              </button>
+              <button onClick={()=>setConfirm({id:r.id,name:r.reviewer_name})}
+                style={{ padding:"8px 12px", borderRadius:8, border:`1px solid ${dark?"#2A1110":"#FDECEA"}`, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
             </div>
           </div>
         ))}
@@ -590,57 +817,256 @@ function PageReviews() {
 
 // ── Page: Photos ──────────────────────────────────────────────
 function PagePhotos() {
+  const toast = useBookingToast();
   const {T, dark} = useTheme();
-  const [photos, setPhotos] = useState(PHOTOS_DATA);
+  const [photos, setPhotos] = useState<any[]>([]);
   const [cat, setCat] = useState("All");
-  const [confirm, setConfirm] = useState<{id:number;label:string}|null>(null);
+  const [confirm, setConfirm] = useState<{id:number;title:string;storage_path?:string}|null>(null);
   const [uploading, setUploading] = useState(false);
-  // ↓ Removed "Team" — only All / Facility / Spa
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ label:"", category:"Facility" });
+  const [previewFile, setPreviewFile] = useState<File|null>(null);
+  const [previewUrl,  setPreviewUrl]  = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Fetch photos from Supabase on mount
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      try {
+        const { data } = await supabase.from('gallery').select('*').order('id', { ascending: false });
+        console.log("Gallery data structure:", data?.[0]); // DEBUG: See column names
+        if (data) setPhotos(data.map((d:any) => ({
+          id: d.id,
+          url: d.photo_url,
+          label: d.title,
+          category: d.category,
+          visible: d.is_visible,
+          storage_path: d.storage_path
+        })));
+      } catch (err) { console.error(err); }
+    };
+    fetchPhotos();
+  }, []);
+
   const cats = ["All","Facility","Spa"];
   const filtered = cat==="All" ? photos : photos.filter(p=>p.category===cat);
+  const inp:React.CSSProperties = {
+    width:"100%", padding:"10px 12px", borderRadius:9,
+    border:`1.5px solid ${T.border}`, fontSize:13, outline:"none",
+    boxSizing:"border-box", color:T.text, background:T.surface2, fontFamily:"inherit",
+  };
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return;
+    setPreviewFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
 
+  // Check jika kategori sudah penuh (5 foto)
+  const isCategoryFull = photos.filter(p=>p.category===form.category).length >= 5;
+
+  const handleSubmit = async () => {
+    if (!form.label || !previewFile) return;
     setUploading(true);
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log("Current user:", user?.id); // DEBUG
+      
+      if (!user) {
+        toast.error("Not authenticated. Please login.");
+        setUploading(false);
+        return;
+      }
 
-    // Check jumlah foto di database dulu
-    const { count } = await supabase
-      .from('gallery')
-      .select('*', { count: 'exact', head: true });
-
-    if (count && count >= 5) {
-      alert("Galeri penuh! Maksimal cuma 5 foto.");
-      setUploading(false);
-      return;
-    }
-
-    // TODO: Upload ke Supabase Storage dan insert ke gallery table
-    // const uploadedUrl = await uploadToStorage(file);
-    // await insertToGallery(uploadedUrl);
-
-    setUploading(false);
+      // 1. Check kuota per kategori (maks 5 foto per kategori)
+      const { count: catCount } = await supabase
+        .from("gallery")
+        .select("*", { count:"exact", head:true })
+        .eq("category", form.category);
+      
+      if (catCount && catCount >= 5) {
+        toast.warning(`Kategori "${form.category}" sudah penuh (max 5). Hapus foto lama dulu.`);
+        setUploading(false);
+        return;
+      }
+      
+      // 2. Generate filename & upload ke Storage
+      const fileExt = previewFile.name.split(".").pop();
+      const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `public/${fileName}`;
+      
+      const { error: upErr } = await supabase.storage.from("gallery_photos").upload(filePath, previewFile, { cacheControl:"3600", upsert:false });
+      if (upErr) throw upErr;
+      
+      // 3. Get public URL
+      const { data: { publicUrl } } = supabase.storage.from("gallery_photos").getPublicUrl(filePath);
+      
+      // 4. Insert ke database dengan user_id (untuk RLS)
+      const insertPayload = {
+        user_id: user.id,
+        title: form.label,
+        category: form.category,
+        photo_url: publicUrl,
+        storage_path: filePath,
+        is_visible: true
+      };
+      console.log("Insert payload:", insertPayload); // DEBUG: See exactly what's being sent
+      
+      const { data: insData, error: insErr } = await supabase.from("gallery").insert([insertPayload]).select();
+      
+      if (insErr) {
+        console.error("Insert error details:", { message: insErr.message, code: insErr.code, details: insErr.details }); // DEBUG: Details
+        throw insErr;
+      }
+      
+      console.log("Insert success! Data:", insData); // DEBUG: Success response
+      
+      if (insData && insData.length > 0) {
+        const newPhoto = insData[0];
+        setPhotos(prev => [...prev, { id:newPhoto.id, url:newPhoto.photo_url, label:newPhoto.title, category:newPhoto.category, visible:newPhoto.is_visible }]);
+      }
+      setShowForm(false); setForm({label:"",category:"Facility"}); setPreviewFile(null); setPreviewUrl("");
+      toast.success("Foto berhasil diupload!");
+    } catch (err: any) { console.error("Full error:", err); toast.error(`Upload gagal: ${err.message || err}`); }
+    finally { setUploading(false); }
   };
 
   return (
     <div>
-      {confirm && <ConfirmModal title="Delete Photo" message={`Delete "${confirm.label}"?`} danger onConfirm={()=>{setPhotos(p=>p.filter(x=>x.id!==confirm.id));setConfirm(null);}} onCancel={()=>setConfirm(null)}/>}
+      {confirm && <ConfirmModal title="Delete Photo" message={`Delete "${confirm.title}"?`} danger
+        onConfirm={async ()=>{
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+              toast.error("Not authenticated");
+              setConfirm(null);
+              return;
+            }
+            
+            console.log("Deleting photo ID:", confirm.id, "Storage path:", confirm.storage_path); // DEBUG
+            
+            // 1. Delete file dari Storage dulu (gunakan storage_path dari DB)
+            const { error: storageError } = await supabase
+              .storage
+              .from('gallery_photos')
+              .remove([confirm.storage_path]);
+            
+            if (storageError) {
+              console.error("Storage delete error:", storageError);
+              throw storageError;
+            }
+            
+            console.log("Storage delete success, now deleting from DB..."); // DEBUG
+            
+            // 2. Jika file di storage berhasil dihapus, baru hapus baris di tabel
+            const { error: dbError } = await supabase
+              .from('gallery')
+              .delete()
+              .eq('id', confirm.id)
+              .eq('user_id', user.id);
+            
+            if (dbError) {
+              console.error("Delete error FULL:", { message: dbError.message, code: dbError.code, details: dbError.details }); // DEBUG
+              throw dbError;
+            }
+            
+            console.log("Delete success!"); // DEBUG
+            setPhotos(p=>p.filter(x=>x.id!==confirm!.id));
+            toast.success('Foto dan data berhasil dibersihkan!');
+          } catch (err: any) {
+            console.error("Delete catch error:", err); // DEBUG
+            toast.error('Delete failed: ' + err.message);
+          }
+          setConfirm(null);
+        }}
+        onCancel={()=>setConfirm(null)}/>}
+
+      {/* Header */}
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:22, flexWrap:"wrap", gap:12 }}>
         <div>
           <h1 style={{ fontSize:22, fontWeight:700, color:T.text, margin:0 }}>Photos</h1>
-          <p style={{ fontSize:13, color:T.textMuted, margin:"4px 0 0" }}>Manage photos shown on the website</p>
+          <p style={{ fontSize:13, color:T.textMuted, margin:"4px 0 0" }}>
+            {photos.filter(p=>p.visible).length} visible · {photos.length} total
+          </p>
         </div>
-        <button onClick={() => document.getElementById("photo-input")?.click()} disabled={uploading} style={{ display:"flex", alignItems:"center", gap:7, background:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor: uploading ? "not-allowed" : "pointer", fontFamily:"inherit", opacity: uploading ? 0.6 : 1 }}>
-          <Icon d={icons.upload} color="#fff" size={14}/> {uploading ? "Uploading..." : "Upload"}
+        <button
+          onClick={()=>{ setShowForm(true); setForm({label:"",category:"Facility"}); setPreviewFile(null); setPreviewUrl(""); }}
+          disabled={isCategoryFull}
+          title={isCategoryFull ? "Kategori penuh (5 foto max). Hapus foto lama dulu." : "Upload foto baru"}
+          style={{ display:"flex", alignItems:"center", gap:7, background:isCategoryFull?T.border:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor:isCategoryFull?"not-allowed":"pointer", fontFamily:"inherit", opacity:isCategoryFull?0.5:1 }}
+        >
+          <Icon d={icons.upload} color="#fff" size={14}/> {isCategoryFull?"Kategori Penuh":"Upload Photo"}
         </button>
-        <input type="file" accept="image/*" onChange={handleUpload} style={{ display: "none" }} id="photo-input" disabled={uploading} />
       </div>
+
+      {/* Upload form — shown BEFORE file picker */}
+      {showForm && (
+        <div style={{ background:T.surface, borderRadius:16, border:`1.5px solid ${T.teal}`, padding:"20px 22px", marginBottom:20 }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+            <h3 style={{ fontSize:14, fontWeight:700, color:T.text, margin:0 }}>New Photo</h3>
+            <button onClick={()=>setShowForm(false)} style={{ background:"none", border:"none", cursor:"pointer", padding:4 }}>
+              <Icon d={icons.x} color={T.textMuted} size={16}/>
+            </button>
+          </div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
+            <div>
+              <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Photo Label *</label>
+              <input value={form.label} onChange={e=>setForm(p=>({...p,label:e.target.value}))} placeholder="e.g. Spa Room" style={inp}/>
+            </div>
+            <div>
+              <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Category *</label>
+              <select value={form.category} onChange={e=>setForm(p=>({...p,category:e.target.value}))} style={{...inp,appearance:"none" as const}}>
+                {["Facility","Spa"].map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ marginBottom:16 }}>
+            <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:6, fontWeight:600, textTransform:"uppercase" }}>Photo File *</label>
+            {!previewUrl ? (
+              <button onClick={()=>fileRef.current?.click()}
+                style={{ width:"100%", padding:"28px 0", borderRadius:12, border:`2px dashed ${T.border}`, background:T.surface2, color:T.textMuted, fontSize:13, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:8, fontFamily:"inherit" }}>
+                <Icon d={icons.image} color={T.textMuted} size={28}/>
+                Click to choose photo
+              </button>
+            ) : (
+              <div style={{ display:"flex", alignItems:"flex-start", gap:14 }}>
+                <div style={{ position:"relative" }}>
+                  <img src={previewUrl} alt="preview" style={{ width:140, height:96, objectFit:"cover", borderRadius:10, border:`1px solid ${T.border}`, display:"block" }}/>
+                  <button onClick={()=>{ setPreviewFile(null); setPreviewUrl(""); if(fileRef.current) fileRef.current.value=""; }}
+                    style={{ position:"absolute", top:5, right:5, background:"rgba(0,0,0,0.55)", border:"none", borderRadius:"50%", width:20, height:20, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", padding:0 }}>
+                    <Icon d={icons.x} color="#fff" size={11}/>
+                  </button>
+                </div>
+                <div>
+                  <p style={{ fontSize:12, color:T.textMid, margin:"0 0 6px", fontWeight:500 }}>{previewFile?.name}</p>
+                  <button onClick={()=>fileRef.current?.click()} style={{ fontSize:11, color:T.teal, background:"none", border:"none", cursor:"pointer", fontFamily:"inherit", fontWeight:600, padding:0 }}>Change file</button>
+                </div>
+              </div>
+            )}
+            <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display:"none" }}/>
+          </div>
+
+          <div style={{ display:"flex", gap:10 }}>
+            <button onClick={handleSubmit} disabled={!form.label||!previewFile||uploading}
+              style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 24px", fontSize:13, fontWeight:600, cursor:(!form.label||!previewFile||uploading)?"not-allowed":"pointer", opacity:(!form.label||!previewFile||uploading)?0.55:1, fontFamily:"inherit" }}>
+              {uploading ? "Uploading…" : "Upload Photo"}
+            </button>
+            <button onClick={()=>setShowForm(false)} style={{ background:T.surface2, color:T.textMid, border:`1px solid ${T.border}`, borderRadius:9, padding:"10px 20px", fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Category filter */}
       <div style={{ display:"flex", gap:7, marginBottom:16, flexWrap:"wrap" }}>
         {cats.map(c=>(
           <button key={c} onClick={()=>setCat(c)} style={{ padding:"8px 16px", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", border:"none", fontFamily:"inherit", background:cat===c?T.teal:T.surface2, color:cat===c?"#fff":T.textMid }}>{c}</button>
         ))}
       </div>
+
+      {/* Photo grid */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))", gap:14 }}>
         {filtered.map(p=>(
           <div key={p.id} style={{ borderRadius:14, overflow:"hidden", border:`1.5px solid ${T.border}`, background:T.surface, opacity:p.visible?1:0.6 }}>
@@ -652,8 +1078,71 @@ function PagePhotos() {
               <p style={{ fontSize:13, fontWeight:600, color:T.text, margin:"0 0 2px" }}>{p.label}</p>
               <p style={{ fontSize:11, color:T.textMuted, margin:"0 0 9px" }}>{p.category}</p>
               <div style={{ display:"flex", gap:7 }}>
-                <button onClick={()=>setPhotos(prev=>prev.map(x=>x.id===p.id?{...x,visible:!x.visible}:x))} style={{ flex:1, padding:"7px", borderRadius:7, border:`1px solid ${p.visible?T.border:T.teal}`, background:p.visible?T.surface2:(dark?"#1B3530":"#E8F5F2"), color:p.visible?T.textMid:T.tealDk, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>{p.visible?"Hide":"Show"}</button>
-                <button onClick={()=>setConfirm({id:p.id,label:p.label})} style={{ padding:"7px 10px", borderRadius:7, border:`1px solid ${dark?"#2A1110":"#FDECEA"}`, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
+                <button onClick={async ()=>{
+                  if (!p.visible) {
+                    const visibleCount = photos.filter(x=>x.category===p.category&&x.visible).length;
+                    if (visibleCount >= 3) { toast.warning(`Maks 3 foto "${p.category}" yang visible. Sembunyikan satu dulu.`); return; }
+                  }
+                  try {
+                    // Get current user
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) {
+                      toast.error("Not authenticated");
+                      return;
+                    }
+                    
+                    console.log("=== TOGGLE START ===");
+                    console.log("Photo ID from state:", p.id, "Type:", typeof p.id);
+                    console.log("User ID:", user.id, "Type:", typeof user.id);
+                    
+                    // First, fetch the photo to see what user_id it has
+                    const { data: photoCheck } = await supabase
+                      .from('gallery')
+                      .select('id, user_id, is_visible')
+                      .eq('id', p.id)
+                      .single();
+                    
+                    console.log("Photo in DB:", photoCheck); // DEBUG: See actual photo data
+                    
+                    if (!photoCheck) {
+                      console.error("Photo not found in DB!");
+                      toast.error("Photo not found in database");
+                      return;
+                    }
+                    
+                    console.log("Photo user_id in DB:", photoCheck.user_id, "Current user ID:", user.id, "Match?", photoCheck.user_id === user.id);
+                    
+                    const { data: updateData, error } = await supabase
+                      .from('gallery')
+                      .update({ is_visible: !p.visible })
+                      .eq('id', p.id)
+                      .eq('user_id', user.id) // Verify ownership via RLS
+                      .select();
+                    
+                    console.log("Update response - Data:", updateData, "Error:", error); // DEBUG
+                    
+                    if (error) {
+                      console.error("Update error FULL:", { message: error.message, code: error.code, details: error.details, hint: error.hint }); // DEBUG
+                      throw error;
+                    }
+                    
+                    if (updateData && updateData.length > 0) {
+                      console.log("Update SUCCESS! Fresh data:", updateData[0]); // DEBUG
+                      setPhotos(prev=>prev.map(x=>x.id===p.id?{...x,visible:!x.visible}:x));
+                      toast.success(p.visible ? "Hidden" : "Shown");
+                    } else {
+                      console.warn("Update returned empty data - no rows matched"); // DEBUG
+                      toast.error("Photo not found or permission denied");
+                    }
+                  } catch (err: any) { 
+                    console.error("Toggle catch error:", err); // DEBUG
+                    toast.error('Update failed: ' + err.message);
+                  }
+                }}
+                  style={{ flex:1, padding:"7px", borderRadius:7, border:`1px solid ${p.visible?T.border:T.teal}`, background:p.visible?T.surface2:(dark?"#1B3530":"#E8F5F2"), color:p.visible?T.textMid:T.tealDk, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                  {p.visible?"Hide":"Show"}
+                </button>
+                  <button onClick={()=>setConfirm({id:p.id,title:p.label,storage_path:p.storage_path})} style={{ padding:"7px 10px", borderRadius:7, border:`1px solid ${dark?"#2A1110":"#FDECEA"}`, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
                   <Icon d={icons.trash} color="#D95E57" size={12}/>
                 </button>
               </div>
@@ -678,23 +1167,76 @@ function PageSettings() {
   const save = () => { setSaved(true); setTimeout(()=>setSaved(false),2000); };
   const inp:React.CSSProperties = { width:"100%", padding:"11px 14px", borderRadius:10, border:`1.5px solid ${T.border}`, fontSize:13, outline:"none", boxSizing:"border-box", color:T.text, background:T.surface2, fontFamily:"inherit" };
 
-  // Integration state — replaced Google Calendar with Google Maps
+  // Integration state — fetch from clinic_info table
   const [integrations, setIntegrations] = useState([
-    { id:"gmail",  name:"Gmail",           desc:"Connected: admin@mantramedica.com", connected:true,  value:"admin@mantramedica.com", icon:"📧" },
-    { id:"wa",     name:"WhatsApp Business",desc:"Not connected",                    connected:false, value:"", icon:"💬" },
-    { id:"gmaps",  name:"Google Maps",      desc:"Not connected",                    connected:false, value:"", icon:"🗺️" },
+    { id:"gmail",  name:"Gmail",           desc:"Not connected",                    connected:false, value:"", icon:"📧" },
+    { id:"wa",     name:"WhatsApp Number", desc:"Not connected",                    connected:false, value:"", icon:"💬" },
+    { id:"gmaps",  name:"Google Maps",     desc:"Not connected",                    connected:false, value:"", icon:"🗺️" },
+    { id:"location", name:"Location",      desc:"Not connected",                    connected:false, value:"", icon:"📍" },
   ]);
   const [mapPopup, setMapPopup] = useState<{id:string;label:string;current:string}|null>(null);
   const [popupInput, setPopupInput] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Load clinic info from database on mount
+  useEffect(() => {
+    const loadClinicInfo = async () => {
+      try {
+        const { data } = await supabase.from('clinic_info').select('*').single();
+        if (data) {
+          setIntegrations(prev => prev.map(item => {
+            const fieldMap: Record<string, keyof typeof data> = {
+              'gmail': 'email_address',
+              'wa': 'whatsapp_number',
+              'gmaps': 'gmaps_link',
+              'location': 'address_text',
+            };
+            const dbField = fieldMap[item.id];
+            const value = data[dbField] || '';
+            return {
+              ...item,
+              value,
+              connected: !!value,
+              desc: value ? `Connected: ${value}` : 'Not connected',
+            };
+          }));
+        }
+      } catch (err) {
+        console.error('Error loading clinic info:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadClinicInfo();
+  }, []);
 
   const openPopup = (item:typeof integrations[0]) => {
     setMapPopup({id:item.id, label:item.name, current:item.value});
     setPopupInput(item.value);
   };
-  const savePopup = () => {
+  
+  const savePopup = async () => {
     if(!mapPopup) return;
-    setIntegrations(p=>p.map(x=>x.id===mapPopup.id?{...x,connected:!!popupInput,value:popupInput,desc:popupInput?`Connected: ${popupInput}`:"Not connected"}:x));
-    setMapPopup(null);
+    try {
+      const fieldMap: Record<string, string> = {
+        'gmail': 'email_address',
+        'wa': 'whatsapp_number',
+        'gmaps': 'gmaps_link',
+        'location': 'address_text',
+      };
+      const dbField = fieldMap[mapPopup.id];
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('Not authenticated');
+        return;
+      }
+      const { error } = await supabase.from('clinic_info').update({ [dbField]: popupInput }).eq('id', 1).eq('user_id', user.id);
+      if (error) throw error;
+      setIntegrations(p=>p.map(x=>x.id===mapPopup.id?{...x,connected:!!popupInput,value:popupInput,desc:popupInput?`Connected: ${popupInput}`:"Not connected"}:x));
+      setMapPopup(null);
+    } catch (err) {
+      console.error('Error saving to database:', err);
+    }
   };
 
   return (
@@ -708,13 +1250,13 @@ function PageSettings() {
               <button onClick={()=>setMapPopup(null)} style={{ background:"none", border:"none", cursor:"pointer", color:T.textMuted, padding:4 }}><Icon d={icons.x} color={T.textMuted} size={18}/></button>
             </div>
             <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:6, fontWeight:600, textTransform:"uppercase" }}>
-              {mapPopup.id==="gmaps" ? "Google Maps Embed URL" : mapPopup.id==="wa" ? "WhatsApp Number" : "Email Address"}
+              {mapPopup.id==="gmaps" ? "Google Maps Embed URL" : mapPopup.id==="wa" ? "WhatsApp Number" : mapPopup.id==="location" ? "Location Address" : "Email Address"}
             </label>
             <input
               autoFocus
               value={popupInput}
               onChange={e=>setPopupInput(e.target.value)}
-              placeholder={mapPopup.id==="gmaps"?"https://maps.google.com/...":mapPopup.id==="wa"?"+62 8xx-xxxx-xxxx":"email@domain.com"}
+              placeholder={mapPopup.id==="gmaps"?"https://maps.google.com/...":mapPopup.id==="wa"?"+62 8xx-xxxx-xxxx":mapPopup.id==="location"?"e.g. Rinjani, Lombok Utara":"email@domain.com"}
               style={{...inp,marginBottom:18}}
             />
             <div style={{ display:"flex", gap:10 }}>

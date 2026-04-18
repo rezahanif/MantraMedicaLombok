@@ -1,7 +1,7 @@
 "use client";
 
 // src/components/contact/BookingForm.tsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { C } from "@/lib/constants";
 import { serviceTypes, testimonials } from "@/data/contactData";
 import { useBookingToast } from "@/components/shared/Bookingtoast";
@@ -58,6 +58,71 @@ export default function BookingForm() {
   const toast = useBookingToast();
 
   const [slide, setSlide] = useState(0);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Fetch Facility photos only (is_visible: true)
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      try {
+        const { data } = await supabase
+          .from('gallery')
+          .select('*')
+          .eq('category', 'Facility')
+          .eq('is_visible', true);
+        if (data && data.length > 0) {
+          setPhotos(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPhotos();
+  }, []);
+
+  // Fetch published reviews dari Supabase
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const { data } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('is_published', true)
+          .order('review_date', { ascending: false });
+        if (data && data.length > 0) {
+          setReviews(data);
+        } else {
+          // Fallback ke testimonials kalau tidak ada published reviews
+          setReviews(testimonials.map((t: any, i: number) => ({
+            id: i,
+            reviewer_name: t.author,
+            rating: t.rating,
+            comment: t.text,
+            service_tag: "Medical Checkup",
+            review_date: new Date().toISOString().split('T')[0],
+            is_published: true,
+          })));
+        }
+      } catch (err) {
+        console.error(err);
+        // Fallback to testimonials on error
+        setReviews(testimonials.map((t: any, i: number) => ({
+          id: i,
+          reviewer_name: t.author,
+          rating: t.rating,
+          comment: t.text,
+          service_tag: "Medical Checkup",
+          review_date: new Date().toISOString().split('T')[0],
+          is_published: true,
+        })));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, []);
+
   const [form, setForm] = useState({
     fullName: "", whatsapp: "", serviceType: "",
     preferredDate: "", preferredTime: "", additionalNotes: "",
@@ -65,8 +130,8 @@ export default function BookingForm() {
   const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const next = () => setSlide((s) => (s + 1) % testimonials.length);
-  const prev = () => setSlide((s) => (s - 1 + testimonials.length) % testimonials.length);
+  const next = () => setSlide((s) => (s + 1) % (photos.length || 1));
+  const prev = () => setSlide((s) => (s - 1 + (photos.length || 1)) % (photos.length || 1));
   const swipe = useSwipe(next, prev);
 
   const handleSubmit = async () => {
@@ -192,34 +257,36 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Right — carousel + testimonial */}
+        {/* Right — carousel + testimonial (only if photos exist) */}
+        {photos.length > 0 ? (
         <div style={{ flex: 1 }}>
           <div
             className="carousel-slide"
             {...swipe}
-            style={{ borderRadius: 20, overflow: "hidden", position: "relative", aspectRatio: "4/3", background: "linear-gradient(135deg, #1A2E2B, #2C4A3A)", marginBottom: 16, cursor: "grab" }}
+            style={{ borderRadius: 20, overflow: "hidden", position: "relative", aspectRatio: "4/3", backgroundImage: photos[slide]?.photo_url ? `url('${photos[slide].photo_url}')` : "linear-gradient(135deg, #1A2E2B, #2C4A3A)", backgroundSize: "cover", backgroundPosition: "center", marginBottom: 16, cursor: "grab" }}
           >
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-              Gallery Photo {slide + 1}
-            </div>
-            <button onClick={prev} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 34, height: 34, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
-            <button onClick={next} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 34, height: 34, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-            <div style={{ position: "absolute", bottom: 14, left: 14, right: 14, background: "rgba(33,33,33,0.82)", borderRadius: 12, padding: "12px 14px", backdropFilter: "blur(4px)" }}>
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)" }} />
+            <button onClick={prev} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 34, height: 34, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>‹</button>
+            <button onClick={next} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 34, height: 34, color: "#fff", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>›</button>
+            {reviews.length > 0 && (
+            <div style={{ position: "absolute", bottom: 14, left: 14, right: 14, background: "rgba(33,33,33,0.82)", borderRadius: 12, padding: "12px 14px", backdropFilter: "blur(4px)", zIndex: 10 }}>
               <div style={{ display: "flex", gap: 2, marginBottom: 6 }}>
-                {"★★★★★".split("").map((s, i) => (
-                  <span key={i} style={{ color: i < testimonials[slide].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 12 }}>{s}</span>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <span key={i} style={{ color: i < reviews[slide % reviews.length].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 12 }}>★</span>
                 ))}
               </div>
-              <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 12, lineHeight: 1.5, marginBottom: 4 }}>"{testimonials[slide].text}"</p>
-              <p style={{ color: "rgba(250,250,250,0.45)", fontSize: 11 }}>— {testimonials[slide].author}</p>
+              <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 12, lineHeight: 1.5, marginBottom: 4 }}>"{reviews[slide % reviews.length].comment}"</p>
+              <p style={{ color: "rgba(250,250,250,0.45)", fontSize: 11 }}>— {reviews[slide % reviews.length].reviewer_name}</p>
             </div>
+            )}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
-            {testimonials.map((_, i) => (
-              <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? C.teal : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />
+            {photos.map((_, i) => (
+              <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 20 : 7, height: 7, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />
             ))}
           </div>
         </div>
+        ) : null}
       </div>
 
       {/* ── MOBILE <500px ── */}
@@ -273,28 +340,42 @@ export default function BookingForm() {
           </button>
         </div>
 
-        {/* Carousel */}
+        {/* Carousel (only if photos exist) */}
+        {photos.length > 0 && (
         <div>
           <div
             className="carousel-slide"
             {...swipe}
-            style={{ borderRadius: 20, overflow: "hidden", position: "relative", aspectRatio: "4/3", background: "linear-gradient(135deg, #1A2E2B, #2C4A3A)", marginBottom: 14, cursor: "grab" }}
+            style={{ 
+              borderRadius: 20, 
+              overflow: "hidden", 
+              position: "relative", 
+              aspectRatio: "4/3", 
+              backgroundImage: photos[slide]?.photo_url ? `url('${photos[slide].photo_url}')` : "linear-gradient(135deg, #1A2E2B, #2C4A3A)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              marginBottom: 14, 
+              cursor: "grab" 
+            }}
           >
-            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.2)", fontSize: 12 }}>Gallery Photo {slide + 1}</div>
-            <button onClick={prev} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
-            <button onClick={next} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-            <div style={{ position: "absolute", bottom: 14, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 12, padding: "12px 14px", backdropFilter: "blur(4px)" }}>
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)" }} />
+            <button onClick={prev} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>‹</button>
+            <button onClick={next} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(255,255,255,0.15)", border: "0.5px solid rgba(255,255,255,0.3)", borderRadius: "50%", width: 30, height: 30, color: "#fff", fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>›</button>
+            {reviews.length > 0 && (
+            <div style={{ position: "absolute", bottom: 14, left: 12, right: 12, background: "rgba(33,33,33,0.82)", borderRadius: 12, padding: "12px 14px", backdropFilter: "blur(4px)", zIndex: 10 }}>
               <div style={{ display: "flex", gap: 2, marginBottom: 4 }}>
-                {"★★★★★".split("").map((s, i) => <span key={i} style={{ color: i < testimonials[slide].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 11 }}>{s}</span>)}
+                {Array.from({ length: 5 }).map((_, i) => <span key={i} style={{ color: i < reviews[slide % reviews.length].rating ? "#C8A96A" : "rgba(255,255,255,0.2)", fontSize: 11 }}>★</span>)}
               </div>
-              <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 11, lineHeight: 1.4, marginBottom: 3 }}>"{testimonials[slide].text}"</p>
-              <p style={{ color: "rgba(250,250,250,0.45)", fontSize: 10 }}>— {testimonials[slide].author}</p>
+              <p style={{ color: "rgba(250,250,250,0.85)", fontSize: 11, lineHeight: 1.4, marginBottom: 3 }}>"{reviews[slide % reviews.length].comment}"</p>
+              <p style={{ color: "rgba(250,250,250,0.45)", fontSize: 10 }}>— {reviews[slide % reviews.length].reviewer_name}</p>
             </div>
+            )}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 5 }}>
-            {testimonials.map((_, i) => <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 18 : 6, height: 6, borderRadius: 100, background: i === slide ? C.teal : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />)}
+            {photos.map((_, i) => <div key={i} onClick={() => setSlide(i)} style={{ width: i === slide ? 18 : 6, height: 6, borderRadius: 100, background: i === slide ? "#C8A96A" : "rgba(255,255,255,0.25)", cursor: "pointer", transition: "all 0.3s" }} />)}
           </div>
         </div>
+        )}
       </div>
     </section>
   );
