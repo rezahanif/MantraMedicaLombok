@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { C } from "@/lib/constants";
+import { supabase } from "@/lib/supabase";
 
 // src/components/shared/ClinicStatsBar.tsx
 // Reusable on any page — stats pill + emergency banner
@@ -50,6 +52,21 @@ const stats = [
 ];
 
 export default function ClinicStatsBar() {
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+
+  // Fetch WhatsApp from clinic_info
+  useEffect(() => {
+    const fetchWhatsApp = async () => {
+      try {
+        const { data } = await supabase.from('clinic_info').select('whatsapp_number').single();
+        if (data?.whatsapp_number) setWhatsappNumber(data.whatsapp_number);
+      } catch (err) {
+        console.error('Error fetching WhatsApp:', err);
+      }
+    };
+    fetchWhatsApp();
+  }, []);
+
   return (
     <div style={{ background: COLORS.light }}>
 
@@ -118,6 +135,11 @@ export default function ClinicStatsBar() {
           </p>
           <button
             className="emergency-call-btn"
+            onClick={() => {
+              if (whatsappNumber) {
+                window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+              }
+            }}
             style={{
               background: COLORS.red, color: COLORS.light,
               border: "none", borderRadius: 100, padding: "10px 20px",

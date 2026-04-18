@@ -1,7 +1,6 @@
 // src/components/contact/ContactInfo.tsx
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { C } from "@/lib/constants";
 import { contactInfo } from "@/data/contactData";
@@ -10,50 +9,65 @@ import { supabase } from "@/lib/supabase";
 export default function ContactInfo() {
   const [contactList, setContactList] = useState(contactInfo);
   const [links, setLinks] = useState({
-    whatsapp: "",
-    email: "",
-    maps: "",
+    whatsapp: contactInfo[0].primary,  // Fallback: "+62 888 8888 8888"
+    email: contactInfo[1].primary,     // Fallback: "Mantramedicare@gmail.com"
+    maps: "https://maps.google.com/?q=Senaru+Bayan+Lombok",  // Fallback: Google Maps search
   });
 
   // Fetch contact info from clinic_info table
   useEffect(() => {
     const fetchContact = async () => {
       try {
+        console.log("🔄 Fetching clinic_info...");
         const { data, error } = await supabase
           .from("clinic_info")
-          .select("whatsapp_number, address_text, email_address, google_maps_link")
-          .single();
+          .select("*");
+        console.log("📥 Raw data from Supabase:", data);
+        console.log("❌ Error (if any):", error);
+        
         if (error) {
           console.error("❌ Error fetching contact info:", error);
-        } else if (data) {
+          console.log("⚠️ Using fallback data from contactData.ts");
+        } else if (data && data.length > 0) {
+          const clinicData = data[0];
+          console.log("✅ Fetched clinic_info:", clinicData);
+          console.log("WhatsApp number:", clinicData.whatsapp_number);
+          console.log("Email address:", clinicData.email_address);
+          console.log("Google Maps link:", clinicData.google_maps_link);
+          
+          const finalMapsLink = clinicData.google_maps_link || "https://maps.google.com/?q=Senaru+Bayan+Lombok";
+          console.log("📍 Final maps link to use:", finalMapsLink);
+          
           setLinks({
-            whatsapp: data.whatsapp_number || contactInfo[0].primary,
-            email: data.email_address || contactInfo[1].primary,
-            maps: data.google_maps_link || "",
+            whatsapp: clinicData.whatsapp_number || contactInfo[0].primary,
+            email: clinicData.email_address || contactInfo[1].primary,
+            maps: finalMapsLink,
           });
           setContactList([
             {
               icon: "icons/call.webp",
-              primary: data.whatsapp_number || contactInfo[0].primary,
+              primary: clinicData.whatsapp_number || contactInfo[0].primary,
               secondary: "Available 24/7 for emergencies",
               cta: "Call Now",
               ctaColor: "#E05A4E",
             },
             {
               icon: "icons/email.webp",
-              primary: data.email_address || contactInfo[1].primary,
+              primary: clinicData.email_address || contactInfo[1].primary,
               secondary: "Response within 2 hours",
               cta: "Send Email",
               ctaColor: "#438BA9",
             },
             {
               icon: "icons/loc.webp",
-              primary: data.address_text || contactInfo[2].primary,
+              primary: clinicData.address_text || contactInfo[2].primary,
               secondary: "Near the main trekking gate",
               cta: "Open in Maps",
               ctaColor: "#65A396",
             },
           ]);
+        } else {
+          console.warn("⚠️ No data found in clinic_info table, using fallback");
         }
       } catch (err) {
         console.error("❌ Error:", err);
@@ -126,12 +140,18 @@ export default function ContactInfo() {
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
                 onClick={() => {
+                  console.log("Button clicked:", item.cta, "Links:", links);
                   if (item.cta === "Call Now" && links.whatsapp) {
+                    console.log("Opening WhatsApp:", `https://wa.me/${links.whatsapp.replace(/\D/g, '')}`);
                     window.open(`https://wa.me/${links.whatsapp.replace(/\D/g, '')}`, "_blank");
                   } else if (item.cta === "Send Email" && links.email) {
-                    window.location.href = `mailto:${links.email}`;
+                    console.log("Opening Email:", `mailto:${links.email}`);
+                    window.open(`mailto:${links.email}`);
                   } else if (item.cta === "Open in Maps" && links.maps) {
+                    console.log("Opening Maps:", links.maps);
                     window.open(links.maps, "_blank");
+                  } else {
+                    console.log("No action - missing data or CTA mismatch");
                   }
                 }}
                 onMouseEnter={(e) => {
@@ -173,12 +193,18 @@ export default function ContactInfo() {
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
                 onClick={() => {
+                  console.log("Mobile button clicked:", item.cta, "Links:", links);
                   if (item.cta === "Call Now" && links.whatsapp) {
+                    console.log("Opening WhatsApp:", `https://wa.me/${links.whatsapp.replace(/\D/g, '')}`);
                     window.open(`https://wa.me/${links.whatsapp.replace(/\D/g, '')}`, "_blank");
                   } else if (item.cta === "Send Email" && links.email) {
-                    window.location.href = `mailto:${links.email}`;
+                    console.log("Opening Email:", `mailto:${links.email}`);
+                    window.open(`mailto:${links.email}`);
                   } else if (item.cta === "Open in Maps" && links.maps) {
+                    console.log("Opening Maps:", links.maps);
                     window.open(links.maps, "_blank");
+                  } else {
+                    console.log("No action - missing data or CTA mismatch");
                   }
                 }}
                 onMouseEnter={(e) => {
