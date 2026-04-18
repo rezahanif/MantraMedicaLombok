@@ -9,6 +9,11 @@ import { supabase } from "@/lib/supabase";
 
 export default function ContactInfo() {
   const [contactList, setContactList] = useState(contactInfo);
+  const [links, setLinks] = useState({
+    whatsapp: "",
+    email: "",
+    maps: "",
+  });
 
   // Fetch contact info from clinic_info table
   useEffect(() => {
@@ -16,11 +21,16 @@ export default function ContactInfo() {
       try {
         const { data, error } = await supabase
           .from("clinic_info")
-          .select("whatsapp_number, address_text, email_address")
+          .select("whatsapp_number, address_text, email_address, google_maps_link")
           .single();
         if (error) {
           console.error("❌ Error fetching contact info:", error);
         } else if (data) {
+          setLinks({
+            whatsapp: data.whatsapp_number || contactInfo[0].primary,
+            email: data.email_address || contactInfo[1].primary,
+            maps: data.google_maps_link || "",
+          });
           setContactList([
             {
               icon: "icons/call.webp",
@@ -116,8 +126,12 @@ export default function ContactInfo() {
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
                 onClick={() => {
-                  if (item.cta === "Call Now" && item.primary) {
-                    window.open(`https://wa.me/${item.primary.replace(/\D/g, '')}`, "_blank");
+                  if (item.cta === "Call Now" && links.whatsapp) {
+                    window.open(`https://wa.me/${links.whatsapp.replace(/\D/g, '')}`, "_blank");
+                  } else if (item.cta === "Send Email" && links.email) {
+                    window.location.href = `mailto:${links.email}`;
+                  } else if (item.cta === "Open in Maps" && links.maps) {
+                    window.open(links.maps, "_blank");
                   }
                 }}
                 onMouseEnter={(e) => {
@@ -159,8 +173,12 @@ export default function ContactInfo() {
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
                 onClick={() => {
-                  if (item.cta === "Call Now" && item.primary) {
-                    window.open(`https://wa.me/${item.primary.replace(/\D/g, '')}`, "_blank");
+                  if (item.cta === "Call Now" && links.whatsapp) {
+                    window.open(`https://wa.me/${links.whatsapp.replace(/\D/g, '')}`, "_blank");
+                  } else if (item.cta === "Send Email" && links.email) {
+                    window.location.href = `mailto:${links.email}`;
+                  } else if (item.cta === "Open in Maps" && links.maps) {
+                    window.open(links.maps, "_blank");
                   }
                 }}
                 onMouseEnter={(e) => {

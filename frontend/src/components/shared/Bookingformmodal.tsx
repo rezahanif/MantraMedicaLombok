@@ -45,6 +45,8 @@ export default function BookingFormModal({ open, onClose }: Props) {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const lastScrollRef = useRef(0);
   const [services, setServices] = useState<any[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
 
@@ -93,6 +95,47 @@ export default function BookingFormModal({ open, onClose }: Props) {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  // Mobile swipe-down-to-dismiss for modal
+  useEffect(() => {
+    if (!modalRef.current || !visible || window.innerWidth > 499) return;
+
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+      lastScrollRef.current = 0;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchCurrentY = e.touches[0].clientY;
+      const swipeDelta = touchCurrentY - touchStartY;
+
+      // Only track downward swipes when at top of modal
+      if (swipeDelta > 0 && modalRef.current && modalRef.current.scrollTop === 0) {
+        lastScrollRef.current = swipeDelta;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      // Close modal if swiped down more than 60px threshold
+      if (lastScrollRef.current > 60) {
+        onClose();
+      }
+      lastScrollRef.current = 0;
+    };
+
+    const modal = modalRef.current;
+    modal.addEventListener("touchstart", handleTouchStart);
+    modal.addEventListener("touchmove", handleTouchMove);
+    modal.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      modal.removeEventListener("touchstart", handleTouchStart);
+      modal.removeEventListener("touchmove", handleTouchMove);
+      modal.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [visible, onClose]);
 
   const handleSubmit = async () => {
     if (!form.fullName.trim())   { toast.error("Please enter your full name.");       return; }
@@ -191,7 +234,7 @@ export default function BookingFormModal({ open, onClose }: Props) {
         className={`bfm-backdrop${visible ? "" : " bfm-out"}`}
         onMouseDown={(e) => { if (e.target === backdropRef.current) onClose(); }}
       >
-        <div className="bfm-modal">
+        <div className="bfm-modal" ref={modalRef}>
 
           {/* ✅ Background as real divs — covers 100% reliably on both desktop & mobile,
               no pseudo-element, no background-attachment:fixed */}
@@ -223,13 +266,13 @@ export default function BookingFormModal({ open, onClose }: Props) {
             ✕
           </button>
 
-          {/* Mobile drag pill */}
+          {/* Mobile drag pill — indicator to scroll down to dismiss */}
           <div
             className="bfm-drag-pill"
             style={{
               display: "none", width: 40, height: 4, borderRadius: 2,
               background: "rgba(255,255,255,0.28)", margin: "12px auto 0",
-              position: "relative", zIndex: 1,
+              position: "relative", zIndex: 1, cursor: "grab", userSelect: "none",
             }}
           />
 

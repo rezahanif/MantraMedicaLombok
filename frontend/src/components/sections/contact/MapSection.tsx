@@ -4,13 +4,35 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { C } from "@/lib/constants";
 import { serviceCards } from "@/data/contactData";
 import BookingFormModal from "@/components/shared/Bookingformmodal";
+import { supabase } from "@/lib/supabase";
 
 export default function MapSection() {
   const [showBooking, setShowBooking] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+
+  // Fetch WhatsApp number from clinic_info
+  useEffect(() => {
+    const fetchWhatsApp = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("clinic_info")
+          .select("whatsapp_number")
+          .single();
+        if (error) {
+          console.error("❌ Error fetching WhatsApp:", error);
+        } else {
+          setWhatsappNumber(data?.whatsapp_number || "");
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+      }
+    };
+    fetchWhatsApp();
+  }, []);
   return (
     <section
       style={{
@@ -261,7 +283,13 @@ export default function MapSection() {
               {/* Bottom: CTA */}
               <div>
                 <button
-                  onClick={() => setShowBooking(true)}
+                  onClick={() => {
+                    if (svc.cta === "Call Now" && whatsappNumber) {
+                      window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}`, "_blank");
+                    } else {
+                      setShowBooking(true);
+                    }
+                  }}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
