@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 //   POST /api/auth/reset-password  { token, newPassword }
 // ─────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -69,7 +69,7 @@ function getStrength(pw: string): { score: number; label: string; color: string 
   return { score, ...map[score] };
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams  = useSearchParams();
   const router        = useRouter();
   const token         = searchParams.get("token") ?? "";
@@ -527,5 +527,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
