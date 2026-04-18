@@ -3,7 +3,7 @@
 // src/components/contact/BookingForm.tsx
 import { useState, useRef, useEffect } from "react";
 import { C } from "@/lib/constants";
-import { serviceTypes, testimonials } from "@/data/contactData";
+import { testimonials } from "@/data/contactData";
 import { useBookingToast } from "@/components/shared/Bookingtoast";
 import { supabase } from "@/lib/supabase";
 
@@ -60,7 +60,26 @@ export default function BookingForm() {
   const [slide, setSlide] = useState(0);
   const [photos, setPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [services, setServices] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Fetch active services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await supabase
+          .from('services')
+          .select('name, is_active')
+          .eq('is_active', true)
+          .order('id', { ascending: true });
+        if (data) setServices(data.map((s:any) => s.name));
+      } catch (err) { console.error('Failed to fetch services:', err); }
+    };
+    fetchServices();
+    // Re-fetch every 10 seconds to catch admin updates
+    const interval = setInterval(fetchServices, 10000);
+    return () => clearInterval(interval);
+  }, []);
   
   // Fetch Facility photos only (is_visible: true)
   useEffect(() => {
@@ -230,7 +249,7 @@ export default function BookingForm() {
               style={{ ...inputStyle, color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.45)", cursor: "pointer" }}
             >
               <option value="" disabled>Select a service</option>
-              {serviceTypes.map((s) => <option key={s} value={s}>{s}</option>)}
+              {services.length > 0 ? services.map((s) => <option key={s} value={s}>{s}</option>) : <option disabled>Loading services...</option>}
             </select>
           </div>
 
@@ -315,7 +334,7 @@ export default function BookingForm() {
               style={{ ...inputStyle, padding: "9px 12px", fontSize: 12, color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.45)", cursor: "pointer" }}
             >
               <option value="" disabled>Select a service</option>
-              {serviceTypes.map((s) => <option key={s} value={s}>{s}</option>)}
+              {services.length > 0 ? services.map((s) => <option key={s} value={s}>{s}</option>) : <option disabled>Loading services...</option>}
             </select>
           </div>
 

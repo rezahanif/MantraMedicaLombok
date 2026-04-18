@@ -53,10 +53,10 @@ const NOTIFS = [
 
 // ── Helpers ───────────────────────────────────────────────────
 const getStatusColor = (s:string, dark:boolean) => ({
-  Confirmed: dark?{bg:"#1B3530",color:"#6FC4B8"}:{bg:"#E8F5F2",color:"#4A7D72"},
-  Pending:   dark?{bg:"#2A2010",color:"#C9933A"}:{bg:"#FEF6E8",color:"#B07B1A"},
-  Done:      dark?{bg:"#111A30",color:"#5B85D4"}:{bg:"#EAF0FF",color:"#3B5FC0"},
-  Cancelled: dark?{bg:"#2A1110",color:"#D4706A"}:{bg:"#FDECEA",color:"#B03A35"},
+  confirmed: dark?{bg:"#1B3530",color:"#6FC4B8"}:{bg:"#E8F5F2",color:"#4A7D72"},
+  pending:   dark?{bg:"#2A2010",color:"#C9933A"}:{bg:"#FEF6E8",color:"#B07B1A"},
+  done:      dark?{bg:"#111A30",color:"#5B85D4"}:{bg:"#EAF0FF",color:"#3B5FC0"},
+  cancelled: dark?{bg:"#2A1110",color:"#D4706A"}:{bg:"#FDECEA",color:"#B03A35"},
 }[s] || (dark?{bg:"#1E2D2B",color:"#A0B3B0"}:{bg:"#F0F0F0",color:"#666"}));
 
 const Stars = ({n}:{n:number}) => {
@@ -233,7 +233,7 @@ function PageDashboard() {
           date: d.preferred_date,
           time: d.preferred_time,
           note: d.notes,
-          status: d.status || 'Pending'
+          status: d.status || 'pending'
         })));
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
@@ -242,7 +242,7 @@ function PageDashboard() {
   }, []);
 
   const today    = appointments.filter(a=>a.date===new Date().toISOString().split('T')[0]);
-  const pending  = appointments.filter(a=>a.status==="Pending").length;
+  const pending  = appointments.filter(a=>a.status==="pending").length;
   const pendingReviews = REVIEWS_DATA.filter(r=>!r.visible).length;
   const recent   = appointments.slice(0,5);
 
@@ -316,6 +316,7 @@ function PageAppointments() {
   const [showForm, setShowForm] = useState(false);
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dbServices, setDbServices] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -332,17 +333,31 @@ function PageAppointments() {
           date: d.preferred_date,
           time: d.preferred_time,
           note: d.notes,
-          status: d.status || 'Pending'
+          status: d.status || 'pending'
         })));
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
     fetchAppointments();
   }, []);
+
+  // Fetch active services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await supabase
+          .from('services')
+          .select('name, is_active')
+          .eq('is_active', true)
+          .order('id', { ascending: true });
+        if (data) setDbServices(data.map((s:any) => s.name));
+      } catch (err) { console.error('Failed to fetch services:', err); }
+    };
+    fetchServices();
+  }, []);
   const [confirm, setConfirm] = useState<{title:string;msg:string;action:()=>void;danger?:boolean}|null>(null);
-  const [form, setForm] = useState({name:"",wa:"",service:"Medical Checkup",date:"",time:"",note:""});
-  const statuses = ["All","Confirmed","Pending","Done","Cancelled"];
-  const services = ["Medical Checkup","Spa & Recovery","Emergency Care"];
+  const [form, setForm] = useState({name:"",wa:"",service:dbServices[0]||"",date:"",time:"",note:""});
+  const statuses = ["All","pending","confirmed","done","cancelled"];
   const filtered = rows.filter(r=>(filter==="All"||r.status===filter)&&(r.name.toLowerCase().includes(search.toLowerCase())||r.service.toLowerCase().includes(search.toLowerCase())));
   const inp:React.CSSProperties = { width:"100%", padding:"10px 12px", borderRadius:9, border:`1.5px solid ${T.border}`, fontSize:13, outline:"none", boxSizing:"border-box", color:T.text, background:T.surface2, fontFamily:"inherit" };
 
@@ -370,7 +385,7 @@ function PageAppointments() {
             ))}
             <div>
               <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Service</label>
-              <select value={form.service} onChange={e=>setForm(p=>({...p,service:e.target.value}))} style={{...inp,appearance:"none"}}>{services.map(s=><option key={s}>{s}</option>)}</select>
+              <select value={form.service} onChange={e=>setForm(p=>({...p,service:e.target.value}))} style={{...inp,appearance:"none"}}>{dbServices.length > 0 ? dbServices.map(s=><option key={s}>{s}</option>) : <option disabled>Loading services...</option>}</select>
             </div>
             <div>
               <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Date</label>
@@ -386,7 +401,7 @@ function PageAppointments() {
             </div>
           </div>
           <div style={{ display:"flex", gap:10, marginTop:12 }}>
-            <button onClick={async()=>{ if(!form.name||!form.wa)return; try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { data, error } = await supabase.from('leads').insert([{ user_id: user.id, nama_lengkap: form.name, whatsapp: form.wa, service_type: form.service, preferred_date: form.date, preferred_time: form.time, notes: form.note, status: "Pending" }]).select(); if (error) throw error; if (data) { setRows(p=>[...p, { id: data[0].id, name: data[0].nama_lengkap, wa: data[0].whatsapp, service: data[0].service_type, date: data[0].preferred_date, time: data[0].preferred_time, note: data[0].notes, status: data[0].status }]); toast.success('Appointment berhasil ditambahkan'); } setForm({name:"",wa:"",service:"Medical Checkup",date:"",time:"",note:""}); setShowForm(false); } catch (err) { console.error(err); toast.error('Gagal tambah appointment'); } }} style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 22px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Submit</button>
+            <button onClick={async()=>{ if(!form.name||!form.wa)return; try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { data, error } = await supabase.from('leads').insert([{ user_id: user.id, nama_lengkap: form.name, whatsapp: form.wa, service_type: form.service, preferred_date: form.date, preferred_time: form.time, notes: form.note, status: "pending" }]).select(); if (error) throw error; if (data) { setRows(p=>[...p, { id: data[0].id, name: data[0].nama_lengkap, wa: data[0].whatsapp, service: data[0].service_type, date: data[0].preferred_date, time: data[0].preferred_time, note: data[0].notes, status: data[0].status }]); toast.success('Appointment berhasil ditambahkan'); } setForm({name:"",wa:"",service:dbServices[0]||"",date:"",time:"",note:""}); setShowForm(false); } catch (err) { console.error(err); toast.error('Gagal tambah appointment'); } }} style={{ background:T.teal, color:"#fff", border:"none", borderRadius:9, padding:"10px 22px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Submit</button>
             <button onClick={()=>setShowForm(false)} style={{ background:T.surface2, color:T.textMid, border:`1px solid ${T.border}`, borderRadius:9, padding:"10px 22px", fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
           </div>
         </div>
@@ -418,8 +433,8 @@ function PageAppointments() {
                 {r.note && <span style={{ gridColumn:"1/-1", color:T.textMuted, fontStyle:"italic" }}>{r.note}</span>}
               </div>
               <div style={{ display:"flex", gap:8 }}>
-                {r.status==="Pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:()=>setRows(p=>p.map(x=>x.id===r.id?{...x,status:"Confirmed"}:x))})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id).eq('user_id', user.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== CONFIRM APPOINTMENT START ==="); console.log("Appointment ID:", r.id); const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } console.log("Confirm success!"); setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
+                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
               </div>
             </div>
           ))}
@@ -447,8 +462,8 @@ function PageAppointments() {
                     <td style={{ padding:"12px 14px" }}><span style={{ ...getStatusColor(r.status,dark), fontSize:10, fontWeight:700, padding:"3px 9px", borderRadius:20 }}>{r.status}</span></td>
                     <td style={{ padding:"12px 14px" }}>
                       <div style={{ display:"flex", gap:6 }}>
-                        {r.status==="Pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:()=>setRows(p=>p.map(x=>x.id===r.id?{...x,status:"Confirmed"}:x))})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id).eq('user_id', user.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                        {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== CONFIRM APPOINTMENT START ==="); console.log("Appointment ID:", r.id); const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } console.log("Confirm success!"); setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
+                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -467,24 +482,66 @@ function PageAppointments() {
 function PageServices() {
   const {T, dark} = useTheme();
   const isMobile = useIsMobile();
+  const toast = useBookingToast();
   const [services, setServices] = useState(INITIAL_SERVICES);
   const [showForm, setShowForm] = useState(false);
   const [editItem, setEditItem] = useState<typeof INITIAL_SERVICES[0]|null>(null);
   const [confirm, setConfirm] = useState<{id:number;name:string}|null>(null);
+  const [loading, setLoading] = useState(true);
   const COLORS = ["#65A396","#604C3A","#D95E57","#5B85D4","#8B6DB0","#E8A444"];
   const emptyForm = { name:"", tag:"", hours:"", desc:"", color:"#65A396", active:true };
   const [form, setForm] = useState(emptyForm);
 
+  // Fetch services from Supabase on mount
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await supabase.from('services').select('*').order('id', { ascending: false });
+        if (data) setServices(data.map((d:any) => ({
+          id: d.id,
+          name: d.name,
+          tag: d.tag || '',
+          hours: d.hours || '',
+          desc: d.description || '',
+          color: d.color || '#65A396',
+          active: d.is_active || true
+        })));
+      } catch (err) { console.error(err); }
+      finally { setLoading(false); }
+    };
+    fetchServices();
+  }, []);
+
   const openAdd  = () => { setEditItem(null); setForm(emptyForm); setShowForm(true); };
   const openEdit = (s:typeof INITIAL_SERVICES[0]) => { setEditItem(s); setForm({name:s.name,tag:s.tag,hours:s.hours,desc:s.desc,color:s.color,active:s.active}); setShowForm(true); };
-  const save = () => {
+  
+  const save = async () => {
     if(!form.name) return;
-    if(editItem) {
-      setServices(p=>p.map(x=>x.id===editItem.id?{...x,...form}:x));
-    } else {
-      setServices(p=>[...p,{id:Date.now(),...form}]);
+    try {
+      if(editItem) {
+        // Update existing service
+        const { error } = await supabase
+          .from('services')
+          .update({name: form.name, tag: form.tag, hours: form.hours, description: form.desc, color: form.color, is_active: form.active})
+          .eq('id', editItem.id);
+        if (error) throw error;
+        setServices(p=>p.map(x=>x.id===editItem.id?{...x,...form}:x));
+        toast.success('Service updated');
+      } else {
+        // Insert new service
+        const { data, error } = await supabase
+          .from('services')
+          .insert([{name: form.name, tag: form.tag, hours: form.hours, description: form.desc, color: form.color, is_active: form.active}])
+          .select();
+        if (error) throw error;
+        if (data) setServices(p=>[...p, {id: data[0].id, name: data[0].name, tag: data[0].tag || '', hours: data[0].hours || '', desc: data[0].description || '', color: data[0].color || '#65A396', active: data[0].is_active || true}]);
+        toast.success('Service added');
+      }
+      setShowForm(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save service');
     }
-    setShowForm(false);
   };
 
   const inp:React.CSSProperties = { width:"100%", padding:"10px 12px", borderRadius:9, border:`1.5px solid ${T.border}`, fontSize:13, outline:"none", boxSizing:"border-box", color:T.text, background:T.surface2, fontFamily:"inherit" };
@@ -492,7 +549,7 @@ function PageServices() {
   return (
     <div>
       {confirm && <ConfirmModal title="Delete Service" message={`Delete "${confirm.name}"? This cannot be undone.`} danger
-        onConfirm={()=>{ setServices(p=>p.filter(x=>x.id!==confirm.id)); setConfirm(null); }} onCancel={()=>setConfirm(null)}/>}
+        onConfirm={async()=>{ try { const { error } = await supabase.from('services').delete().eq('id', confirm.id); if(error) throw error; setServices(p=>p.filter(x=>x.id!==confirm.id)); toast.success('Service deleted'); } catch(err) { console.error(err); toast.error('Failed to delete service'); } setConfirm(null); }} onCancel={()=>setConfirm(null)}/>}
 
       <div style={{ display:"flex", alignItems:isMobile?"flex-start":"center", justifyContent:"space-between", marginBottom:22, flexDirection:isMobile?"column":"row", gap:12 }}>
         <div>
@@ -560,7 +617,56 @@ function PageServices() {
 
               {/* Toggle active */}
               <button
-                onClick={()=>setServices(p=>p.map(x=>x.id===svc.id?{...x,active:!x.active}:x))}
+                onClick={async()=>{
+                  try {
+                    console.log("=== TOGGLE SERVICE START ===");
+                    console.log("Mengubah ID:", svc.id, "dari:", svc.active, "ke:", !svc.active);
+                    
+                    const { data, error } = await supabase
+                      .from('services')
+                      .update({ is_active: !svc.active })
+                      .eq('id', svc.id)
+                      .select();
+
+                    console.log("Response error:", error);
+                    console.log("Response data:", data);
+                    console.log("Data length:", data?.length);
+
+                    if (error) {
+                      console.error("JIR ERROR LAGI:", error);
+                      console.error("Error code:", error.code);
+                      console.error("Error message:", error.message);
+                      throw error;
+                    }
+                    
+                    if (!data || data.length === 0) {
+                      console.error("NO DATA RETURNED - Update mungkin tidak tersimpan ke database");
+                      console.log("Cek RLS policy atau authentication");
+                      toast.error('Update returned no data - RLS policy issue?');
+                      return;
+                    }
+                    
+                    console.log("SUKSES BOS:", data);
+                    
+                    // Update state with actual database response
+                    const updated = data[0];
+                    setServices(p=>p.map(x=>x.id===svc.id?{
+                      id: x.id,
+                      name: x.name,
+                      tag: x.tag,
+                      hours: x.hours,
+                      desc: x.desc,
+                      color: x.color,
+                      active: updated.is_active
+                    }:x));
+                    
+                    toast.success(svc.active ? 'Service deactivated' : 'Service activated');
+                  } catch(err) { 
+                    console.error("Toggle catch error:", err);
+                    console.error("Error details:", JSON.stringify(err, null, 2));
+                    toast.error('Failed to update service: ' + (err as any).message); 
+                  }
+                }}
                 style={{ width:42, height:24, borderRadius:100, background:svc.active?svc.color:T.border, border:"none", cursor:"pointer", padding:2, transition:"background 0.25s", flexShrink:0, position:"relative" }}
                 title={svc.active?"Deactivate":"Activate"}
               >
@@ -593,11 +699,11 @@ function PageReviews() {
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState<{id:number;name:string}|null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [dbServices, setDbServices] = useState<string[]>([]);
   const [form, setForm] = useState({
-    reviewer_name: "", service_tag: "Medical Checkup", rating: 5, comment: "", is_published: false,
+    reviewer_name: "", service_tag: dbServices[0]||"", rating: 5, comment: "", is_published: false,
   });
 
-  const services = ["Medical Checkup","Spa & Recovery","Emergency Care"];
   const inp:React.CSSProperties = {
     width:"100%", padding:"10px 12px", borderRadius:9,
     border:`1.5px solid ${T.border}`, fontSize:13, outline:"none",
@@ -619,6 +725,21 @@ function PageReviews() {
     fetchReviews();
   }, []);
 
+  // Fetch active services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await supabase
+          .from('services')
+          .select('name, is_active')
+          .eq('is_active', true)
+          .order('id', { ascending: true });
+        if (data) setDbServices(data.map((s:any) => s.name));
+      } catch (err) { console.error('Failed to fetch services:', err); }
+    };
+    fetchServices();
+  }, []);
+
   const handlePublishToggle = async (review:any) => {
     const publishedCount = reviews.filter(r => r.is_published).length;
     const isCurrentlyPublished = review.is_published;
@@ -631,16 +752,10 @@ function PageReviews() {
 
     // Update di Supabase
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error("Not authenticated");
-        return;
-      }
       const { error } = await supabase
         .from('reviews')
         .update({ is_published: !isCurrentlyPublished })
-        .eq('id', review.id)
-        .eq('user_id', user.id);
+        .eq('id', review.id);
       if (error) throw error;
       
       // Update local state
@@ -687,7 +802,7 @@ function PageReviews() {
         setReviews(p => [...p, data[0]]);
         toast.success("Review berhasil ditambahkan");
       }
-      setForm({ reviewer_name:"", service_tag:"Medical Checkup", rating:5, comment:"", is_published:false });
+      setForm({ reviewer_name:"", service_tag:dbServices[0]||"", rating:5, comment:"", is_published:false });
       setShowForm(false);
     } catch (err) {
       console.error(err);
@@ -698,7 +813,7 @@ function PageReviews() {
   return (
     <div>
       {confirm && <ConfirmModal title="Delete Review" message={`Delete review from ${confirm.name}?`} danger
-        onConfirm={async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); setConfirm(null); return; } await supabase.from('reviews').delete().eq('id',confirm!.id).eq('user_id', user.id); setReviews(p=>p.filter(x=>x.id!==confirm!.id)); toast.success("Review berhasil dihapus"); } catch(err) { console.error(err); toast.error('Gagal hapus review'); } setConfirm(null); }}
+        onConfirm={async()=>{ try { await supabase.from('reviews').delete().eq('id',confirm!.id); setReviews(p=>p.filter(x=>x.id!==confirm!.id)); toast.success("Review berhasil dihapus"); } catch(err) { console.error(err); toast.error('Gagal hapus review'); } setConfirm(null); }}
         onCancel={()=>setConfirm(null)}/>}
 
       {/* Header */}
@@ -709,7 +824,7 @@ function PageReviews() {
             {reviews.filter(r=>r.is_published).length} of {reviews.length} published (max 3)
           </p>
         </div>
-        <button onClick={()=>{ setShowForm(true); setForm({reviewer_name:"",service_tag:"Medical Checkup",rating:5,comment:"",is_published:false}); }}
+        <button onClick={()=>{ setShowForm(true); setForm({reviewer_name:"",service_tag:dbServices[0]||"",rating:5,comment:"",is_published:false}); }}
           style={{ display:"flex", alignItems:"center", gap:7, background:T.teal, color:"#fff", border:"none", borderRadius:10, padding:"10px 18px", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
           <Icon d={icons.plus} color="#fff" size={14}/> Add Review
         </button>
@@ -736,7 +851,7 @@ function PageReviews() {
             <div>
               <label style={{ fontSize:11, color:T.textMuted, display:"block", marginBottom:4, fontWeight:600, textTransform:"uppercase" }}>Service</label>
               <select value={form.service_tag} onChange={e=>setForm(p=>({...p,service_tag:e.target.value}))} style={{...inp,appearance:"none" as const}}>
-                {services.map(s=><option key={s}>{s}</option>)}
+                {dbServices.length > 0 ? dbServices.map(s=><option key={s}>{s}</option>) : <option disabled>Loading services...</option>}
               </select>
             </div>
           </div>
@@ -963,8 +1078,7 @@ function PagePhotos() {
             const { error: dbError } = await supabase
               .from('gallery')
               .delete()
-              .eq('id', confirm.id)
-              .eq('user_id', user.id);
+              .eq('id', confirm.id);
             
             if (dbError) {
               console.error("Delete error FULL:", { message: dbError.message, code: dbError.code, details: dbError.details }); // DEBUG
@@ -1116,7 +1230,6 @@ function PagePhotos() {
                       .from('gallery')
                       .update({ is_visible: !p.visible })
                       .eq('id', p.id)
-                      .eq('user_id', user.id) // Verify ownership via RLS
                       .select();
                     
                     console.log("Update response - Data:", updateData, "Error:", error); // DEBUG
@@ -1230,7 +1343,7 @@ function PageSettings() {
         console.error('Not authenticated');
         return;
       }
-      const { error } = await supabase.from('clinic_info').update({ [dbField]: popupInput }).eq('id', 1).eq('user_id', user.id);
+      const { error } = await supabase.from('clinic_info').update({ [dbField]: popupInput }).eq('id', 1);
       if (error) throw error;
       setIntegrations(p=>p.map(x=>x.id===mapPopup.id?{...x,connected:!!popupInput,value:popupInput,desc:popupInput?`Connected: ${popupInput}`:"Not connected"}:x));
       setMapPopup(null);
@@ -1413,7 +1526,7 @@ function SidebarContent({ page, setPage, onNavClick }:{ page:string; setPage:(p:
   const {T, dark} = useTheme();
   const nav = [
     { id:"Dashboard",    icon:icons.dashboard, label:"Dashboard" },
-    { id:"Appointments", icon:icons.calendar,  label:"Appointments", badge:APPOINTMENTS_DATA.filter(a=>a.status==="Pending").length },
+    { id:"Appointments", icon:icons.calendar,  label:"Appointments", badge:APPOINTMENTS_DATA.filter(a=>a.status==="pending").length },
     { id:"Services",     icon:icons.service,   label:"Services" },
     { id:"Reviews",      icon:icons.star,      label:"Reviews" },
     { id:"Photos",       icon:icons.image,     label:"Photos" },

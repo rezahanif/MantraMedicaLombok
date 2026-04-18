@@ -12,7 +12,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { C } from "@/lib/constants";
-import { serviceTypes } from "@/data/contactData";
 import { useBookingToast } from "@/components/shared/Bookingtoast";
 import { supabase } from "@/lib/supabase";
 
@@ -46,9 +45,31 @@ export default function BookingFormModal({ open, onClose }: Props) {
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [services, setServices] = useState<any[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
 
   // ✅ Real toast — works because BookingToastContainer is in layout.tsx
   const toast = useBookingToast();
+
+  // Fetch active services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await supabase
+          .from('services')
+          .select('name, is_active')
+          .eq('is_active', true)
+          .order('id', { ascending: true });
+        console.log("Fetched active services:", data);
+        if (data) setServices(data.map((s:any) => s.name));
+      } catch (err) { console.error('Failed to fetch services:', err); }
+      finally { setServicesLoading(false); }
+    };
+    fetchServices();
+    // Re-fetch every 10 seconds to catch admin updates
+    const interval = setInterval(fetchServices, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [form, setForm] = useState({
     fullName: "", whatsapp: "", serviceType: "",
@@ -238,7 +259,7 @@ export default function BookingFormModal({ open, onClose }: Props) {
                   style={{ ...inp, color: form.serviceType ? "#FAFAFA" : "rgba(250,250,250,0.4)", cursor: "pointer" }}
                 >
                   <option value="" disabled>Select a service</option>
-                  {serviceTypes.map((s) => <option key={s} value={s}>{s}</option>)}
+                  {services.length > 0 ? services.map((s) => <option key={s} value={s}>{s}</option>) : <option disabled>Loading services...</option>}
                 </select>
               </div>
 
