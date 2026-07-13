@@ -433,8 +433,8 @@ function PageAppointments() {
                 {r.note && <span style={{ gridColumn:"1/-1", color:T.textMuted, fontStyle:"italic" }}>{r.note}</span>}
               </div>
               <div style={{ display:"flex", gap:8 }}>
-                {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== CONFIRM APPOINTMENT START ==="); console.log("Appointment ID:", r.id); const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } console.log("Confirm success!"); setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
+                <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ flex:1, padding:"8px", borderRadius:8, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
               </div>
             </div>
           ))}
@@ -462,8 +462,8 @@ function PageAppointments() {
                     <td style={{ padding:"12px 14px" }}><span style={{ ...getStatusColor(r.status,dark), fontSize:10, fontWeight:700, padding:"3px 9px", borderRadius:20 }}>{r.status}</span></td>
                     <td style={{ padding:"12px 14px" }}>
                       <div style={{ display:"flex", gap:6 }}>
-                        {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== CONFIRM APPOINTMENT START ==="); console.log("Appointment ID:", r.id); const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } console.log("Confirm success!"); setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
-                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } console.log("=== DELETE APPOINTMENT START ==="); console.log("Appointment ID:", r.id, "Type:", typeof r.id); console.log("User ID:", user.id, "Type:", typeof user.id); const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); console.log("Appointment in DB:", appointmentCheck); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } console.log("Appointment user_id:", appointmentCheck.user_id, "Match?", appointmentCheck.user_id === user.id); const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } console.log("Delete success!"); setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
+                        {r.status==="pending" && <button onClick={()=>setConfirm({title:"Confirm Appointment",msg:`Confirm for ${r.name}?`,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { error } = await supabase.from('leads').update({status: 'confirmed'}).eq('id', r.id); if(error) { console.error("Confirm error:", error); throw error; } setRows(p=>p.map(x=>x.id===r.id?{...x,status:"confirmed"}:x)); toast.success('Appointment confirmed'); } catch(err) { console.error("Confirm error:", err); toast.error('Failed to confirm'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#1B3530":"#E8F5F2", color:T.tealDk, border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Confirm</button>}
+                        <button onClick={()=>setConfirm({title:"Delete Appointment",msg:`Delete for ${r.name}?`,danger:true,action:async()=>{ try { const { data: { user } } = await supabase.auth.getUser(); if (!user) { toast.error("Not authenticated"); return; } const { data: appointmentCheck } = await supabase.from('leads').select('id, user_id').eq('id', r.id).single(); if (!appointmentCheck) { console.error("Appointment not found in DB!"); toast.error("Appointment not found"); return; } const { error } = await supabase.from('leads').delete().eq('id',r.id); if(error) { console.error("Delete error:", { message: error.message, code: error.code, details: error.details }); throw error; } setRows(p=>p.filter(x=>x.id!==r.id)); toast.success('Appointment berhasil dihapus'); } catch(err) { console.error("Delete catch error:", err); toast.error('Gagal hapus appointment'); }}})} style={{ padding:"5px 10px", borderRadius:7, background:dark?"#2A1110":"#FDECEA", color:"#D95E57", border:"none", fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -521,13 +521,13 @@ function PageServices() {
   const save = async () => {
     if(!form.name) return;
     try {
-      console.log("=== SAVE SERVICE START ===");
-      console.log("Edit mode?", !!editItem);
-      console.log("Form data:", form);
+      
+      
+      
       
       if(editItem) {
         // Update existing service
-        console.log("UPDATE - ID:", editItem.id);
+        
         const { error } = await supabase
           .from('services')
           .update({name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active})
@@ -536,20 +536,20 @@ function PageServices() {
           console.error("❌ UPDATE ERROR:", error.message, error.code);
           throw error;
         }
-        console.log("✅ UPDATE SUKSES");
+        
         setServices(p=>p.map(x=>x.id===editItem.id?{...x,...form}:x));
         toast.success('Service updated');
       } else {
         // Insert new service (without color - not in DB)
-        console.log("INSERT - Sending data:", {name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active});
+        
         const { data, error } = await supabase
           .from('services')
           .insert([{name: form.name, tag: form.tag, hours: form.hours, description: form.desc, is_active: form.active}])
           .select();
         
-        console.log("INSERT Response - Error:", error?.message || "null");
-        console.log("INSERT Response - Error code:", error?.code || "null");
-        console.log("INSERT Response - Data:", data);
+        
+        
+        
         
         if (error) {
           console.error("❌ INSERT ERROR:", error);
@@ -560,7 +560,7 @@ function PageServices() {
           toast.error('Insert returned no data');
           return;
         }
-        console.log("✅ INSERT SUKSES - New service:", data[0]);
+        
         if (data) setServices(p=>[...p, {id: data[0].id, name: data[0].name, tag: data[0].tag || '', hours: data[0].hours || '', desc: data[0].description || '', color: getColorByIndex(p.length), active: data[0].is_active || true}]);
         toast.success('Service added');
       }
@@ -648,10 +648,10 @@ function PageServices() {
               <button
                 onClick={async()=>{
                   try {
-                    console.log("=== TOGGLE SERVICE START ===");
-                    console.log("Service ID type:", typeof svc.id, "Value:", svc.id);
-                    console.log("Mengubah dari:", svc.active, "ke:", !svc.active);
-                    console.log("Full svc object:", svc);
+                    
+                    
+                    
+                    
                     
                     const { data, error } = await supabase
                       .from('services')
@@ -659,12 +659,12 @@ function PageServices() {
                       .eq('id', svc.id)
                       .select();
 
-                    console.log("=== RESPONSE ===");
-                    console.log("Error:", error?.message || "null");
-                    console.log("Error code:", error?.code || "null");
-                    console.log("Data:", data);
-                    console.log("Data length:", data?.length);
-                    console.log("Data array?:", Array.isArray(data));
+                    
+                    
+                    
+                    
+                    
+                    
 
                     if (error) {
                       console.error("JIR ERROR:", error);
@@ -674,12 +674,12 @@ function PageServices() {
                     
                     if (!data || data.length === 0) {
                       console.error("⚠️ NO DATA RETURNED - Update mungkin GAGAL TERSIMPAN");
-                      console.log("Ini pertanda RLS policy issue atau row tidak ada");
+                      
                       toast.error('Update failed - 0 rows affected');
                       return;
                     }
                     
-                    console.log("✅ SUKSES - Data returned:", data);
+                    
                     
                     const updated = data[0];
                     setServices(p=>p.map(x=>x.id===svc.id?{
@@ -980,7 +980,7 @@ function PagePhotos() {
     const fetchPhotos = async () => {
       try {
         const { data } = await supabase.from('gallery').select('*').order('id', { ascending: false });
-        console.log("Gallery data structure:", data?.[0]); // DEBUG: See column names
+         // DEBUG: See column names
         if (data) setPhotos(data.map((d:any) => ({
           id: d.id,
           url: d.photo_url,
@@ -1017,7 +1017,7 @@ function PagePhotos() {
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
-      console.log("Current user:", user?.id); // DEBUG
+       // DEBUG
       
       if (!user) {
         toast.error("Not authenticated. Please login.");
@@ -1057,7 +1057,7 @@ function PagePhotos() {
         storage_path: filePath,
         is_visible: true
       };
-      console.log("Insert payload:", insertPayload); // DEBUG: See exactly what's being sent
+       // DEBUG: See exactly what's being sent
       
       const { data: insData, error: insErr } = await supabase.from("gallery").insert([insertPayload]).select();
       
@@ -1066,7 +1066,7 @@ function PagePhotos() {
         throw insErr;
       }
       
-      console.log("Insert success! Data:", insData); // DEBUG: Success response
+       // DEBUG: Success response
       
       if (insData && insData.length > 0) {
         const newPhoto = insData[0];
@@ -1090,7 +1090,7 @@ function PagePhotos() {
               return;
             }
             
-            console.log("Deleting photo ID:", confirm.id, "Storage path:", confirm.storage_path); // DEBUG
+             // DEBUG
             
             // 1. Delete file dari Storage dulu (gunakan storage_path dari DB)
             const { error: storageError } = await supabase
@@ -1103,7 +1103,7 @@ function PagePhotos() {
               throw storageError;
             }
             
-            console.log("Storage delete success, now deleting from DB..."); // DEBUG
+             // DEBUG
             
             // 2. Jika file di storage berhasil dihapus, baru hapus baris di tabel
             const { error: dbError } = await supabase
@@ -1116,7 +1116,7 @@ function PagePhotos() {
               throw dbError;
             }
             
-            console.log("Delete success!"); // DEBUG
+             // DEBUG
             setPhotos(p=>p.filter(x=>x.id!==confirm!.id));
             toast.success('Foto dan data berhasil dibersihkan!');
           } catch (err: any) {
@@ -1236,9 +1236,9 @@ function PagePhotos() {
                       return;
                     }
                     
-                    console.log("=== TOGGLE START ===");
-                    console.log("Photo ID from state:", p.id, "Type:", typeof p.id);
-                    console.log("User ID:", user.id, "Type:", typeof user.id);
+                    
+                    
+                    
                     
                     // First, fetch the photo to see what user_id it has
                     const { data: photoCheck } = await supabase
@@ -1247,7 +1247,7 @@ function PagePhotos() {
                       .eq('id', p.id)
                       .single();
                     
-                    console.log("Photo in DB:", photoCheck); // DEBUG: See actual photo data
+                     // DEBUG: See actual photo data
                     
                     if (!photoCheck) {
                       console.error("Photo not found in DB!");
@@ -1255,7 +1255,7 @@ function PagePhotos() {
                       return;
                     }
                     
-                    console.log("Photo user_id in DB:", photoCheck.user_id, "Current user ID:", user.id, "Match?", photoCheck.user_id === user.id);
+                    
                     
                     const { data: updateData, error } = await supabase
                       .from('gallery')
@@ -1263,7 +1263,7 @@ function PagePhotos() {
                       .eq('id', p.id)
                       .select();
                     
-                    console.log("Update response - Data:", updateData, "Error:", error); // DEBUG
+                     // DEBUG
                     
                     if (error) {
                       console.error("Update error FULL:", { message: error.message, code: error.code, details: error.details, hint: error.hint }); // DEBUG
@@ -1271,7 +1271,7 @@ function PagePhotos() {
                     }
                     
                     if (updateData && updateData.length > 0) {
-                      console.log("Update SUCCESS! Fresh data:", updateData[0]); // DEBUG
+                       // DEBUG
                       setPhotos(prev=>prev.map(x=>x.id===p.id?{...x,visible:!x.visible}:x));
                       toast.success(p.visible ? "Hidden" : "Shown");
                     } else {
@@ -1329,7 +1329,7 @@ function PageSettings() {
       try {
         const { data } = await supabase.from('clinic_info').select('*').single();
         if (data) {
-          console.log("Loaded clinic_info - ID (UUID):", data.id);
+          
           setClinicInfoId(data.id);
           setIntegrations(prev => prev.map(item => {
             const fieldMap: Record<string, keyof typeof data> = {
@@ -1365,10 +1365,10 @@ function PageSettings() {
   const savePopup = async () => {
     if(!mapPopup) return;
     try {
-      console.log("=== SAVE CLINIC INFO START ===");
-      console.log("Field ID:", mapPopup.id);
-      console.log("New value:", popupInput);
-      console.log("Clinic Info UUID:", clinicInfoId);
+      
+      
+      
+      
       
       if (!clinicInfoId) {
         console.error("ERROR: Clinic Info ID not loaded yet");
@@ -1382,7 +1382,7 @@ function PageSettings() {
         'location': 'address_text',
       };
       const dbField = fieldMap[mapPopup.id];
-      console.log("DB field:", dbField);
+      
       
       const { data, error } = await supabase
         .from('clinic_info')
@@ -1390,8 +1390,8 @@ function PageSettings() {
         .eq('id', clinicInfoId)
         .select();
       
-      console.log("Update response - data:", data);
-      console.log("Update response - error:", error);
+      
+      
       
       if (error) {
         console.error("JIR UPDATE ERROR:", error.message, error.code);
@@ -1401,7 +1401,7 @@ function PageSettings() {
       if (!data || data.length === 0) {
         console.warn("NO DATA RETURNED - clinic_info record might not have been updated");
       } else {
-        console.log("SUKSES BOS Update clinic info:", data);
+        
       }
       
       setIntegrations(p=>p.map(x=>x.id===mapPopup.id?{...x,connected:!!popupInput,value:popupInput,desc:popupInput?`Connected: ${popupInput}`:"Not connected"}:x));

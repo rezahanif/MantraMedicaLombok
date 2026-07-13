@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
             return request.cookies.getAll()
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
             response = NextResponse.next({
               request,
             })
@@ -52,7 +52,12 @@ export async function middleware(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Middleware error:', error)
-    // Jika ada error, izinkan request melanjut
+    // Fail closed: jika mencoba akses /admin tapi terjadi error, redirect ke /login
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
     return NextResponse.next({
       request: {
         headers: request.headers,
