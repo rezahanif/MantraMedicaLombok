@@ -3,7 +3,7 @@
 export const contactInfo = [
   {
     icon: "icons/call.webp",
-    primary: "+62 888 8888 8888",
+    primary: "+62 852 5382 8294",
     secondary: "Available 24/7 for emergencies",
     cta: "Call Now",
     ctaColor: "#E05A4E",
