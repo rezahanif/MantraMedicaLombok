@@ -63,6 +63,12 @@ export const PagePhotos: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const fileExt = file.name.split(".").pop()?.toLowerCase();
+    if (fileExt !== "webp") {
+      toast.warning("Hanya format .webp yang diperbolehkan.");
+      if (e.target) e.target.value = "";
+      return;
+    }
     setPreviewFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
@@ -145,7 +151,11 @@ export const PagePhotos: React.FC = () => {
       toast.success("Foto berhasil diupload!");
     } catch (err: any) {
       console.error("Full error:", err);
-      toast.error(`Upload gagal: ${err.message || err}`);
+      let errMsg = err.message || err;
+      if (typeof errMsg === "string" && errMsg.includes("row-level security policy")) {
+        errMsg = "Format file tidak didukung oleh server. Hanya file .webp yang diperbolehkan.";
+      }
+      toast.error(`Upload gagal: ${errMsg}`);
     } finally {
       setUploading(false);
     }
@@ -334,7 +344,7 @@ export const PagePhotos: React.FC = () => {
                 </div>
               </div>
             )}
-            <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
+            <input ref={fileRef} type="file" accept="image/webp" onChange={handleFileChange} style={{ display: "none" }} />
           </div>
 
           <div style={{ display: "flex", gap: 10 }}>
