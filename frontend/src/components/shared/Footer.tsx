@@ -72,7 +72,7 @@ export default function Footer() {
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, marginTop: -30 }}>
                   <Image
-                    src="/images/logovertical.webp"
+                    src="/images/Text-Vertical-Green.webp"
                     alt="Mantra Medica"
                     width={240}
                     height={240}
@@ -125,7 +125,7 @@ export default function Footer() {
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
                     {c.icon === "icons/callgreen.webp" ? (
-                      <a 
+                      <a
                         href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -226,7 +226,7 @@ export default function Footer() {
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
                     {c.icon === "icons/callgreen.webp" ? (
-                      <a 
+                      <a
                         href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"

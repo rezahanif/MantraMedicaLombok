@@ -75,12 +75,12 @@ export default function Navbar({ activePage }: { activePage?: string }) {
         }}
       >
         {/* Logo */}
-        <Link href="/" className="navbar-logo" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none", marginTop: -6, marginLeft: -8 }}>
+        <Link href="/" className="navbar-logo" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none" }}>
           <Image
-            src="/images/Notext-Logo.webp"
+            src="/images/Notext-Logo-Colored.webp"
             alt="Mantra Medica"
-            width={192}
-            height={38}
+            width={42}
+            height={42}
             priority
             style={{ objectFit: "contain" }}
           />

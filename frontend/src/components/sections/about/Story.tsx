@@ -48,7 +48,7 @@ export default function Story() {
           <div className="story-photo" style={{ position: "relative", display: "flex", justifyContent: "center", left: "clamp(40px, 6vw, 120px)", width: "clamp(270px, 27vw, 459px)", height: "clamp(351px, 36.45vw, 581px)" }}>
             {/* BlubDoctor background layer */}
             <div style={{ position: "absolute", inset: 0, backgroundImage: `url('/images/blubdoctor.webp')`, backgroundPosition: `calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_X}px) calc(50% + ${BLUB_DOCTOR_DESKTOP_POS_Y}px)`, backgroundSize: `${BLUB_DOCTOR_DESKTOP_ZOOM * 100}%`, backgroundRepeat: "no-repeat", zIndex: 0 }} />
-            
+
             {/* Doctor photo layer */}
             <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
               <Image
@@ -256,18 +256,17 @@ export default function Story() {
                 width: 160,
                 height: 120,
                 borderRadius: 14,
-                backgroundColor: C.light,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               <Image
-                src="/images/logovertical.webp"
+                src="/images/Text-Vertical-White.webp"
                 alt="Mantra Medica Logo"
-                width={180}
-                height={240}
-                style={{ objectFit: "contain", position: "relative", left: 3}}
+                width={240}
+                height={360}
+                style={{ objectFit: "contain", position: "relative", left: 3 }}
               />
             </div>
           </div>
