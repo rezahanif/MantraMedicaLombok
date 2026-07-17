@@ -11,6 +11,7 @@ export default function Footer() {
   const [inView, setInView] = useState(false);
   const footerRef = useRef<HTMLElement>(null);
   const [contact, setContact] = useState(footerLinks.contact);
+  const [mapsLink, setMapsLink] = useState("https://maps.google.com/?q=Senaru+Bayan+Lombok");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -32,6 +33,9 @@ export default function Footer() {
             { icon: "icons/callgreen.webp", text: data.whatsapp_number || footerLinks.contact[1].text },
             { icon: "icons/emailgreen.webp", text: data.email_address || footerLinks.contact[2].text },
           ]);
+          if (data.google_maps_link) {
+            setMapsLink(data.google_maps_link);
+          }
         }
       } catch (err) {
         console.error('Error loading clinic info:', err);
@@ -124,11 +128,27 @@ export default function Footer() {
                       height={16}
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
-                    {c.icon === "icons/callgreen.webp" ? (
+                     {c.icon === "icons/callgreen.webp" ? (
                       <a
                         href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 13, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : c.icon === "icons/locgreen.webp" ? (
+                      <a
+                        href={mapsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 13, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : c.icon === "icons/emailgreen.webp" ? (
+                      <a
+                        href={`mailto:${c.text}`}
                         style={{ color: C.teal, fontSize: 13, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
                       >
                         {c.text}
@@ -225,11 +245,27 @@ export default function Footer() {
                       height={14}
                       style={{ objectFit: "contain", marginTop: 1, flexShrink: 0 }}
                     />
-                    {c.icon === "icons/callgreen.webp" ? (
+                     {c.icon === "icons/callgreen.webp" ? (
                       <a
                         href={`https://wa.me/${c.text.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 12, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : c.icon === "icons/locgreen.webp" ? (
+                      <a
+                        href={mapsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: C.teal, fontSize: 12, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
+                      >
+                        {c.text}
+                      </a>
+                    ) : c.icon === "icons/emailgreen.webp" ? (
+                      <a
+                        href={`mailto:${c.text}`}
                         style={{ color: C.teal, fontSize: 12, opacity: 0.7, textDecoration: "none", cursor: "pointer" }}
                       >
                         {c.text}

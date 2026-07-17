@@ -216,7 +216,7 @@ export default function Navbar({ activePage }: { activePage?: string }) {
             margin-right: 20px !important;
           }
           .navbar-logo {
-            margin-left: -32px !important;
+            margin-left: 2px !important;
           }
           .nav-links { display: none !important; }
           .hamburger { display: flex !important; }
