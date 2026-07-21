@@ -196,7 +196,7 @@ export default function Footer() {
       {/* Mobile Footer */}
       <div className="footer-mobile" style={{ display: "none" }}>
         {/* Top Section - Light background */}
-        <div style={{ background: C.light, padding: "32px 16px 24px" }}>
+        <div style={{ background: C.light, padding: "32px 16px 24px 12px" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
             {/* Logo */}
             <div style={{
@@ -281,7 +281,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section - Teal background */}
-        <div style={{ background: C.teal, padding: "16px" }}>
+        <div style={{ background: C.teal, padding: "16px 16px 16px 12px" }}>
           <p style={{ color: C.light, fontSize: 11, marginBottom: 12, lineHeight: 1.5 }}>
             © 2026 Mantra Medicare. All rights reserved.
           </p>
