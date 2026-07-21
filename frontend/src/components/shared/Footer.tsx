@@ -203,12 +203,12 @@ export default function Footer() {
               animation: inView ? "fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) 100ms both" : "none",
               opacity: inView ? undefined : 0,
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, marginTop: -30 }}>
                 <Image
-                  src="/images/logonavbar.webp"
+                  src="/images/Text-Vertical-Green.webp"
                   alt="Mantra Medica"
-                  width={150}
-                  height={150}
+                  width={240}
+                  height={240}
                   style={{ objectFit: "contain" }}
                 />
               </div>
